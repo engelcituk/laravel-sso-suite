@@ -1,0 +1,16 @@
+/vendor/
+/.phpunit.cache/
+/.phpstan-cache/
+/.runtime/
+/.env
+*.pem
+*.key
+/examples/*/vendor/
+/examples/*/.env
+/examples/*/database/*.sqlite
+/examples/*/storage/
+/examples/*/bootstrap/cache/*.php
+/examples/*/database/migrations/*create_oauth_*.php
+/examples/*/database/migrations/*create_sso_*.php
+/examples/*/composer.lock
+/tests/.keys/

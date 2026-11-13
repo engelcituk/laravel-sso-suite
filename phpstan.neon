@@ -1,0 +1,13 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+parameters:
+    level: 5
+    paths:
+        - packages
+        - tests/Fixtures
+    configDirectories:
+        - packages/client/config
+        - packages/server/config
+    tmpDir: .phpstan-cache
+    excludePaths:
+        - packages/*/resources/*

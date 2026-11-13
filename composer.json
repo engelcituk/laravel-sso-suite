@@ -1,0 +1,29 @@
+{
+    "name": "laravel-sso/monorepo",
+    "description": "Experimental Laravel-native OpenID Connect server and client monorepo",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "laravel-sso/contracts": "0.1.x-dev",
+        "laravel-sso/server": "0.1.x-dev",
+        "laravel-sso/client": "0.1.x-dev"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^12.0"
+    },
+    "repositories": [{"type": "path", "url": "packages/*", "options": {"symlink": true, "versions": {"laravel-sso/contracts": "0.1.x-dev", "laravel-sso/server": "0.1.x-dev", "laravel-sso/client": "0.1.x-dev"}}}],
+    "autoload-dev": {"psr-4": {"LaravelSso\\Tests\\": "tests/"}},
+    "config": {"sort-packages": true, "platform": {"php": "8.3.0"}, "allow-plugins": {"php-http/discovery": false}},
+    "scripts": {
+        "test": "phpunit",
+        "lint": "pint --test",
+        "format": "pint",
+        "analyse": "phpstan analyse --memory-limit=1G"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
