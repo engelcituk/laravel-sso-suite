@@ -13,5 +13,8 @@
 /examples/*/database/migrations/*create_oauth_*.php
 /examples/*/database/migrations/*create_sso_*.php
 /examples/*/database/migrations/*allow_optional_oidc_nonce.php
+/examples/*/database/migrations/*add_client_pkce_policy.php
+/examples/*/database/migrations/*bind_access_tokens_to_auth_codes.php
+/examples/*/database/migrations/*bind_authorized_claims.php
 /examples/*/composer.lock
 /tests/.keys/

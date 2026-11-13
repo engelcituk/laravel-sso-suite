@@ -11,4 +11,9 @@ final class CentralUser extends User
     protected $guarded = [];
 
     protected $hidden = ['password', 'remember_token'];
+
+    protected function casts(): array
+    {
+        return ['oidc_profile' => 'array'];
+    }
 }

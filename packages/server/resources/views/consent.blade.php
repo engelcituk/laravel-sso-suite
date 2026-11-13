@@ -2,6 +2,7 @@
 <html lang="es"><meta charset="utf-8"><title>Autorizar acceso</title>
 <h1>Autorizar acceso a tu identidad</h1>
 <p>{{ $clientName }} solicita: {{ implode(', ', $scopes) }}.</p>
+@if ($requestedClaims ?? []) <p>Atributos adicionales solicitados: {{ implode(', ', $requestedClaims) }}.</p> @endif
 <p>Cuenta actual: {{ $account }}.</p>
 <form method="post" action="{{ route('sso-server.consent') }}">
     @csrf

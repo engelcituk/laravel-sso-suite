@@ -10,12 +10,17 @@ use Laravel\Passport\ClientRepository;
 
 final class RegisterClientCommand extends Command
 {
-    protected $signature = 'sso:client {name} {redirect} {--public} {--first-party} {--backchannel=} {--post-logout=}';
+    protected $signature = 'sso:client {name} {redirect} {--public} {--first-party} {--allow-confidential-without-pkce} {--backchannel=} {--post-logout=}';
 
     protected $description = 'Register a Passport authorization-code client and its OIDC metadata';
 
     public function handle(ClientRepository $clients): int
     {
+        if ($this->option('public') && $this->option('allow-confidential-without-pkce')) {
+            $this->error('Public clients always require S256 PKCE.');
+
+            return self::FAILURE;
+        }
         $redirect = $this->argument('redirect');
         $parts = parse_url($redirect);
         $schemes = config('sso-server.allow_http') && ! app()->environment('production') ? ['http', 'https'] : ['https'];
@@ -42,6 +47,7 @@ final class RegisterClientCommand extends Command
         $client = DB::transaction(function () use ($clients, $redirect) {
             $client = $clients->createAuthorizationCodeGrantClient($this->argument('name'), [$redirect], ! $this->option('public'));
             DB::table('sso_clients')->insert(['client_id' => $client->getKey(), 'auto_approve' => $this->option('first-party'),
+                'require_pkce' => ! $this->option('allow-confidential-without-pkce'),
                 'backchannel_logout_uri' => $this->option('backchannel'),
                 'post_logout_redirect_uris' => $this->option('post-logout') ? json_encode([$this->option('post-logout')]) : null,
             ]);

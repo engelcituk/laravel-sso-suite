@@ -15,12 +15,26 @@
 - ADR-008: SQLite para pruebas locales, MySQL/PostgreSQL en CI antes de declarar soporte
   probado. No dependencia obligatoria de Redis.
 - ADR-009: fases abiertas hasta cumplir sus criterios, no simular logout ni conformidad.
-- ADR-010: ampliar Code con nonce/state opcionales en OP, S256 obligatorio, Basic,
+- ADR-010: ampliar Code con nonce/state opcionales en OP, S256 obligatorio por defecto, Basic,
   form_post y RFC 9207. El RP propio sigue creando transacciones con state/nonce y sid.
 - ADR-011: separar entrada externa GET/POST de OIDC y confirmaciones CSRF locales.
   Reautenticación exige un nuevo Login ligado a la solicitud, sin confiar en un booleano.
 - ADR-012: pruebas normativas propias con JUnit/JSON, separadas del harness OIDF fijado
-  por revisión. No relajar S256 ni atribuir certificación ante la falta de Docker.
+  por revisión. La suite oficial se ejecuta localmente en Docker; sus resultados no
+  equivalen a certificación externa ni se confunden con las pruebas propias.
+- ADR-013: S256 obligatorio por defecto y para clientes públicos. El usuario autorizó
+  compatibilidad sin PKCE sólo mediante inscripción explícita de clientes confidenciales;
+  no cambia el RP Laravel ni permite plain o verifier incorrecto cuando se usa PKCE.
+- ADR-014: en Code, perfil/email proceden de UserInfo con sub coincidente; replay de código
+  revoca sólo los tokens ligados a ese código y al cliente autenticado.
+- ADR-015: Request Objects no soportados siguen rechazados. Sólo response_mode puede
+  orientar la entrega de ese rechazo, con parsing limitado; no se usa ninguna otra claim.
+- ADR-016: claims normales configurables y selección userinfo/id_token ligada al código
+  y al token, con consentimiento y filtros de valores. Datos ausentes no se sintetizan.
+  acr se anuncia como 0; nunca se copia una clase solicitada que el login no acredita.
+- ADR-017: REVIEW conserva el estado oficial. La auditoría local verifica semántica de
+  DOM/formularios/CSRF y respuestas 400; los SKIPPED se contrastan con discovery y pruebas
+  negativas de capacidades. Nada se convierte artificialmente en PASSED.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

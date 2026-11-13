@@ -8,7 +8,7 @@ $config['provision'] = 'automatic';
 $config['user_model'] = LocalUser::class;
 $config['session_check_interval'] = 5;
 $config['allowed_urls'] = array_map(static fn ($path) => env('SSO_ISSUER').$path, [
-    '/.well-known/openid-configuration', '/oidc/authorize', '/oidc/token', '/oidc/jwks', '/oidc/session', '/oidc/logout',
+    '/.well-known/openid-configuration', '/oidc/authorize', '/oidc/token', '/oidc/jwks', '/oidc/userinfo', '/oidc/session', '/oidc/logout',
 ]);
 
 return $config;

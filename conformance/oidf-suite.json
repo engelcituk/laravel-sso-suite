@@ -10,6 +10,6 @@
         "oidcc-rp-initiated-logout-certification-test-plan",
         "oidcc-backchannel-rp-initiated-logout-certification-test-plan"
     ],
-    "execution": "not_executed",
-    "policy": "S256 remains mandatory; do not weaken the provider to hide a suite failure."
+    "execution": "executed_locally",
+    "policy": "S256 is required by default and always for public clients. User-authorized per-confidential-client compatibility is used for the official Basic evaluation. PKCE parameters, when present, always require S256 and the matching verifier. The Laravel RP always uses S256."
 }

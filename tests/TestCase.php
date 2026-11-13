@@ -38,7 +38,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('sso-client.session_status_url', 'https://identity.test/oidc/session');
         $app['config']->set('sso-client.allowed_urls', [
             'https://identity.test/.well-known/openid-configuration', 'https://identity.test/oidc/authorize',
-            'https://identity.test/oidc/token', 'https://identity.test/oidc/jwks', 'https://identity.test/oidc/session',
+            'https://identity.test/oidc/token', 'https://identity.test/oidc/jwks', 'https://identity.test/oidc/userinfo', 'https://identity.test/oidc/session',
         ]);
         $dir = __DIR__.'/.keys';
         if (! is_dir($dir)) {

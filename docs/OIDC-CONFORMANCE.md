@@ -2,13 +2,14 @@
 
 Actualizado 2026-11-13. Se implementó y comprobó el perfil del proyecto para Authorization
 Code, RS256 y PKCE S256. **No se afirma conformidad completa de OpenID Connect ni
-certificación:** la suite oficial todavía no se ha podido ejecutar.
+certificación. La suite oficial se ejecutó localmente y sus resultados y revisión de
+evidencias están en [OIDC-CONFORMANCE-RESULTS](OIDC-CONFORMANCE-RESULTS.md).
 
 ## Perfil implementado
 
 | Superficie | Comportamiento |
 | --- | --- |
-| Authorization Endpoint | GET/POST form; response_type=code; redirect exacto registrado; S256 obligatorio |
+| Authorization Endpoint | GET/POST form; response_type=code; redirect exacto registrado; S256 obligatorio por defecto; excepción explícita sólo para confidenciales |
 | Transacción | nonce/state opcionales para RPs externos en Code; nuestro RP genera y exige ambos |
 | Respuestas | query/form_post; state preservado y escapado; iss conforme RFC 9207; no-store |
 | Errores | invalid_request, invalid_scope, unsupported_response_type, unauthorized_client, login_required, consent_required, access_denied |
@@ -17,16 +18,19 @@ certificación:** la suite oficial todavía no se ha podido ejecutar.
 | Reautenticación | max_age incluido 0 y prompt=login exigen nuevo Login Laravel, ligado a solicitud y TTL |
 | Hints | id_token_hint verificado orienta cuenta, nunca autentica; hints/locales no conceden acceso |
 | Consentimiento | POST separado con CSRF, transacción de un uso, cuenta/cliente visibles y cambio de cuenta |
+| Claims | selección por userinfo/id_token, essential, value/values; consentimiento visible y selección persistida por código/token; sub no puede cambiar la cuenta |
+| Contexto de autenticación | acr_values_supported=["0"]; ID Token declara la clase real 0; un acr esencial no disponible impide autenticar |
 | Token Endpoint | client_secret_basic, client_secret_post y cliente público; no mezcla de métodos; código ligado a RP/redirect/PKCE |
 | ID Token | RS256, iss/sub/aud/iat/exp/auth_time/sid, nonce si se pidió y at_hash del access token exacto enviado |
 | UserInfo | GET/POST con Bearer header; POST form también permite access_token en cuerpo, sin mezclar credenciales |
+| Perfil | atributos normales configurables mediante claim_attributes; se omiten valores ausentes o con tipos incorrectos; no se inventan datos ni se cargan relaciones |
 | Transporte Bearer | query access_token rechazado para evitar filtraciones; errores JSON y WWW-Authenticate |
 | RP del proyecto | valida firma/alg/kid, iss/aud/azp/fechas/nonce, at_hash cuando existe y max_age configurado |
 | RP-Initiated Logout | GET/POST, hint opcional, sin cookie, hint expirado reciente, client_id coherente, confirmación/cancelación CSRF |
 | Back-channel RP | evento/jti/aud/iss/sub/sid y frescura; exp opcional validado si existe; sin nonce; recibos durables |
 
-Discovery anuncia sólo lo implementado. No anuncia claims parameter, request object,
-registro dinámico, implicit, hybrid, refresh, JWE ni algoritmos alternativos. Los scopes
+Discovery anuncia claims parameter, atributos normales configurados y acr=0. No anuncia
+request object, registro dinámico, implicit, hybrid, refresh, JWE ni algoritmos alternativos. Los scopes
 son openid/profile/email. Los hints de UI no implementados se ignoran cuando corresponde;
 no autentican ni vinculan por correo. El RP propio usa respuesta query y exige sid/auth_time
 para comprobar sesiones; no es un RP genérico para cualquier OP sin esas extensiones.
@@ -64,77 +68,59 @@ La suite completa añade firma/alg/kid, replay, PKCE, rotación, aprovisionamien
 E2E usa tres servidores reales y comprueba cookies/bases/claves separadas, ACL y CSRF positivo
 y negativo. No equivale a probar todos los navegadores ni el harness oficial.
 
-## Suite oficial preparada, todavía no ejecutada
+## Suite oficial ejecutada localmente
 
-Se descargó [conformance-suite de OpenID Foundation](https://gitlab.com/openid/conformance-suite)
-en `.runtime/oidf-suite`, separado del producto. Revisión inspeccionada:
-`daca6ad2068468d42557ea1152f899cc3ac01a10`. El descriptor versionado
-`conformance/oidf-suite.json` fija esa revisión y los cinco planes relevantes.
-
-```sh
-composer test:oidf:preflight
-```
-
-El preflight sólo lee requisitos y guarda `oidf-preflight.json` en el directorio de informes.
-Salida 2 significa **bloqueado antes de ejecutar**, sin ningún test oficial aprobado/fallido.
-En este equipo falta Docker. Java 8 está presente y no hay toolchain nativo Maven/JDK 21;
-el builder oficial Docker ya proporciona Maven/JDK 21. El preflight no prueba daemon,
-TLS, DNS, conectividad ni automatización del navegador.
-
-## Continuar en un entorno con Docker
-
-La [guía oficial](https://gitlab.com/openid/conformance-suite/-/wikis/Developers/Build-%26-Run)
-es la referencia. En un checkout nuevo:
-
-```sh
-git clone https://gitlab.com/openid/conformance-suite.git .runtime/oidf-suite
-git -C .runtime/oidf-suite checkout daca6ad2068468d42557ea1152f899cc3ac01a10
-git -C .runtime/oidf-suite status --short
-```
-
-Define un caché Maven local privado y utiliza los compose inspeccionados, por ejemplo:
+La revisión oficial `daca6ad2068468d42557ea1152f899cc3ac01a10` permanece sin cambios en
+`.runtime/oidf-suite`. Los cinco planes, el OP Laravel y su worker se ejecutan en la red
+Docker, con almacenamiento Linux para evitar el salto a PHP de Windows. Las pruebas de
+paquetes y los ejemplos siguen funcionando con Herd/Laragon. Los resultados,
+IDs y límites reales están en [OIDC-CONFORMANCE-RESULTS](OIDC-CONFORMANCE-RESULTS.md).
 
 ```powershell
-$env:MAVEN_CACHE = Join-Path (Get-Location) '.runtime/maven-cache'
-docker compose -f .runtime/oidf-suite/builder-compose.yml run --rm builder
-docker compose -f .runtime/oidf-suite/docker-compose.yml up -d --build
+.\tools\oidf-docker.ps1 -Action Status
+composer test:oidf:preflight
+.\tools\oidf-docker.ps1 -Action Start
+.\tools\oidf-docker.ps1 -Action Run -Mode compatibility -Label oidc
+.\tools\oidf-docker.ps1 -Action Stop
 ```
 
-**Estos comandos de Docker no se ejecutaron aquí.** El compose oficial utiliza
-`https://localhost.emobix.co.uk:8443`, MongoDB y nginx. Comprueba resolución local y
-confianza TLS según su guía. El issuer del OP debe ser HTTPS privado y accesible desde
-navegador y contenedor: sus loopbacks son distintos. No abras un túnel público ni
-desactives TLS para fingir una ejecución de conformidad.
+Usa PHP >=8.3 con OpenSSL, curl y SQLite. El helper acepta `-PhpPath` y en este equipo
+selecciona PHP 8.3 de Herd. La [guía de Windows](OIDF-WINDOWS-SETUP.md) explica TLS,
+puertos, almacenamiento privado y logs. `Start` prepara el OP aislado con política estricta;
+`Run -Mode compatibility` habilita la excepción sólo en sus dos clientes confidenciales de laboratorio.
+Para evaluar la política predeterminada usa `Run -Mode strict`. El coordinador y el worker
+deben usar la misma base del OP: se ejecutan mediante el helper dentro de Docker.
 
-Registra dos clientes confidenciales diferentes; el mismo primero puede probar Basic y
-secret_post. Usa el callback exacto exportado por el plan local, normalmente bajo
-`https://localhost.emobix.co.uk:8443/test/a/ALIAS/callback`, sin usar la instancia pública.
-`conformance/oidf-config.example.json` contiene placeholders con campos inspeccionados
-en la fuente oficial; cópialo a `.runtime` antes de añadir secretos. Sigue las instrucciones
-interactivas del plan o prepara automatización de navegador en ese entorno.
+El helper verifica el checkout, compila la misma revisión en un volumen Linux para evitar
+los recorridos lentos sobre NTFS y copia el JAR al directorio ignorado. La API y Mongo deben
+estar listos antes de crear planes. El preflight comprueba requisitos; no ejecuta módulos.
 
-Planes verificados en el código de la revisión fijada:
+El runner llama a la API de los planes/módulos oficiales, sin modificar sus condiciones ni
+fabricar aprobados. Selecciona discovery/static_client donde lo permite el plan; Code,
+query/form_post y Basic/secret_post proceden de las variantes fijadas por cada plan.
+Registra dos clientes distintos y el campo oficial `client_secret_post`, reutilizando el
+primero porque nuestro OP admite ambos métodos. Cada módulo recibe navegador independiente;
+se limpia sólo el rate limit y la bandeja del fixture. Back-channel se registra únicamente
+en su plan, con allowlist exacta y un worker real en proceso separado.
 
-1. `oidcc-config-certification-test-plan`.
-2. `oidcc-basic-certification-test-plan` con discovery/static_client y code.
-3. `oidcc-formpost-basic-certification-test-plan`.
-4. `oidcc-rp-initiated-logout-certification-test-plan`.
-5. `oidcc-backchannel-rp-initiated-logout-certification-test-plan`.
+El navegador automático es HtmlUnit, incluido en la suite oficial. Sus reglas rellenan el
+login central, confirman decisiones y conservan instantáneas DOM mediante la función oficial
+`update-image-placeholder`. No son capturas de Chrome ni una evaluación visual de todos los
+navegadores. Los estados REVIEW/WARNING/SKIPPED se conservan y se explican; no se convierten
+en PASSED. El runner devuelve 1 si existen fallos, advertencias o revisiones.
+`tools/oidf-review.php` audita sus exports sin cambiar ese estado: comprueba semántica de
+formularios, CSRF, origen de acciones, respuestas 400 y capacidades para los saltos.
 
-Para logout registra exactamente las URLs que exporte el plan, incluye su back-channel en
-la allowlist y procesa la bandeja durable. La [guía OP oficial](https://openid.net/certification/connect_op_testing/)
-explica clientes, módulos y evaluación de resultados.
+**Política PKCE:** S256 es obligatorio por defecto y siempre para clientes públicos. El
+usuario autorizó una excepción explícita por cliente confidencial para evaluar Basic,
+cuyos flujos anteriores no envían PKCE. Si PKCE está presente se valida S256 y su verifier;
+nuestro cliente Laravel siempre lo envía. No se modificó la suite para eludir comprobaciones.
+No se anuncian address/phone/offline_access ni claims/request objects no implementados.
 
-**Diferencia conocida:** exigimos S256 también para clientes confidenciales. El plan Basic
-inspeccionado contiene módulos sin PKCE y otro módulo específico con PKCE; no se promete
-aprobar todos sin ajustar el perfil de pruebas. No se desactivó PKCE para obtener un verde.
-Tampoco se anuncian address/phone/offline_access ni algoritmos no implementados. Registra
-cada fallo/advertencia/revisión/salto real, sin inventar exclusiones aprobadas.
-
-Conserva revisión, configuración privada, versiones, variantes, IDs y exports originales
-en `.runtime/conformance`. Actualiza el resumen redactado OIDC-CONFORMANCE-RESULTS.md sólo
-tras revisar los resultados. No se creó cuenta remota, se subieron evidencias ni se solicitó
-certificación o publicación.
+Los informes originales, configuración con secretos y ZIP exports permanecen en
+`.runtime/conformance/official-*/`. No deben subirse a Git: contienen tokens, credenciales,
+cookies y datos del navegador de laboratorio. Se documenta sólo el resumen sin secretos.
+No se creó cuenta remota ni se solicitó certificación o publicación.
 
 ## Fuentes normativas
 

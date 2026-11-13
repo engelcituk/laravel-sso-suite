@@ -1,0 +1,375 @@
+{
+    "suite_revision": "daca6ad2068468d42557ea1152f899cc3ac01a10",
+    "checked_at_utc": "2026-11-13T21:20:07+00:00",
+    "official_results_modified": false,
+    "official_certification_claimed": false,
+    "reviews": [
+        {
+            "module": "oidcc-prompt-login",
+            "id": "vZqsLAu5veEbxJi",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "REVIEW",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "post_login_with_csrf": true,
+                "password_not_prefilled": true,
+                "two_login_submissions": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-max-age-1",
+            "id": "wCmlOUSoANvzOdd",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "REVIEW",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "post_login_with_csrf": true,
+                "password_not_prefilled": true,
+                "two_login_submissions": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-ensure-registered-redirect-uri",
+            "id": "nQ9cBErIQj3NSpw",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "REVIEW",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-ensure-request-object-with-redirect-uri",
+            "id": "EG9Bi9pLkgTnzBw",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "REVIEW",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-prompt-login",
+            "id": "V1GwvzQfCzJ96KF",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "REVIEW",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "post_login_with_csrf": true,
+                "password_not_prefilled": true,
+                "two_login_submissions": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-max-age-1",
+            "id": "fNf7x8legfpUj64",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "REVIEW",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "post_login_with_csrf": true,
+                "password_not_prefilled": true,
+                "two_login_submissions": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-ensure-registered-redirect-uri",
+            "id": "V8KHaFUqvKHLYNq",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "REVIEW",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-ensure-request-object-with-redirect-uri",
+            "id": "HgR0Dv4s07JveKK",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "REVIEW",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-bad-post-logout-redirect-uri",
+            "id": "qgZom77caBMddEb",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-modified-id-token-hint",
+            "id": "xt49E0Rdoi4O98J",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-no-id-token-hint",
+            "id": "RYSQPOg5jUWTZvg",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-no-params",
+            "id": "FNYuTczJSwgSsua",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "logout_completed": true,
+                "no_redirect_form": true,
+                "confirmed_from_csrf_form": true,
+                "confirmation_clicked": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-no-post-logout-redirect-uri",
+            "id": "jqeIU56cTbeY5ok",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "logout_completed": true,
+                "no_redirect_form": true,
+                "confirmed_from_csrf_form": true,
+                "confirmation_clicked": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-only-state",
+            "id": "6EaCOXhxWdP1rHW",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "logout_completed": true,
+                "no_redirect_form": true,
+                "confirmed_from_csrf_form": true,
+                "confirmation_clicked": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-query-added-to-post-logout-redirect-uri",
+            "id": "dG8MSGwQpDu8rbw",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        },
+        {
+            "module": "oidcc-rp-initiated-logout-bad-id-token-hint",
+            "id": "cMbYJTgNGb1KygW",
+            "plan_id": "bUws0MjoDcMZ2",
+            "official_result": "REVIEW",
+            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "checks": {
+                "finished": true,
+                "captured_dom": true,
+                "no_failed_conditions": true,
+                "capture_matches": true,
+                "explicit_invalid_request": true,
+                "no_redirect_form_or_script": true,
+                "http_400_observed": true
+            },
+            "local_disposition": "evidence_verified"
+        }
+    ],
+    "skips": [
+        {
+            "module": "oidcc-scope-address",
+            "id": "s1tj4xnp54x7AOG",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "SKIPPED",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "reason": "address not advertised",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-scope-phone",
+            "id": "PSpSc7etCcqHSR0",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "SKIPPED",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "reason": "phone not advertised",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-scope-all",
+            "id": "bqDms1N3WAV0BWO",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "SKIPPED",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "reason": "address and phone not advertised",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-unsigned-request-object-supported-correctly-or-rejected-as-unsupported",
+            "id": "icJg0n7MKNK1lwV",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "SKIPPED",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "reason": "Request Objects explicitly unsupported",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-refresh-token",
+            "id": "V5tEZxj8mvyCWcA",
+            "plan_id": "Juo55sGOzvw6n",
+            "official_result": "SKIPPED",
+            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "reason": "refresh grant not advertised",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-scope-address",
+            "id": "ueSfxnyXDxS3xaB",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "SKIPPED",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "reason": "address not advertised",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-scope-phone",
+            "id": "SfaiWTCb37SiP96",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "SKIPPED",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "reason": "phone not advertised",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-scope-all",
+            "id": "D5QYDm53vHyciva",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "SKIPPED",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "reason": "address and phone not advertised",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-unsigned-request-object-supported-correctly-or-rejected-as-unsupported",
+            "id": "HsIAm8di6Mf0GEy",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "SKIPPED",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "reason": "Request Objects explicitly unsupported",
+            "capability_gate_verified": true
+        },
+        {
+            "module": "oidcc-refresh-token",
+            "id": "O9K1G28cuLyPcQ1",
+            "plan_id": "7QVK5C0g1Xiya",
+            "official_result": "SKIPPED",
+            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "reason": "refresh grant not advertised",
+            "capability_gate_verified": true
+        }
+    ]
+}

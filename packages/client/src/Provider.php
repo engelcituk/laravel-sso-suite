@@ -18,7 +18,7 @@ final class Provider
         if (($data['issuer'] ?? null) !== $issuer) {
             throw new ProtocolException('Discovery issuer mismatch.');
         }
-        foreach (['authorization_endpoint', 'token_endpoint', 'jwks_uri'] as $key) {
+        foreach (['authorization_endpoint', 'token_endpoint', 'jwks_uri', 'userinfo_endpoint'] as $key) {
             if (! is_string($data[$key] ?? null)) {
                 throw new ProtocolException('Missing discovery endpoint.');
             }

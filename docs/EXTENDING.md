@@ -18,7 +18,11 @@ administrativas HTTP. Agrega autorización y auditoría en las operaciones que l
 Las vistas `sso-server::consent` y `sso-server::logout` se pueden sobrescribir siguiendo la
 convención Laravel resources/views/vendor/sso-server. Conserva CSRF y transacciones opacas.
 
-El modelo de claims OP actual ofrece name/email/email_verified desde el Eloquent central.
+El OP ofrece atributos normales profile/email desde el Eloquent central mediante
+`sso-server.claim_attributes`. El mapeo puede apuntar a columnas o atributos JSON casteados;
+omite valores ausentes y no carga relaciones. No se agregan datos personales de relleno.
+La selección OIDC claims permanece ligada al código y al token, y se filtra por destino y
+value/values. No admite solicitar passwords, roles ni propiedades arbitrarias del modelo.
 Adaptadores de claims y proveedores sin Eloquent se evaluarán después; no existe una
 interfaz universal prometida para ellos. Nunca aceptar atributos arbitrarios de un request.
 

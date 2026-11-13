@@ -62,6 +62,25 @@ final class ProtocolTest extends TestCase
         $this->exchange($client, $query['code'], $verifier)->assertOk();
     }
 
+    public function test_code_replay_revokes_only_tokens_issued_for_that_code_and_client(): void
+    {
+        [$response, $client, $verifier] = $this->authorization();
+        parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $query);
+        $first = $this->exchange($client, $query['code'], $verifier)->assertOk()->json('access_token');
+        $params = ['client_id' => $client->id, 'response_type' => 'code', 'redirect_uri' => 'https://one.test/sso/callback', 'scope' => 'openid',
+            'code_challenge_method' => 'S256', 'code_challenge' => JWT::urlsafeB64Encode(hash('sha256', $verifier, true))];
+        $secondResponse = $this->get('/oidc/authorize?'.http_build_query($params))->assertRedirect();
+        parse_str(parse_url($secondResponse->headers->get('Location'), PHP_URL_QUERY), $secondQuery);
+        $second = $this->exchange($client, $secondQuery['code'], $verifier)->assertOk()->json('access_token');
+        $other = app(ClientRepository::class)->createAuthorizationCodeGrantClient('Other', ['https://one.test/sso/callback'], false);
+        DB::table('sso_clients')->insert(['client_id' => $other->id, 'auto_approve' => true]);
+        $this->exchange($other, $secondQuery['code'], $verifier)->assertStatus(400);
+        $this->withToken($second)->getJson('/oidc/userinfo')->assertOk();
+        $this->exchange($client, $query['code'], $verifier)->assertStatus(400);
+        $this->withToken($first)->getJson('/oidc/userinfo')->assertStatus(401);
+        $this->withToken($second)->getJson('/oidc/userinfo')->assertOk();
+    }
+
     public function test_unregistered_callback_is_rejected_without_redirect(): void
     {
         [$response] = $this->authorization(['redirect_uri' => 'https://evil.test/callback']);

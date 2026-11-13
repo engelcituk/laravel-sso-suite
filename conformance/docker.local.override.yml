@@ -1,0 +1,48 @@
+# Keep the development-only OIDF UI/API private to this computer.
+services:
+  nginx:
+    ports: !override
+      - "127.0.0.1:8443:8443"
+    networks:
+      default:
+        aliases:
+          - localhost.emobix.co.uk
+    volumes:
+      - ../conformance/tls/server.pem:/etc/ssl/certs/nginx-selfsigned.crt:ro
+      - ../conformance/tls/server.key:/etc/ssl/private/nginx-selfsigned.key:ro
+  server:
+    ports: !reset []
+    volumes:
+      - ../conformance/tls:/local-tls:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        if [ -f /tmp/local-trust.p12 ]; then keytool -delete -alias laravel-sso-local -keystore /tmp/local-trust.p12 -storepass local-test-only; fi;
+        keytool -importcert -noprompt -alias laravel-sso-local -file /local-tls/ca.pem -keystore /tmp/local-trust.p12 -storepass local-test-only &&
+        exec java -Djavax.net.ssl.trustStore=/tmp/local-trust.p12 -Djavax.net.ssl.trustStorePassword=local-test-only -Djdk.tls.maxHandshakeMessageSize=65536 -jar /server/fapi-test-suite.jar
+        --fintechlabs.base_url=https://localhost.emobix.co.uk:8443
+        --fintechlabs.base_http_url=http://localhost.emobix.co.uk:8080
+        --fintechlabs.devmode=true --fintechlabs.startredir=true
+  identity:
+    image: nginx:1.27.3
+    depends_on: [identity-php]
+    volumes:
+      - ../../conformance/identity.nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../conformance/tls:/tls:ro
+    networks:
+      default:
+        aliases: [identity.sso.test]
+  identity-php:
+    image: laravel-sso-oidf-identity-php:local
+    build: ../../conformance/php
+    working_dir: /app/.runtime/conformance/op
+    environment:
+      OIDF_CONTAINERIZED: '1'
+      PHP_CLI_SERVER_WORKERS: '4'
+    volumes:
+      - op-app:/app
+    command: ['php', '-S', '0.0.0.0:8000', '-t', 'public', 'public/index.php']
+volumes:
+  op-app:
+    name: laravel-sso-oidf-op-app
+

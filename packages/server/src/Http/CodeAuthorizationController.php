@@ -15,6 +15,7 @@ use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\OidcServer;
 use LaravelSso\Server\Protocol\AuthorizationInput;
 use LaravelSso\Server\Protocol\AuthorizationResponse;
+use LaravelSso\Server\Protocol\ClaimsRequest;
 use LaravelSso\Server\Protocol\IdTokenHint;
 use LaravelSso\Server\Protocol\InvalidRequest;
 use LaravelSso\Server\Protocol\Parameters;
@@ -27,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class CodeAuthorizationController
 {
     public function authorize(Request $request, ServerRequestInterface $psr, Parameters $parameters,
-        AuthorizationInput $rules, OidcServer $factory, GlobalSessions $sessions): Response
+        AuthorizationInput $rules, OidcServer $factory, GlobalSessions $sessions, ClaimsRequest $claims): Response
     {
         $input = $parameters->read($request);
         // Never redirect until BOTH registration and exact redirect URI are trusted.
@@ -44,11 +45,18 @@ final class CodeAuthorizationController
         if (! $client->hasGrantType('authorization_code')) {
             return $this->error($input, 'unauthorized_client');
         }
-        if ($error = $rules->error($input)) {
+        if ($error = $rules->error($input, ! $client->confidential() || (bool) $registration->require_pkce)) {
+            if ($error === 'request_not_supported') {
+                $input['response_mode'] = $rules->unsupportedRequestErrorMode($input);
+            }
+
             return $this->error($input, $error);
         }
         try {
+            $selection = $claims->parse($input['claims'] ?? null);
             $authorization = $factory->make()->validateAuthorizationRequest($psr->withQueryParams($input));
+        } catch (InvalidRequest) {
+            return $this->error($input, 'invalid_request');
         } catch (OAuthServerException $e) {
             return $this->error($input, $e->getErrorType());
         }
@@ -87,12 +95,19 @@ final class CodeAuthorizationController
             return $this->login($request, $input, $guard);
         }
         $user = $guard->user();
+        if (! $claims->permits($selection, (string) $user->getAuthIdentifier())) {
+            return $this->error($input, in_array('none', $prompts, true) ? 'login_required' : 'access_denied');
+        }
         if (! $sessions->activeUser((string) $user->getAuthIdentifier())) {
             return $this->error($input, 'access_denied');
         }
         $session = $sessions->establish($request, $user);
+        if (isset($input['max_age'], $selection['id_token']['auth_time'])
+            && ! $claims->matches($selection['id_token']['auth_time'], (int) $session->auth_time)) {
+            return $this->error($input, 'access_denied');
+        }
         $authorization->setUser(new User((string) $user->getAuthIdentifier()));
-        $context = ['nonce' => $input['nonce'] ?? null, 'sid' => $session->sid];
+        $context = ['nonce' => $input['nonce'] ?? null, 'sid' => $session->sid, 'claims' => $selection];
         $interaction = ! $registration->auto_approve || in_array('consent', $prompts, true) || in_array('select_account', $prompts, true);
         if (! $interaction) {
             return $this->complete($request, $authorization, $context, $input, $factory);
@@ -107,6 +122,7 @@ final class CodeAuthorizationController
 
         return response()->view('sso-server::consent', ['transaction' => $transaction,
             'scopes' => explode(' ', $input['scope']), 'account' => $user->getAuthIdentifier(), 'clientName' => $client->getAttribute('name'),
+            'requestedClaims' => array_merge(array_keys($selection['userinfo'] ?? []), array_keys($selection['id_token'] ?? [])),
             'selectAccount' => in_array('select_account', $prompts, true)])
             ->header('Cache-Control', 'no-store')->header('Content-Security-Policy', "frame-ancestors 'none'; base-uri 'none'");
     }

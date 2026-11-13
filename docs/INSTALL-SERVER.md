@@ -61,6 +61,34 @@ un cliente sin secreto; S256 sigue siendo obligatorio. El comando muestra el sec
 cliente confidencial una sola vez. No lo copies a logs, tickets ni control de versiones.
 No hay registro dinámico ni URLs suministradas por visitantes.
 
+S256 se exige por defecto también a los clientes confidenciales. Sólo para interoperar
+con clientes confidenciales antiguos puede registrarse uno con
+`--allow-confidential-without-pkce`. Esta opción guarda `require_pkce=false` en esa
+inscripción; no modifica el resto de clientes ni el cliente Laravel, que siempre envía
+S256. Se rechaza combinarla con `--public`. Si una solicitud incluye parámetros PKCE,
+deben ser S256 válidos y el token endpoint siempre comprueba el verifier correspondiente.
+La evaluación Basic oficial se ejecutó con esta excepción explícitamente autorizada.
+
+Las instalaciones existentes deben incorporar las migraciones nuevas
+`000005_add_client_pkce_policy`, `000006_bind_access_tokens_to_auth_codes` y
+`000007_bind_authorized_claims`, conservando
+el historial de migraciones. Los clientes existentes reciben `require_pkce=true`.
+El OP enlaza los tokens nuevos con su código para revocarlos al detectar reutilización;
+los tokens anteriores a esa migración conservan su vencimiento original.
+
+`sso-server.claim_attributes` asigna los atributos normales de profile/email a columnas del
+modelo; admite rutas de atributos JSON casteados, por ejemplo `given_name => oidc_profile.given_name`.
+No exige agregar todas esas columnas a users: los datos inexistentes se omiten. La lectura
+no carga relaciones Eloquent. Configura sólo fuentes reales y fiables; los atributos de
+administración, contraseñas y roles no forman parte del catálogo de claims solicitado por RPs.
+
+El parámetro OIDC claims permite pedir atributos concretos en userinfo o id_token. El OP
+guarda esa selección junto al código y al access token, la muestra en el consentimiento y
+respeta value/values; no puede ampliarse desde el POST de consentimiento ni desde token.
+Un atributo normal esencial ausente se omite sin inventarlo. Las restricciones sub deben
+coincidir con el usuario autenticado. Para acr se anuncia y devuelve sólo `0`, sin afirmar
+MFA ni un nivel de aseguramiento superior. Una solicitud esencial de otro acr se rechaza.
+
 Ejecuta `sso:deliver-logouts` con scheduler o worker externo cada minuto. Por ejemplo en
 `routes/console.php` del OP:
 

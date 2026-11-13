@@ -8,7 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\Protocol\BearerFailure;
+use LaravelSso\Server\Protocol\ClaimsRequest;
 use LaravelSso\Server\Protocol\Parameters;
+use LaravelSso\Server\UserClaims;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,14 +33,11 @@ final class ResourceController
         if ($user === null) {
             throw new BearerFailure;
         }
-        $claims = ['sub' => $session->subject];
-        if (in_array('profile', $scopes, true)) {
-            $claims['name'] = $user->getAttribute('name');
-        }
-        if (in_array('email', $scopes, true)) {
-            $claims['email'] = $user->getAttribute('email');
-            $claims['email_verified'] = $user->getAttribute('email_verified_at') !== null;
-        }
+        $selection = json_decode($binding->claims_request ?? '[]', true, 8, JSON_THROW_ON_ERROR);
+        $attributes = app(UserClaims::class);
+        $claims = ['sub' => $session->subject] + $attributes->scoped($user, $scopes)
+            + app(ClaimsRequest::class)->select($selection, 'userinfo', $attributes->available($user));
+        $claims = app(ClaimsRequest::class)->constrain($selection, 'userinfo', $claims);
 
         return response()->json($claims)->header('Cache-Control', 'no-store');
     }

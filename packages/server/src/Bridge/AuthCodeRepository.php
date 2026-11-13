@@ -13,6 +13,19 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 /** Compatibility surface: Passport 13 Bridge repository, covered by real grant tests. */
 final class AuthCodeRepository extends \Laravel\Passport\Bridge\AuthCodeRepository
 {
+    public function isAuthCodeRevoked(string $codeId): bool
+    {
+        $revoked = parent::isAuthCodeRevoked($codeId);
+        // League authenticates the client first, but checks revocation before
+        // comparing the code's client. Bind this signal to the authenticated RP.
+        if ($revoked && Passport::authCode()->newQuery()->whereKey($codeId)
+            ->where('client_id', request()->attributes->get('sso.authenticated_client'))->exists()) {
+            request()->attributes->set('sso.replayed_code', $codeId);
+        }
+
+        return $revoked;
+    }
+
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void
     {
         $context = request()->attributes->get('sso.authorization');
@@ -23,6 +36,7 @@ final class AuthCodeRepository extends \Laravel\Passport\Bridge\AuthCodeReposito
             parent::persistNewAuthCode($authCodeEntity);
             DB::table('sso_auth_contexts')->insert([
                 'code_id' => $authCodeEntity->getIdentifier(), 'nonce' => $context['nonce'], 'sid' => $context['sid'],
+                'claims_request' => json_encode($context['claims'] ?? [], JSON_THROW_ON_ERROR),
             ]);
         });
     }

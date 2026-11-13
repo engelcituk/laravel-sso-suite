@@ -20,7 +20,7 @@ Los Gates, Policies y relaciones usan la clave local. Nunca se vincula por email
 1. RP crea state, nonce y verifier aleatorios, con caducidad y consumo único.
 2. OP valida cliente, redirect exacto, scope openid y PKCE S256 antes de autenticar.
 3. Passport/League emite y consume el código; una extensión acotada de su repositorio
-   asocia nonce, auth_time y sid al identificador del código.
+   asocia nonce, auth_time, sid y selección autorizada de claims al identificador del código.
 4. La respuesta Bearer de League añade un ID Token RS256 sólo al intercambio OIDC.
 5. RP obtiene discovery/JWKS exclusivamente de URLs previamente confiadas, valida firma,
    kid, algoritmo, issuer, audience, fechas y nonce antes de aprovisionar.

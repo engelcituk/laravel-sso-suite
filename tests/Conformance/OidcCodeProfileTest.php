@@ -37,6 +37,72 @@ final class OidcCodeProfileTest extends TestCase
         return $query;
     }
 
+    public function test_unsupported_request_object_can_select_only_error_transport_not_authorization_claims(): void
+    {
+        [, $user, $params] = $this->fixture();
+        $params['request'] = JWT::urlsafeB64Encode('{"alg":"none"}').'.'.JWT::urlsafeB64Encode(json_encode([
+            'response_mode' => 'form_post', 'client_id' => 'attacker', 'redirect_uri' => 'https://evil.test/cb',
+            'state' => 'untrusted-state', 'scope' => 'admin', 'sub' => 'attacker',
+        ])).'.';
+        $response = $this->actingAs($user)->get('/oidc/authorize?'.http_build_query($params))->assertOk();
+        $response->assertSee('name="error" value="request_not_supported"', false)
+            ->assertSee('action="https://one.test/cb"', false)->assertDontSee('evil.test')->assertDontSee('untrusted-state');
+        $this->assertSame(0, DB::table('oauth_auth_codes')->count());
+        $query = $this->responseQuery($this->get('/oidc/authorize?'.http_build_query($params + ['response_mode' => 'query'])));
+        $this->assertSame('request_not_supported', $query['error']);
+        $this->assertSame($params['state'], $query['state']);
+    }
+
+    public static function invalidRequestObjectEncoding(): array
+    {
+        return ['malformed' => ['not-a-jwt'], 'invalid base64' => ['e30.%%%.'],
+            'invalid json' => ['e30.'.JWT::urlsafeB64Encode('{broken').'.'],
+            'wrong claim type' => ['e30.'.JWT::urlsafeB64Encode('{"response_mode":[]}').'.'],
+            'oversized' => ['e30.'.str_repeat('a', 8192).'.']];
+    }
+
+    #[DataProvider('invalidRequestObjectEncoding')]
+    public function test_malformed_unsupported_request_objects_are_rejected_without_authentication(string $object): void
+    {
+        [, , $params] = $this->fixture();
+        $query = $this->responseQuery($this->get('/oidc/authorize?'.http_build_query($params + ['request' => $object])));
+        $this->assertSame('request_not_supported', $query['error']);
+        $this->assertSame(0, DB::table('oauth_auth_codes')->count());
+    }
+
+    public function test_confidential_compatibility_is_opt_in_and_never_allows_plain_pkce(): void
+    {
+        [$client, $user, $params] = $this->fixture(confidential: true);
+        unset($params['code_challenge'], $params['code_challenge_method']);
+        $this->assertSame('invalid_request', $this->responseQuery($this->actingAs($user)->get('/oidc/authorize?'.http_build_query($params)))['error']);
+        DB::table('sso_clients')->where('client_id', $client->id)->update(['require_pkce' => false]);
+        $query = $this->responseQuery($this->get('/oidc/authorize?'.http_build_query($params)));
+        $this->assertArrayHasKey('code', $query);
+        $this->post('/oidc/token', ['grant_type' => 'authorization_code', 'client_id' => $client->id, 'client_secret' => $client->plainSecret,
+            'redirect_uri' => $params['redirect_uri'], 'code' => $query['code']])->assertOk()->assertJsonStructure(['id_token']);
+        $params += ['code_challenge' => str_repeat('p', 43), 'code_challenge_method' => 'plain'];
+        $this->assertSame('invalid_request', $this->responseQuery($this->get('/oidc/authorize?'.http_build_query($params)))['error']);
+    }
+
+    public function test_public_client_cannot_disable_pkce_even_with_incorrect_registration(): void
+    {
+        [$client, $user, $params] = $this->fixture();
+        DB::table('sso_clients')->where('client_id', $client->id)->update(['require_pkce' => false]);
+        unset($params['code_challenge'], $params['code_challenge_method']);
+        $this->assertSame('invalid_request', $this->responseQuery($this->actingAs($user)->get('/oidc/authorize?'.http_build_query($params)))['error']);
+        $this->artisan('sso:client Public https://one.test/cb --public --allow-confidential-without-pkce')->assertFailed();
+    }
+
+    public function test_opted_out_confidential_client_still_validates_pkce_when_present(): void
+    {
+        [$client, $user, $params] = $this->fixture(confidential: true);
+        DB::table('sso_clients')->where('client_id', $client->id)->update(['require_pkce' => false]);
+        $query = $this->responseQuery($this->actingAs($user)->get('/oidc/authorize?'.http_build_query($params)));
+        $credentials = ['client_secret' => $client->plainSecret];
+        $this->redeem($params, $query['code'], $credentials + ['code_verifier' => str_repeat('x', 64)])->assertStatus(400);
+        $this->redeem($params, $query['code'], $credentials)->assertOk();
+    }
+
     private function redeem(array $params, string $code, array $extra = [])
     {
         return $this->withoutHeader('Authorization')->post('/oidc/token', array_merge([
@@ -55,6 +121,8 @@ final class OidcCodeProfileTest extends TestCase
         $token = $this->redeem($params, $query['code'])->assertOk();
         $claims = JWT::decode($token->json('id_token'), JWK::parseKeySet(app(SigningKeys::class)->jwks()));
         $this->assertFalse(property_exists($claims, 'nonce'));
+        $this->assertFalse(property_exists($claims, 'name'));
+        $this->assertFalse(property_exists($claims, 'email'));
         $this->assertSame(JWT::urlsafeB64Encode(substr(hash('sha256', $token->json('access_token'), true), 0, 16)), $claims->at_hash);
     }
 
@@ -255,7 +323,8 @@ final class OidcCodeProfileTest extends TestCase
         $this->get('/.well-known/openid-configuration')->assertOk()
             ->assertJsonPath('response_types_supported', ['code'])
             ->assertJsonPath('response_modes_supported', ['query', 'form_post'])
-            ->assertJsonPath('request_parameter_supported', false)->assertJsonPath('claims_parameter_supported', false)
+            ->assertJsonPath('request_parameter_supported', false)->assertJsonPath('claims_parameter_supported', true)
+            ->assertJsonPath('acr_values_supported', ['0'])
             ->assertJsonPath('authorization_response_iss_parameter_supported', true)
             ->assertJsonPath('token_endpoint_auth_methods_supported', ['client_secret_basic', 'client_secret_post', 'none']);
     }

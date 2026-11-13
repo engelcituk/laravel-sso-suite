@@ -14,6 +14,7 @@ use LaravelSso\Client\Exceptions\ProtocolException;
 use LaravelSso\Client\IdTokenValidator;
 use LaravelSso\Client\Provider;
 use LaravelSso\Client\TrustedHttp;
+use LaravelSso\Contracts\Identity;
 
 final class LoginController
 {
@@ -69,6 +70,16 @@ final class LoginController
         }
         $identity = $validator->validate($response->json('id_token'), $http->get($metadata['jwks_uri']), $transaction['nonce'],
             $transaction['maxAge'] ?? null, $response->json('access_token'));
+        try {
+            $userinfo = $http->request($metadata['userinfo_endpoint'])->withToken($response->json('access_token'))->get($metadata['userinfo_endpoint']);
+        } catch (\Throwable $e) {
+            throw new ProtocolException('OIDC UserInfo unavailable.', 0, $e);
+        }
+        if (! $userinfo->successful() || ! is_array($userinfo->json()) || $userinfo->json('sub') !== $identity->subject) {
+            throw new ProtocolException('OIDC UserInfo subject mismatch or invalid response.');
+        }
+        $identity = new Identity($identity->issuer, $identity->subject, $identity->sessionId, $identity->authenticatedAt,
+            array_intersect_key($userinfo->json(), array_flip(['name', 'email', 'email_verified'])));
         $user = $users->provision($identity);
         /** @var StatefulGuard $guard */
         $guard = Auth::guard(config('sso-client.guard'));

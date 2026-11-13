@@ -36,10 +36,21 @@ Back-channel valida firma, evento, audiencia, sid/sub, TTL y jti; usa recibos at
 índice persistente y bandeja durable. Reconoce duplicados sin reaplicarlos. Los ensayos
 secuenciales SQLite no prueban concurrencia distribuida ni conformidad completa.
 La ampliación del perfil y las pruebas normativas se documentan en OIDC-CONFORMANCE.md.
-El harness oficial está preparado pero no ejecutado por falta de Docker; sus resultados
-no se confunden con los del grupo PHPUnit propio. Ver OIDC-CONFORMANCE-RESULTS.md.
+El harness oficial se ejecutó localmente en Docker tras el reinicio de Windows. Sus
+resultados, advertencias y revisiones se conservan separados del grupo PHPUnit propio.
+Ver OIDC-CONFORMANCE-RESULTS.md. S256 sigue siendo obligatorio por defecto; la excepción
+explícita por cliente confidencial se usa sólo donde el operador la haya autorizado.
+Los clientes públicos y el cliente Laravel mantienen PKCE obligatorio.
+Los atributos concretos solicitados mediante claims se muestran en el consentimiento y
+se conservan por código/token. sub no puede sustituir al usuario autenticado. El contexto
+acr=0 no afirma MFA ni identidad acreditada; un acr esencial distinto se rechaza.
+
+El replay revoca sólo tokens ligados al código y al cliente autenticado. UserInfo debe
+tener el mismo sub que el ID Token validado antes de crear o actualizar al usuario local.
+Los Request Objects siguen rechazados: se puede leer de forma acotada sólo response_mode
+para entregar ese error; nunca se aceptan su redirect, identidad, state, scopes ni PKCE.
 
 ## Validación externa pendiente
 
 Los tests propios no equivalen a certificación OIDC. Faltan revisión independiente,
-OpenID Foundation conformance, pruebas MySQL/PostgreSQL y evaluación operativa.
+certificación externa de OpenID Foundation, pruebas MySQL/PostgreSQL y evaluación operativa.

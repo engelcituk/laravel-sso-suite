@@ -42,10 +42,13 @@ SSO_SESSION_STATUS_URL=https://identity.example.org/oidc/session
 ```
 
 En `sso-client.allowed_urls` autoriza explícitamente discovery, authorize, token, jwks,
-session y logout de ese issuer, con las URLs exactas. No se siguen redirecciones HTTP
+userinfo, session y logout de ese issuer, con las URLs exactas. No se siguen redirecciones HTTP
 del transporte servidor-a-servidor. El proveedor nunca se toma de un parámetro del visitante.
 `sso:doctor` comprueba discovery y conectividad sin mostrar secretos.
 El callback verifica iss si el OP lo anuncia y at_hash si aparece en el ID Token.
+Después solicita UserInfo con el access token en Authorization y exige que su sub coincida
+exactamente con el ID Token validado antes de sincronizar nombre/email. Un fallo HTTP,
+una redirección o un sub ausente/diferente impiden el login y el aprovisionamiento.
 Puedes fijar sso-client.max_age (segundos, incluido 0) para solicitar reautenticación y
 validar auth_time firmado; no se acepta un max_age arbitrario desde parámetros del visitante.
 

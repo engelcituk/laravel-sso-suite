@@ -5,6 +5,14 @@ return [
     'issuer' => env('SSO_ISSUER', 'https://identity.example.test'),
     'guard' => 'web',
     'active_column' => 'is_active',
+    // Optional model attributes. Missing values are omitted, never synthesized.
+    'claim_attributes' => [
+        'name' => 'name', 'given_name' => 'given_name', 'family_name' => 'family_name',
+        'middle_name' => 'middle_name', 'nickname' => 'nickname', 'preferred_username' => 'preferred_username',
+        'profile' => 'profile', 'picture' => 'picture', 'website' => 'website', 'gender' => 'gender',
+        'birthdate' => 'birthdate', 'zoneinfo' => 'zoneinfo', 'locale' => 'locale', 'updated_at' => 'updated_at',
+        'email' => 'email', 'email_verified' => 'email_verified_at',
+    ],
     'allow_http' => false,
     'id_token_ttl' => 300,
     'access_token_ttl' => 300,

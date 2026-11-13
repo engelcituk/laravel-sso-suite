@@ -26,6 +26,32 @@ final class ClientTest extends TestCase
             'nonce' => 'nonce-test', 'name' => 'Ada', 'email' => 'ada@example.test'], $overrides);
     }
 
+    public static function invalidUserinfo(): array
+    {
+        return ['different subject' => [['sub' => 'another-user'], 200],
+            'missing subject' => [['name' => 'Untrusted'], 200],
+            'non-string subject' => [['sub' => 7], 200],
+            'unavailable' => [['sub' => 'central-7'], 503]];
+    }
+
+    #[DataProvider('invalidUserinfo')]
+    public function test_userinfo_must_match_validated_id_token_before_provisioning(array $body, int $status): void
+    {
+        config(['sso-client.provision' => 'automatic']);
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://identity.test/.well-known/openid-configuration' => Http::response(app(ProtocolController::class)->discovery()->getData(true)),
+            'https://identity.test/oidc/jwks' => Http::response(app(SigningKeys::class)->jwks()),
+            'https://identity.test/oidc/token' => Http::response(['access_token' => 'test-access', 'id_token' => app(SigningKeys::class)->sign($this->claims())]),
+            'https://identity.test/oidc/userinfo' => Http::response($body, $status),
+        ]);
+        $this->withSession(['sso.transaction' => ['state' => 'state', 'nonce' => 'nonce-test', 'verifier' => str_repeat('v', 64), 'created' => time()]])
+            ->get('/sso/callback?state=state&code=code&iss=https%3A%2F%2Fidentity.test')->assertStatus(400);
+        $this->assertGuest('local');
+        $this->assertSame(0, LocalUser::count());
+        Http::assertSent(fn ($request) => $request->url() === 'https://identity.test/oidc/userinfo' && $request->hasHeader('Authorization', 'Bearer test-access'));
+    }
+
     public function test_valid_identity_and_negative_jwt_claims(): void
     {
         $validator = app(IdTokenValidator::class);
@@ -126,6 +152,7 @@ final class ClientTest extends TestCase
         Http::fake([
             'https://identity.test/.well-known/openid-configuration' => Http::response($metadata),
             'https://identity.test/oidc/jwks' => Http::response(app(SigningKeys::class)->jwks()),
+            'https://identity.test/oidc/userinfo' => Http::response(['sub' => 'central-7', 'name' => 'From UserInfo']),
         ]);
         $response = $this->get('/sso/login')->assertRedirect();
         parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $query);
@@ -141,6 +168,7 @@ final class ClientTest extends TestCase
         $this->get('/sso/callback?'.http_build_query(['state' => $query['state'], 'code' => 'authorization-code', 'iss' => 'https://identity.test']))->assertRedirect('/');
         $this->assertTrue(Auth::guard('local')->check());
         $this->assertSame('central-7', Auth::guard('local')->user()->sso_subject);
+        $this->assertSame('From UserInfo', Auth::guard('local')->user()->name);
         $this->assertNotSame($before, session()->getId());
         $this->assertNull(session('sso.transaction'));
         Http::assertSent(fn ($request) => $request->url() === 'https://identity.test/oidc/token'

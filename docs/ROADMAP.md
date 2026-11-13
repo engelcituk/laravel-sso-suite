@@ -7,8 +7,8 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
 | 1 fundamento | base local verificada | tres paquetes, providers, Composer, CI configurada, Pint y Larastan; CI remota aún no ejecutada |
-| 2 servidor | perfil Code ampliado verificado | GET/POST, query/form_post, prompts, max_age, Basic, errores y at_hash; harness oficial pendiente |
-| 3 cliente | validación OIDC ampliada | iss de autorización, at_hash, aud/azp, max_age y Logout Tokens; falta evaluación externa |
+| 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
+| 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
 | 4 identidad local | implementación inicial verificada | índice único, createOrFirst y ACL independiente; falta probar carreras en motores reales |
 | 5 sesiones | parcial | logout RP/back-channel, reintentos y revocación probados; Recordarme y dispositivos pendientes |
 | 6 instalación | laboratorio reproducido | tres apps, setup repetible y comandos documentados; falta instalación limpia en otros SO/motores |
@@ -16,14 +16,20 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 
 ## Resultados ejecutados
 
-- **97 tests / 386 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
+- **145 tests / 566 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
 - PHPStan/Larastan nivel 5: sin errores y sin baseline. Laravel Pint: aprobado.
-- Grupo de conformidad propio: **63 tests / 259 aserciones**, sin saltos; informes JUnit/JSON
+- Grupo de conformidad propio: **106 tests / 414 aserciones**, sin saltos; informes JUnit/JSON
   locales. Ver [alcance](OIDC-CONFORMANCE.md) y [resultados](OIDC-CONFORMANCE-RESULTS.md).
 - Suite oficial descargada y fijada a `daca6ad2068468d42557ea1152f899cc3ac01a10`.
-  Preflight: **bloqueado por Docker ausente**; ningún plan oficial ejecutado.
+  Docker Desktop 4.99.0 y WSL 3.0.5 operativos después del primer reinicio. Los cinco
+  planes se ejecutaron con TLS privado y HtmlUnit; ver IDs, estados y exports en
+  [resultados](OIDC-CONFORMANCE-RESULTS.md). No se necesitó otro reinicio de Windows.
+- Revisión de las observaciones OIDC: seis advertencias corregidas; ensayo final con
+  58 PASSED, 0 WARNING/FAILED, 16 evidencias REVIEW verificadas y 10 SKIPPED justificados.
+  OP/worker trasladados al volumen y red Linux; transporte HTTPS 80/80, cuatro simultáneas.
+  Se mantiene esta fase: no se avanzó al siguiente bloque del roadmap ni se publicó.
 - Siete manifiestos Composer: validate --strict aprobado. Composer audit --locked:
   sin avisos conocidos en la consulta realizada; no equivale a auditar el código propio.
 - Resolución independiente del cliente: 77 paquetes, sin Passport ni laravel-sso/server.
@@ -57,13 +63,14 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 | Independencia | manifests / ejemplos | cliente sin Passport; E2E bases y APP_KEY distintas |
 | Recordarme | política central persistente | **sin implementar ni demostrar** |
 | Compatibilidad DB / carreras | migraciones y transacciones | SQLite secuencial; MySQL/PostgreSQL y cargas pendientes |
-| Perfil Code normativo local | tests/Conformance | **63 tests / 259 aserciones**; no equivale al harness oficial |
-| Certificación | OpenID Foundation | checkout/preflight preparados; **harness no ejecutado**, certificación no solicitada |
+| Perfil Code normativo local | tests/Conformance | **106 tests / 414 aserciones**; no equivale al harness oficial |
+| Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
 
 ## Próxima fase
 
-1. Ejecutar el harness oficial local al disponer de Docker/TLS, siguiendo OIDC-CONFORMANCE;
-   registrar sus resultados reales y revisar la diferencia de perfil S256 obligatorio.
+1. La ejecución local de los cinco planes quedó atendida; mantener su reproducción según
+   OIDF-WINDOWS-SETUP y el resumen OIDC-CONFORMANCE-RESULTS. La evaluación o certificación
+   externa constituye otro alcance y no se solicitó ni publicó.
 2. Probar consumo concurrente de códigos, aprovisionamiento, revocación y workers en
    MySQL/PostgreSQL. Definir retención/limpieza del estado persistente.
 3. Implementar Recordarme central con rotación y revocación por dispositivo; probarlo
