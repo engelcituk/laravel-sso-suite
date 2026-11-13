@@ -36,12 +36,17 @@ No se utilizan refresh tokens ni ID Tokens como sesiones permanentes.
 ## Logout
 
 POST `/sso/logout` del RP exige CSRF, revoca su índice y cierra la sesión local. Redirige
-al endpoint del OP con id_token_hint. El OP valida la firma y la vinculación del hint con
-la cookie central y solicita confirmación CSRF. POST `/oidc/logout` revoca el sid y sus
-access tokens. Sólo permite redirecciones post logout registradas exactamente. Se admiten
-hints expirados cuya firma sigue siendo válida y que pertenecen a la sesión central actual.
-Sin cookie/hint coincidente se rechaza: aún no se implementa el resto del perfil de logout
-para RPs externos. Si el OP está caído al iniciar logout, la sesión local se cierra pero el
+al endpoint del OP con id_token_hint. GET/POST `/oidc/logout` aceptan solicitudes externas
+y muestran confirmación; **no ejecutan el cierre por sí solos**. POST `/oidc/logout/confirm`
+exige CSRF/transacción de un uso y revoca el sid/access tokens. También permite cancelar.
+El hint es opcional. Sin hint se confirma la sesión central actual; con hint firmado reciente
+puede funcionar sin cookie central. Si hay otra cuenta conectada, se pide confirmar el
+cierre de la cuenta actual y no se revoca otra identidad silenciosamente. La confirmación
+falla si cambia la sesión central mientras se decide. Un hint nunca inicia sesión.
+Sólo se redirige a post_logout_redirect_uri registrado exactamente, asociado a client_id
+válido o a la audiencia del hint. Los hints expirados mantienen firma y vínculo a una
+sesión RP reciente (logout_hint_retention, 86400 s después de su expiración absoluta).
+Si el OP está caído al iniciar logout, la sesión local se cierra pero el
 cierre global no se confirma; el operador/usuario debe reintentarlo en el OP.
 
 El evento Laravel Logout del guard central también revoca su sid. Administración puede
@@ -58,6 +63,8 @@ entre intentos, sin límite de intentos. Una reserva de 60 s evita tomar la mism
 simultáneamente; si un proceso muere se recupera después de la reserva.
 
 El RP valida los tokens sin nonce, registra un recibo atómico e invalida las filas vinculadas.
+Acepta exp omitido conforme al estándar y mantiene el límite max_token_age sobre iat;
+cuando exp está presente valida su tipo y vigencia. Sid es opcional si hay sub.
 Un duplicado firmado válido recibe 200 y no se reaplica. El navegador desconectado puede
 conservar su cookie, pero el índice revocado impide reutilizarla. Monitoriza intentos pendientes,
 alertas y tamaño de las tablas. La retención/limpieza automática y los workers distribuidos

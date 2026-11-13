@@ -14,6 +14,7 @@ return [
     'transaction_ttl' => 300,
     'clock_skew' => 30,
     'max_token_age' => 300,
+    'max_age' => null, // Optional OIDC reauthentication policy, validated again in the ID Token.
     'session_check_interval' => 30,
     'session_status_url' => env('SSO_SESSION_STATUS_URL'),
     'allow_http' => false,

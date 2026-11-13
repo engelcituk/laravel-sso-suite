@@ -8,7 +8,9 @@ use GuzzleHttp\Psr7\Response as PsrResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\Passport;
 use LaravelSso\Server\OidcServer;
+use LaravelSso\Server\Protocol\Parameters;
 use LaravelSso\Server\SigningKeys;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,9 +31,13 @@ final class ProtocolController
             'backchannel_logout_supported' => true, 'backchannel_logout_session_supported' => true,
             'grant_types_supported' => ['authorization_code'], 'subject_types_supported' => ['public'],
             'id_token_signing_alg_values_supported' => ['RS256'], 'scopes_supported' => ['openid', 'profile', 'email'],
-            'token_endpoint_auth_methods_supported' => ['client_secret_post', 'none'],
+            'token_endpoint_auth_methods_supported' => ['client_secret_basic', 'client_secret_post', 'none'],
+            'response_modes_supported' => ['query', 'form_post'],
+            'authorization_response_iss_parameter_supported' => true,
+            'claims_parameter_supported' => false, 'request_parameter_supported' => false,
+            'request_uri_parameter_supported' => false, 'claim_types_supported' => ['normal'],
             'code_challenge_methods_supported' => ['S256'],
-            'claims_supported' => ['iss', 'sub', 'aud', 'exp', 'iat', 'auth_time', 'nonce', 'sid', 'name', 'email', 'email_verified'],
+            'claims_supported' => ['iss', 'sub', 'aud', 'exp', 'iat', 'auth_time', 'nonce', 'sid', 'at_hash', 'name', 'email', 'email_verified'],
         ])->header('Cache-Control', 'public, max-age=300');
     }
 
@@ -40,12 +46,36 @@ final class ProtocolController
         return response()->json($keys->jwks())->header('Cache-Control', 'public, max-age=300');
     }
 
-    public function token(Request $request, ServerRequestInterface $psr, OidcServer $server): Response
+    public function token(Request $request, ServerRequestInterface $psr, OidcServer $server, Parameters $parameters): Response
     {
         $request->attributes->remove('sso.token_context');
-        if ($request->input('grant_type') !== 'authorization_code') {
+        $body = $parameters->read($request);
+        if (($body['grant_type'] ?? '') === '') {
+            return response()->json(['error' => 'invalid_request'], 400)->header('Cache-Control', 'no-store');
+        }
+        if ($body['grant_type'] !== 'authorization_code') {
             return response()->json(['error' => 'unsupported_grant_type'], 400)->header('Cache-Control', 'no-store');
         }
+        $header = $psr->getHeaderLine('Authorization');
+        if ($header !== '') {
+            $decoded = preg_match('/^Basic ([A-Za-z0-9+\/=]+)$/iD', $header, $match) === 1 ? base64_decode($match[1], true) : false;
+            if ($decoded === false || ! str_contains($decoded, ':') || isset($body['client_secret'])) {
+                return $this->invalidClient();
+            }
+            [$id, $secret] = array_map('urldecode', explode(':', $decoded, 2));
+            if ($id === '' || (isset($body['client_id']) && $body['client_id'] !== $id)) {
+                return $this->invalidClient();
+            }
+            $body['client_id'] = $id;
+            $body['client_secret'] = $secret;
+            $psr = $psr->withoutHeader('Authorization');
+        }
+        $client = Passport::client()->newQuery()->whereKey($body['client_id'] ?? '')->where('revoked', false)->first();
+        if (! $client || ! DB::table('sso_clients')->where('client_id', $body['client_id'] ?? '')->exists()
+            || ($client->confidential() && ($body['client_secret'] ?? '') === '')) {
+            return $this->invalidClient();
+        }
+        $psr = $psr->withParsedBody($body);
         try {
             $response = DB::transaction(fn () => $server->make()->respondToAccessTokenRequest($psr, new PsrResponse));
         } catch (OAuthServerException $e) {
@@ -53,5 +83,11 @@ final class ProtocolController
         }
 
         return (new HttpFoundationFactory)->createResponse($response);
+    }
+
+    private function invalidClient(): Response
+    {
+        return response()->json(['error' => 'invalid_client'], 401)->header('Cache-Control', 'no-store')
+            ->header('WWW-Authenticate', 'Basic realm="oidc"');
     }
 }

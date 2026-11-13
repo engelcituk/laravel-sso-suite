@@ -25,16 +25,17 @@ final class LogoutTokenValidator
         $event = 'http://schemas.openid.net/event/backchannel-logout';
         $audiences = is_array($claims['aud'] ?? null) ? $claims['aud'] : [$claims['aud'] ?? null];
         if (($claims['iss'] ?? null) !== config('sso-client.issuer')
+            || $audiences === [] || count(array_filter($audiences, 'is_string')) !== count($audiences)
             || ! in_array(config('sso-client.client_id'), $audiences, true)
             || ! is_int($claims['iat'] ?? null) || $claims['iat'] > time() + config('sso-client.clock_skew')
             || $claims['iat'] < time() - config('sso-client.max_token_age')
-            || ! is_int($claims['exp'] ?? null) || $claims['exp'] <= time() || $claims['exp'] <= $claims['iat']
+            || (array_key_exists('exp', $claims) && (! is_int($claims['exp']) || $claims['exp'] <= time() || $claims['exp'] <= $claims['iat']))
             || ! is_string($claims['jti'] ?? null) || $claims['jti'] === ''
             || isset($claims['nonce']) || array_key_exists('nonce', $claims)
             || ! is_object($events) || ! isset($events->{$event}) || ! is_object($events->{$event})
             || count((array) $events->{$event}) !== 0
             || (! is_string($claims['sid'] ?? null) && ! is_string($claims['sub'] ?? null))
-            || (isset($claims['sid']) && ! is_string($claims['sid'])) || (isset($claims['sub']) && ! is_string($claims['sub']))
+            || (array_key_exists('sid', $claims) && ! is_string($claims['sid'])) || (array_key_exists('sub', $claims) && ! is_string($claims['sub']))
             || (isset($claims['sid']) && $claims['sid'] === '') || (isset($claims['sub']) && $claims['sub'] === '')) {
             throw new ProtocolException('Invalid Logout Token claims.');
         }

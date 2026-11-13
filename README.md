@@ -17,6 +17,9 @@ El cliente no depende de Passport. No hay dependencias de frontend ni ACL obliga
 
 Incluye Authorization Code + PKCE S256, consentimiento, discovery, JWKS con convivencia de
 claves, ID Tokens RS256, UserInfo, callback con state/nonce y aprovisionamiento configurable.
+El perfil Code admite GET/POST, nonce/state opcionales para RPs externos, query/form_post,
+prompts combinados, max_age, Basic y at_hash. Consulta [alcance de conformidad](docs/OIDC-CONFORMANCE.md)
+y [resultados reales](docs/OIDC-CONFORMANCE-RESULTS.md).
 Hay sesiones centrales con caducidad, comprobación remota con fallo cerrado, logout con
 confirmación, back-channel firmado y notificaciones durables con reintentos.
 
@@ -35,6 +38,7 @@ habituales de Laravel. La instalación raíz incluye Testbench y Laravel para el
 ```sh
 composer install
 composer test
+composer test:conformance
 php tools/setup-examples.php
 php tools/e2e.php
 ```

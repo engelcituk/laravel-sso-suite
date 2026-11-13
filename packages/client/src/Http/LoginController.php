@@ -23,13 +23,17 @@ final class LoginController
         $state = bin2hex(random_bytes(32));
         $nonce = bin2hex(random_bytes(32));
         $verifier = bin2hex(random_bytes(32));
-        $request->session()->put('sso.transaction', compact('state', 'nonce', 'verifier') + ['created' => time()]);
+        $maxAge = config('sso-client.max_age');
+        $request->session()->put('sso.transaction', compact('state', 'nonce', 'verifier', 'maxAge') + ['created' => time()]);
         $query = http_build_query([
             'response_type' => 'code', 'client_id' => config('sso-client.client_id'),
             'redirect_uri' => config('sso-client.redirect_uri'), 'scope' => implode(' ', config('sso-client.scopes')),
             'state' => $state, 'nonce' => $nonce, 'code_challenge_method' => 'S256',
             'code_challenge' => rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '='),
         ], '', '&', PHP_QUERY_RFC3986);
+        if ($maxAge !== null) {
+            $query .= '&max_age='.(int) $maxAge;
+        }
 
         return redirect()->away($metadata['authorization_endpoint'].'?'.$query);
     }
@@ -45,6 +49,11 @@ final class LoginController
             throw new ProtocolException('Invalid or expired authorization transaction.');
         }
         $metadata = $provider->metadata();
+        $issuer = $request->query('iss');
+        if (($issuer !== null && $issuer !== config('sso-client.issuer'))
+            || (($metadata['authorization_response_iss_parameter_supported'] ?? false) && $issuer === null)) {
+            throw new ProtocolException('Authorization response issuer mismatch.');
+        }
         try {
             $response = $http->request($metadata['token_endpoint'])->asForm()->post($metadata['token_endpoint'], [
                 'grant_type' => 'authorization_code', 'client_id' => config('sso-client.client_id'),
@@ -58,7 +67,8 @@ final class LoginController
             || ! is_string($response->json('access_token'))) {
             throw new ProtocolException('OIDC code exchange failed.');
         }
-        $identity = $validator->validate($response->json('id_token'), $http->get($metadata['jwks_uri']), $transaction['nonce']);
+        $identity = $validator->validate($response->json('id_token'), $http->get($metadata['jwks_uri']), $transaction['nonce'],
+            $transaction['maxAge'] ?? null, $response->json('access_token'));
         $user = $users->provision($identity);
         /** @var StatefulGuard $guard */
         $guard = Auth::guard(config('sso-client.guard'));

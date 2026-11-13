@@ -138,7 +138,7 @@ final class ClientTest extends TestCase
             'id_token' => app(SigningKeys::class)->sign($this->claims(['nonce' => $query['nonce']])),
         ])]);
         $before = session()->getId();
-        $this->get('/sso/callback?'.http_build_query(['state' => $query['state'], 'code' => 'authorization-code']))->assertRedirect('/');
+        $this->get('/sso/callback?'.http_build_query(['state' => $query['state'], 'code' => 'authorization-code', 'iss' => 'https://identity.test']))->assertRedirect('/');
         $this->assertTrue(Auth::guard('local')->check());
         $this->assertSame('central-7', Auth::guard('local')->user()->sso_subject);
         $this->assertNotSame($before, session()->getId());

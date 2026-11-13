@@ -38,12 +38,16 @@ try {
         mkdir($root.'/.runtime', 0700);
     }
     $appKeys = [];
+    $clientIds = [];
     foreach ($bases as $name => $host) {
         $base = $root.'/examples/'.$name;
         $env = file_get_contents($base.'/.env');
         check(str_contains($env, 'APP_ENV=local'), 'E2E may only operate local development examples.');
         preg_match('/^APP_KEY=(.+)$/m', $env, $match);
         $appKeys[] = trim($match[1]);
+        if (preg_match('/^SSO_CLIENT_ID=(.+)$/m', $env, $clientMatch)) {
+            $clientIds[$name] = trim($clientMatch[1]);
+        }
         [$ip, $port] = explode(':', $host);
         $existing = @fsockopen($ip, (int) $port, $errno, $error, 0.2);
         check($existing === false, 'E2E port already in use: '.$host);
@@ -100,11 +104,23 @@ try {
         $columns = $db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_COLUMN, 1);
         check(! in_array('password', $columns, true) && ! in_array('remember_token', $columns, true), 'RP stores local credentials.');
     }
+    $externalAuthorization = $browser->post('http://127.0.0.1:9100/oidc/authorize', ['form_params' => [
+        'response_type' => 'code', 'client_id' => $clientIds['app-one'], 'redirect_uri' => 'http://127.0.0.2:9101/sso/callback',
+        'scope' => 'openid', 'code_challenge_method' => 'S256',
+        'code_challenge' => rtrim(strtr(base64_encode(hash('sha256', str_repeat('v', 64), true)), '+/', '-_'), '='),
+    ]]);
+    check($externalAuthorization->getStatusCode() === 302, 'External authorization POST must not require Laravel CSRF.');
     $html = (string) $browser->get('http://127.0.0.2:9101/')->getBody();
     [$url, $response] = $follow('http://127.0.0.2:9101/sso/logout', 'POST', ['_token' => field($html, '_token')]);
     check($response->getStatusCode() === 200 && str_starts_with($url, 'http://127.0.0.1:9100/oidc/logout'), 'RP logout confirmation failed.');
+    parse_str(parse_url($url, PHP_URL_QUERY), $logoutInput);
+    $response = $browser->post('http://127.0.0.1:9100/oidc/logout', ['form_params' => $logoutInput]);
+    check($response->getStatusCode() === 200, 'External logout POST must reach confirmation without CSRF.');
     $html = (string) $response->getBody();
-    [$url, $response] = $follow('http://127.0.0.1:9100/oidc/logout', 'POST', [
+    check($browser->post('http://127.0.0.1:9100/oidc/logout/confirm', ['form_params' => [
+        'transaction' => field($html, 'transaction'),
+    ]])->getStatusCode() === 419, 'Logout confirmation accepted a request without CSRF.');
+    [$url, $response] = $follow('http://127.0.0.1:9100/oidc/logout/confirm', 'POST', [
         '_token' => field($html, '_token'), 'transaction' => field($html, 'transaction'),
     ]);
     check($response->getStatusCode() === 200, 'Central logout failed.');

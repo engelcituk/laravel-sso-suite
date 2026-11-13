@@ -6,12 +6,15 @@ namespace LaravelSso\Server;
 
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
-use LaravelSso\Server\Http\AuthorizationController;
-use LaravelSso\Server\Http\EndSessionController;
+use LaravelSso\Server\Http\CodeAuthorizationController;
+use LaravelSso\Server\Http\LogoutEndpointController;
 use LaravelSso\Server\Http\ProtocolController;
 use LaravelSso\Server\Http\ResourceController;
 
@@ -47,6 +50,7 @@ final class SsoServerServiceProvider extends ServiceProvider
         Event::listen(Login::class, function (Login $event): void {
             if ($event->guard === config('sso-server.guard') && request()->hasSession()) {
                 request()->session()->put('sso.auth_time', time());
+                request()->session()->put('sso.login_epoch', bin2hex(random_bytes(16)));
             }
         });
         Event::listen(Logout::class, function (Logout $event): void {
@@ -61,13 +65,17 @@ final class SsoServerServiceProvider extends ServiceProvider
             Route::get('/.well-known/openid-configuration', [ProtocolController::class, 'discovery']);
             Route::get('/oidc/jwks', [ProtocolController::class, 'jwks']);
             Route::post('/oidc/token', [ProtocolController::class, 'token']);
-            Route::get('/oidc/userinfo', [ResourceController::class, 'userinfo']);
+            Route::match(['GET', 'POST'], '/oidc/userinfo', [ResourceController::class, 'userinfo']);
             Route::get('/oidc/session', [ResourceController::class, 'status']);
             Route::middleware('web')->name('sso-server.')->group(function (): void {
-                Route::get('/oidc/authorize', [AuthorizationController::class, 'authorize'])->name('authorize');
-                Route::post('/oidc/authorize', [AuthorizationController::class, 'consent'])->name('consent');
-                Route::get('/oidc/logout', [EndSessionController::class, 'confirm'])->name('logout-confirm');
-                Route::post('/oidc/logout', [EndSessionController::class, 'logout'])->name('logout');
+                Route::match(['GET', 'POST'], '/oidc/authorize', [CodeAuthorizationController::class, 'authorize'])->name('authorize')
+                    ->withoutMiddleware([PreventRequestForgery::class,
+                        ValidateCsrfToken::class, VerifyCsrfToken::class]);
+                Route::post('/oidc/consent', [CodeAuthorizationController::class, 'consent'])->name('consent');
+                Route::match(['GET', 'POST'], '/oidc/logout', [LogoutEndpointController::class, 'confirm'])->name('logout-confirm')
+                    ->withoutMiddleware([PreventRequestForgery::class,
+                        ValidateCsrfToken::class, VerifyCsrfToken::class]);
+                Route::post('/oidc/logout/confirm', [LogoutEndpointController::class, 'logout'])->name('logout');
             });
         });
     }

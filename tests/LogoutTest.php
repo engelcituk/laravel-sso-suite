@@ -111,7 +111,7 @@ final class LogoutTest extends TestCase
         $this->get('/oidc/logout?'.http_build_query(['id_token_hint' => $hint,
             'post_logout_redirect_uri' => 'https://one.test/logged-out', 'state' => 'logout-state']))->assertOk();
         $pending = session('sso.logout');
-        $this->post('/oidc/logout', ['transaction' => $pending['transaction']])->assertRedirect('https://one.test/logged-out?state=logout-state');
+        $this->post('/oidc/logout/confirm', ['transaction' => $pending['transaction']])->assertRedirect('https://one.test/logged-out?state=logout-state');
         $this->assertEquals(1, DB::table('sso_sessions')->where('sid', 'global-one')->value('revoked'));
         $this->assertGuest('web');
     }

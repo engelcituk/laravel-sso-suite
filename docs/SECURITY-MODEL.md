@@ -16,6 +16,8 @@ no conceden roles. Las cookies y bases de datos no se comparten entre dominios.
 | Vinculación errónea de cuentas | UNIQUE issuer/subject, jamás email | ClientTest; concurrencia pendiente |
 | Session fixation | SessionGuard login + regenerate | ClientTest callback |
 | SSRF | allowlist de endpoints exactos, HTTPS, redirects desactivados | ClientTest transporte |
+| Mix-up de proveedor | iss en respuesta de autorización y validación antes de enviar código/secreto | Conformance/RelyingPartyValidationTest |
+| Ambigüedad de credenciales | Basic form-encoded, métodos únicos y parámetros query/form no repetidos | Conformance/OidcCodeProfileTest |
 | Sesión central revocada | índice local y comprobación central acotada | SessionTest, LogoutTest y E2E |
 | Fuga de tokens | no logs de cuerpos/headers, no localStorage, no tokens en contraseñas | revisión pendiente |
 
@@ -33,6 +35,9 @@ entre dos RP, suspensión, caída del OP simulada y reintentos HTTP 503.
 Back-channel valida firma, evento, audiencia, sid/sub, TTL y jti; usa recibos atómicos,
 índice persistente y bandeja durable. Reconoce duplicados sin reaplicarlos. Los ensayos
 secuenciales SQLite no prueban concurrencia distribuida ni conformidad completa.
+La ampliación del perfil y las pruebas normativas se documentan en OIDC-CONFORMANCE.md.
+El harness oficial está preparado pero no ejecutado por falta de Docker; sus resultados
+no se confunden con los del grupo PHPUnit propio. Ver OIDC-CONFORMANCE-RESULTS.md.
 
 ## Validación externa pendiente
 

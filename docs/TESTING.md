@@ -21,6 +21,7 @@ Para ejecutar localmente:
 ```sh
 composer install
 composer test
+composer test:conformance
 composer lint
 composer analyse
 composer validate --strict
@@ -33,8 +34,13 @@ E2E requiere puertos loopback 9100/9101/9102 libres, proc_open y PDO SQLite. Se 
 reutilizar servidores ajenos y detiene únicamente los procesos que inicia. El setup es
 repetible, conserva bases y secretos, y E2E retira su identidad temporal al terminar.
 
-Resultado local final: 34 tests / 127 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
+Resultado local final: 97 tests / 386 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
 aprobados; E2E, Pint, PHPStan, validación Composer y auditoría también aprobados.
+El subconjunto normativo propio suma 63 tests / 259 aserciones. Su lanzador genera JUnit
+y JSON en .runtime/conformance, sin publicación. El harness oficial está descargado y
+su preflight bloqueado por Docker: [alcance y reproducción](OIDC-CONFORMANCE.md).
+En Windows composer analyse usa tools/analyse.php con --debug para evitar el bloqueo de
+manifiestos Testbench entre procesos. No modifica vendor ni reduce reglas/nivel de análisis.
 
 GitHub Actions define PHP 8.3/8.4/8.5 y las mismas verificaciones. Configurar una matriz no
 demuestra que se ejecutó: los entornos verificados figuran en ROADMAP. MySQL/PostgreSQL,

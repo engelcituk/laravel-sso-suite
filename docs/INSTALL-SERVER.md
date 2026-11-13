@@ -23,6 +23,10 @@ php artisan sso:keys
 Publica las migraciones **una sola vez**: el publisher de Laravel cambia timestamps y
 repetirlo puede generar copias. Los ejemplos evitan esto en su script de setup.
 Si Passport ya está instalado conserva sus migraciones y claves existentes.
+Si ya instalaste esta primera versión, copia únicamente la nueva migración
+`2026_11_13_000004_allow_optional_oidc_nonce.php` de packages/server/database/migrations
+a las migraciones de tu aplicación y ejecuta migrate. No republiques todas las anteriores.
+En el laboratorio, tools/setup-examples.php realiza esa actualización sin duplicarlas.
 `sso:keys` nunca reemplaza archivos existentes; genera RSA 3072, sin exponer la clave privada.
 
 Activa `SSO_SERVER_ENABLED=true` y configura `SSO_ISSUER=https://identity.example.org` sin
@@ -35,6 +39,10 @@ Configura el guard en `sso-server.guard` y su proveedor Eloquent. El modelo cent
 `is_active`). Las credenciales y recuperación son responsabilidad de tu aplicación central,
 usando Laravel Hash y SessionGuard. Define la ruta nombrada `login`. El ejemplo implementa
 un formulario Blade, CSRF y rate limiting. El paquete no reemplaza tu login existente.
+Las solicitudes externas GET/POST de /oidc/authorize y /oidc/logout no exigen CSRF de
+Laravel. Las decisiones locales usan /oidc/consent y /oidc/logout/confirm con CSRF.
+Conserva los nombres de rutas en las vistas personalizadas y utiliza SessionGuard::login
+para emitir Login, requerido por la prueba de reautenticación prompt/max_age.
 
 OIDC y Passport deben utilizar la misma conexión de base de datos predeterminada, necesaria
 para consumir códigos y persistir tokens/contexto en una transacción. Se rechaza una

@@ -32,7 +32,7 @@ final class ProtocolTest extends TestCase
 
     private function exchange($client, string $code, string $verifier): TestResponse
     {
-        return $this->postJson('/oidc/token', ['grant_type' => 'authorization_code', 'client_id' => $client->id,
+        return $this->withoutHeader('Authorization')->postJson('/oidc/token', ['grant_type' => 'authorization_code', 'client_id' => $client->id,
             'code' => $code, 'code_verifier' => $verifier, 'redirect_uri' => 'https://one.test/sso/callback']);
     }
 
@@ -65,14 +65,15 @@ final class ProtocolTest extends TestCase
     public function test_unregistered_callback_is_rejected_without_redirect(): void
     {
         [$response] = $this->authorization(['redirect_uri' => 'https://evil.test/callback']);
-        $response->assertStatus(401);
+        $response->assertStatus(400);
         $this->assertFalse($response->headers->has('Location'));
     }
 
     public function test_plain_pkce_is_rejected(): void
     {
         [$response] = $this->authorization(['code_challenge_method' => 'plain']);
-        $response->assertSessionHasErrors('code_challenge_method');
+        $response->assertRedirect();
+        $this->assertStringContainsString('error=invalid_request', $response->headers->get('Location'));
         $this->assertSame(0, DB::table('oauth_auth_codes')->count());
     }
 
@@ -113,19 +114,19 @@ final class ProtocolTest extends TestCase
         $response->assertOk();
         $pending = session('sso.consent');
         $transaction = array_key_first($pending);
-        $approval = $this->post('/oidc/authorize', ['transaction' => $transaction, 'approve' => true])->assertRedirect();
+        $approval = $this->post('/oidc/consent', ['transaction' => $transaction, 'approve' => '1'])->assertRedirect();
         parse_str(parse_url($approval->headers->get('Location'), PHP_URL_QUERY), $query);
         $token = $this->exchange($client, $query['code'], $verifier)->assertOk();
         $claims = JWT::decode($token->json('id_token'), JWK::parseKeySet(app(SigningKeys::class)->jwks()));
         $this->assertSame('nonce-test', $claims->nonce);
-        $this->post('/oidc/authorize', ['transaction' => $transaction, 'approve' => true])->assertStatus(400);
+        $this->post('/oidc/consent', ['transaction' => $transaction, 'approve' => '1'])->assertStatus(400);
     }
 
     public function test_unknown_client_is_rejected_without_redirect(): void
     {
         $response = $this->get('/oidc/authorize?'.http_build_query(['client_id' => '00000000-0000-4000-8000-000000000000',
             'response_type' => 'code', 'redirect_uri' => 'https://evil.test/callback', 'scope' => 'openid']));
-        $response->assertStatus(401);
+        $response->assertStatus(400);
         $this->assertFalse($response->headers->has('Location'));
     }
 }

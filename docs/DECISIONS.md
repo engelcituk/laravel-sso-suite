@@ -15,6 +15,12 @@
 - ADR-008: SQLite para pruebas locales, MySQL/PostgreSQL en CI antes de declarar soporte
   probado. No dependencia obligatoria de Redis.
 - ADR-009: fases abiertas hasta cumplir sus criterios, no simular logout ni conformidad.
+- ADR-010: ampliar Code con nonce/state opcionales en OP, S256 obligatorio, Basic,
+  form_post y RFC 9207. El RP propio sigue creando transacciones con state/nonce y sid.
+- ADR-011: separar entrada externa GET/POST de OIDC y confirmaciones CSRF locales.
+  Reautenticación exige un nuevo Login ligado a la solicitud, sin confiar en un booleano.
+- ADR-012: pruebas normativas propias con JUnit/JSON, separadas del harness OIDF fijado
+  por revisión. No relajar S256 ni atribuir certificación ante la falta de Docker.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

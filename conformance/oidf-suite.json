@@ -1,0 +1,15 @@
+{
+    "upstream": "https://gitlab.com/openid/conformance-suite.git",
+    "revision": "daca6ad2068468d42557ea1152f899cc3ac01a10",
+    "inspected_on": "2026-11-13",
+    "java_major": 21,
+    "plans": [
+        "oidcc-config-certification-test-plan",
+        "oidcc-basic-certification-test-plan",
+        "oidcc-formpost-basic-certification-test-plan",
+        "oidcc-rp-initiated-logout-certification-test-plan",
+        "oidcc-backchannel-rp-initiated-logout-certification-test-plan"
+    ],
+    "execution": "not_executed",
+    "policy": "S256 remains mandatory; do not weaken the provider to hide a suite failure."
+}

@@ -4,16 +4,31 @@ declare(strict_types=1);
 
 namespace LaravelSso\Server\Bridge;
 
+use Firebase\JWT\JWT;
+use GuzzleHttp\Psr7\Utils;
 use Illuminate\Support\Facades\DB;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\SigningKeys;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
+use Psr\Http\Message\ResponseInterface;
 
-final class IdTokenResponse extends BearerTokenResponse
+final class IdTokenResponse extends AbstractResponseType
 {
-    protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface
+    {
+        // League's entity includes new timestamps on each serialization. Hash exactly once.
+        $encoded = $this->accessToken->toString();
+        $body = ['token_type' => 'Bearer', 'expires_in' => max(0, $this->accessToken->getExpiryDateTime()->getTimestamp() - time()),
+            'access_token' => $encoded, 'id_token' => $this->idToken($this->accessToken, $encoded)];
+
+        return $response->withStatus(200)->withHeader('Content-Type', 'application/json; charset=UTF-8')
+            ->withHeader('Cache-Control', 'no-store')->withHeader('Pragma', 'no-cache')
+            ->withBody(Utils::streamFor(json_encode($body, JSON_THROW_ON_ERROR)));
+    }
+
+    private function idToken(AccessTokenEntityInterface $accessToken, string $encoded): string
     {
         $context = request()->attributes->get('sso.token_context');
         $sessions = app(GlobalSessions::class);
@@ -29,8 +44,12 @@ final class IdTokenResponse extends BearerTokenResponse
             'iss' => config('sso-server.issuer'), 'sub' => $session->subject,
             'aud' => $accessToken->getClient()->getIdentifier(), 'sid' => $session->sid,
             'auth_time' => (int) $session->auth_time, 'iat' => time(),
-            'exp' => time() + config('sso-server.id_token_ttl'), 'nonce' => $context->nonce,
+            'exp' => time() + config('sso-server.id_token_ttl'),
         ];
+        if ($context->nonce !== null && $context->nonce !== '') {
+            $claims['nonce'] = $context->nonce;
+        }
+        $claims['at_hash'] = JWT::urlsafeB64Encode(substr(hash('sha256', $encoded, true), 0, 16));
         $user = $sessions->activeUser($session->subject);
         if (in_array('profile', $scopes, true)) {
             $claims['name'] = $user->getAttribute('name');
@@ -44,6 +63,6 @@ final class IdTokenResponse extends BearerTokenResponse
             'client_id' => $accessToken->getClient()->getIdentifier(),
         ]);
 
-        return ['id_token' => app(SigningKeys::class)->sign($claims)];
+        return app(SigningKeys::class)->sign($claims);
     }
 }

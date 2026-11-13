@@ -20,9 +20,11 @@
     "config": {"sort-packages": true, "platform": {"php": "8.3.0"}, "allow-plugins": {"php-http/discovery": false}},
     "scripts": {
         "test": "phpunit",
+        "test:conformance": "@php tools/conformance.php",
+        "test:oidf:preflight": "@php tools/oidf-preflight.php",
         "lint": "pint --test",
         "format": "pint",
-        "analyse": "phpstan analyse --memory-limit=1G"
+        "analyse": "@php tools/analyse.php"
     },
     "minimum-stability": "stable",
     "prefer-stable": true

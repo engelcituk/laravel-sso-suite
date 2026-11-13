@@ -11,6 +11,7 @@ return [
     'code_ttl' => 300,
     'session_idle' => 1800,
     'session_max' => 28800,
+    'logout_hint_retention' => 86400, // Accept signed expired hints only for current/recent RP session bindings.
     'signing_kid' => env('SSO_SIGNING_KID', 'initial'),
     'private_key' => env('SSO_PRIVATE_KEY', storage_path('sso/private.pem')),
     // Retain old PUBLIC keys until all tokens they signed have expired.

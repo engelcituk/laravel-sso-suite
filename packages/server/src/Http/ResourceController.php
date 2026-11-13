@@ -7,6 +7,8 @@ namespace LaravelSso\Server\Http;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use LaravelSso\Server\GlobalSessions;
+use LaravelSso\Server\Protocol\BearerFailure;
+use LaravelSso\Server\Protocol\Parameters;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,11 +19,18 @@ final class ResourceController
     {
         $validated = $this->validate($server, $request);
         $scopes = $validated->getAttribute('oauth_scopes', []);
-        abort_unless(in_array('openid', $scopes, true), 403);
+        if (! in_array('openid', $scopes, true)) {
+            throw new BearerFailure('insufficient_scope', 403);
+        }
         $binding = DB::table('sso_token_sessions')->where('token_id', $validated->getAttribute('oauth_access_token_id'))->first();
         $session = $binding ? $sessions->valid($binding->sid, true) : null;
-        abort_unless($session !== null, 401);
+        if ($session === null) {
+            throw new BearerFailure;
+        }
         $user = $sessions->activeUser($session->subject);
+        if ($user === null) {
+            throw new BearerFailure;
+        }
         $claims = ['sub' => $session->subject];
         if (in_array('profile', $scopes, true)) {
             $claims['name'] = $user->getAttribute('name');
@@ -47,10 +56,24 @@ final class ResourceController
 
     private function validate(ResourceServer $server, ServerRequestInterface $request): ServerRequestInterface
     {
+        if (array_key_exists('access_token', $request->getQueryParams())) {
+            throw new BearerFailure('invalid_request', 400); // Query tokens leak into browser/proxy logs.
+        }
+        $type = strtolower(explode(';', $request->getHeaderLine('Content-Type'))[0]);
+        if ($request->getMethod() === 'POST' && $type === 'application/x-www-form-urlencoded') {
+            $body = app(Parameters::class)->read(request());
+            if (isset($body['access_token'])) {
+                if ($request->hasHeader('Authorization') || strlen($body['access_token']) > 16384
+                    || preg_match('/^[A-Za-z0-9\-._~+\/]+=*$/D', $body['access_token']) !== 1) {
+                    throw new BearerFailure('invalid_request', 400);
+                }
+                $request = $request->withHeader('Authorization', 'Bearer '.$body['access_token']);
+            }
+        }
         try {
             return $server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException) {
-            abort(401, 'Invalid bearer token.', ['WWW-Authenticate' => 'Bearer error="invalid_token"']);
+            throw new BearerFailure;
         }
     }
 }

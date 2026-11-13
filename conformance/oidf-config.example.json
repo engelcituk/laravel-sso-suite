@@ -1,0 +1,15 @@
+{
+    "alias": "laravel-sso-local",
+    "description": "Private local OIDC Code evaluation; no certification claim",
+    "server": {"discoveryUrl": "https://identity.sso.test/.well-known/openid-configuration"},
+    "client": {
+        "client_id": "REPLACE_WITH_FIRST_REGISTERED_CLIENT_ID",
+        "client_secret": "REPLACE_IN_PRIVATE_COPY_ONLY",
+        "scope": "openid profile email"
+    },
+    "client2": {
+        "client_id": "REPLACE_WITH_SECOND_REGISTERED_CLIENT_ID",
+        "client_secret": "REPLACE_IN_PRIVATE_COPY_ONLY",
+        "scope": "openid profile email"
+    }
+}

@@ -20,6 +20,7 @@ jobs:
       - run: composer validate --strict
       - run: composer install --no-interaction --prefer-dist
       - run: composer test
+      - run: composer test:conformance
       - run: composer lint
       - run: composer analyse
       - run: composer audit --locked

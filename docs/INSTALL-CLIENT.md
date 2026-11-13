@@ -45,6 +45,9 @@ En `sso-client.allowed_urls` autoriza explícitamente discovery, authorize, toke
 session y logout de ese issuer, con las URLs exactas. No se siguen redirecciones HTTP
 del transporte servidor-a-servidor. El proveedor nunca se toma de un parámetro del visitante.
 `sso:doctor` comprueba discovery y conectividad sin mostrar secretos.
+El callback verifica iss si el OP lo anuncia y at_hash si aparece en el ID Token.
+Puedes fijar sso-client.max_age (segundos, incluido 0) para solicitar reautenticación y
+validar auth_time firmado; no se acepta un max_age arbitrario desde parámetros del visitante.
 
 El guard debe ser SessionGuard con proveedor Eloquent local. Usa sesiones de servidor
 (`database`, `file` o Redis); el driver cookie se rechaza. Protege su almacenamiento:
