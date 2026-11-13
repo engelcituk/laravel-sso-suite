@@ -23,10 +23,14 @@ php artisan sso:keys
 Publica las migraciones **una sola vez**: el publisher de Laravel cambia timestamps y
 repetirlo puede generar copias. Los ejemplos evitan esto en su script de setup.
 Si Passport ya está instalado conserva sus migraciones y claves existentes.
-Si ya instalaste esta primera versión, copia únicamente la nueva migración
-`2026_11_13_000004_allow_optional_oidc_nonce.php` de packages/server/database/migrations
-a las migraciones de tu aplicación y ejecuta migrate. No republiques todas las anteriores.
-En el laboratorio, tools/setup-examples.php realiza esa actualización sin duplicarlas.
+El paquete contiene una única migración, `create_sso_tables.php`, que crea las cinco tablas
+con su esquema final: política PKCE, nonce opcional, contexto de claims, enlace código/token
+y entregas de logout. No hay migraciones incrementales en esta versión en desarrollo.
+Los ejemplos sincronizan su copia de esa definición sin cambiar el timestamp ni duplicarla.
+Si conservas copias de las migraciones incrementales de un checkout anterior, retíralas
+del directorio de migraciones y actualiza la copia de `create_sso_tables.php`.
+Esto no modifica una base ya migrada ni su historial; la definición consolidada se aplica
+a instalaciones nuevas. No ejecutes `migrate:fresh` sobre datos que debas conservar.
 `sso:keys` nunca reemplaza archivos existentes; genera RSA 3072, sin exponer la clave privada.
 
 Activa `SSO_SERVER_ENABLED=true` y configura `SSO_ISSUER=https://identity.example.org` sin
@@ -69,12 +73,8 @@ S256. Se rechaza combinarla con `--public`. Si una solicitud incluye parámetros
 deben ser S256 válidos y el token endpoint siempre comprueba el verifier correspondiente.
 La evaluación Basic oficial se ejecutó con esta excepción explícitamente autorizada.
 
-Las instalaciones existentes deben incorporar las migraciones nuevas
-`000005_add_client_pkce_policy`, `000006_bind_access_tokens_to_auth_codes` y
-`000007_bind_authorized_claims`, conservando
-el historial de migraciones. Los clientes existentes reciben `require_pkce=true`.
-El OP enlaza los tokens nuevos con su código para revocarlos al detectar reutilización;
-los tokens anteriores a esa migración conservan su vencimiento original.
+La tabla `sso_clients` nace con `require_pkce=true`. El OP enlaza cada access token con su
+código de autorización para revocarlo al detectar reutilización.
 
 `sso-server.claim_attributes` asigna los atributos normales de profile/email a columnas del
 modelo; admite rutas de atributos JSON casteados, por ejemplo `given_name => oidc_profile.given_name`.

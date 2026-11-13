@@ -33,6 +33,9 @@ con PHP de Herd y construye localmente la imagen de PHP. Copia código, vendor y
 secretos/bases del fixture a `laravel-sso-oidf-op-app`, un volumen Linux. Excluye junctions
 recursivas de Testbench y reconstruye enlaces de los tres paquetes. No copia ni modifica
 las bases o credenciales de los ejemplos. No instala dependencias de Composer distintas.
+Antes de extraer la copia, sustituye los archivos de migración de las carpetas gestionadas
+del volumen para que no sobrevivan migraciones retiradas del repositorio. Conserva las
+bases, su historial y los informes originales.
 
 El OP atiende con cuatro procesos PHP en la red Docker. El runner y su worker de logout
 usan la misma base SQLite. `Run` prepara la política elegida dentro del contenedor y copia

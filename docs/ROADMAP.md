@@ -16,10 +16,12 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 
 ## Resultados ejecutados
 
-- **145 tests / 566 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
+- **146 tests / 584 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
 - PHPStan/Larastan nivel 5: sin errores y sin baseline. Laravel Pint: aprobado.
+- Esquema del servidor consolidado en una migración inicial; prueba de creación,
+  reversión y recreación aprobada. No se avanza de fase ni se reinician bases existentes.
 - Grupo de conformidad propio: **106 tests / 414 aserciones**, sin saltos; informes JUnit/JSON
   locales. Ver [alcance](OIDC-CONFORMANCE.md) y [resultados](OIDC-CONFORMANCE-RESULTS.md).
 - Suite oficial descargada y fijada a `daca6ad2068468d42557ea1152f899cc3ac01a10`.

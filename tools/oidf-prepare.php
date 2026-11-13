@@ -24,9 +24,8 @@ foreach (['bootstrap/cache', 'database/migrations', 'storage/framework/sessions'
 foreach ([$root.'/vendor/laravel/passport/database/migrations', $root.'/packages/server/database/migrations'] as $source) {
     foreach (glob($source.'/*.php') as $path) {
         $suffix = substr(basename($path), 18);
-        if (glob($base.'/database/migrations/*'.$suffix) === []) {
-            copy($path, $base.'/database/migrations/'.basename($path));
-        }
+        $published = glob($base.'/database/migrations/*'.$suffix);
+        copy($path, $published[0] ?? $base.'/database/migrations/'.basename($path));
     }
 }
 foreach (glob($root.'/examples/identity-server/database/migrations/*create_users.php') as $path) {

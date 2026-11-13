@@ -34,8 +34,11 @@ E2E requiere puertos loopback 9100/9101/9102 libres, proc_open y PDO SQLite. Se 
 reutilizar servidores ajenos y detiene únicamente los procesos que inicia. El setup es
 repetible, conserva bases y secretos, y E2E retira su identidad temporal al terminar.
 
-Resultado local final: 145 tests / 566 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
+Resultado local final: 146 tests / 584 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
 aprobados; E2E, Pint, PHPStan, validación Composer y auditoría también aprobados.
+La consolidación del esquema añade `MigrationTest`: crea, revierte y recrea las cinco
+tablas del servidor desde un solo archivo; comprueba PKCE por defecto, campos opcionales
+e índices. Las repeticiones están en `.runtime/conformance/consolidated-schema-php*-verified.log`.
 El subconjunto normativo propio suma 106 tests / 414 aserciones. Su lanzador genera JUnit
 y JSON en .runtime/conformance, sin publicación. Los cinco planes del harness oficial se ejecutan localmente con Docker/WSL y TLS privado. Ver
 [estado de instalación](OIDF-WINDOWS-SETUP.md) y [alcance](OIDC-CONFORMANCE.md).

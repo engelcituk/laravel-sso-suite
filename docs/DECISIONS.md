@@ -35,6 +35,11 @@
 - ADR-017: REVIEW conserva el estado oficial. La auditoría local verifica semántica de
   DOM/formularios/CSRF y respuestas 400; los SKIPPED se contrastan con discovery y pruebas
   negativas de capacidades. Nada se convierte artificialmente en PASSED.
+- ADR-018: una migración inicial por paquete. El servidor crea sus cinco tablas con
+  todos los campos e índices definitivos en `create_sso_tables.php`; el cliente conserva
+  su propia migración. Durante este desarrollo los cambios se incorporan al esquema
+  inicial, sin acumular migraciones incrementales. Consolidar archivos no altera datos
+  ni reescribe el historial de bases ya instaladas.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

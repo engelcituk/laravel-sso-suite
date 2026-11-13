@@ -32,9 +32,8 @@ foreach (['identity-server', 'app-one', 'app-two'] as $name) {
         foreach (glob($source.'/*.php') as $migration) {
             // Laravel's publisher changes timestamps on every run; preserve one copy by suffix.
             $suffix = substr(basename($migration), 18);
-            if (glob($base.'/database/migrations/*'.$suffix) === []) {
-                copy($migration, $base.'/database/migrations/'.basename($migration));
-            }
+            $published = glob($base.'/database/migrations/*'.$suffix);
+            copy($migration, $published[0] ?? $base.'/database/migrations/'.basename($migration));
         }
     }
     artisan($base, ['migrate', '--force']);
