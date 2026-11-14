@@ -34,11 +34,18 @@ E2E requiere puertos loopback 9100/9101/9102 libres, proc_open y PDO SQLite. Se 
 reutilizar servidores ajenos y detiene únicamente los procesos que inicia. El setup es
 repetible, conserva bases y secretos, y E2E retira su identidad temporal al terminar.
 
-Resultado local final: 146 tests / 584 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
+Resultado local final (2026-11-14): 155 tests / 635 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
 aprobados; E2E, Pint, PHPStan, validación Composer y auditoría también aprobados.
 La consolidación del esquema añade `MigrationTest`: crea, revierte y recrea las cinco
 tablas del servidor desde un solo archivo; comprueba PKCE por defecto, campos opcionales
 e índices. Las repeticiones están en `.runtime/conformance/consolidated-schema-php*-verified.log`.
+La fase de bases añade limpieza, eventos después de commit, expiración local y comparación
+sensible a mayúsculas. Logs actuales: `.runtime/database-lab-php*-final.log`.
+La configuración `phpunit.database.xml` ejecuta toda la suite más diez casos concurrentes
+y la comprobación de entorno: MySQL 8.4.13, **166 pruebas / 691 aserciones**;
+PostgreSQL 18.7, **166 / 689**, sin fallos ni saltos. Ver [reproducción y límites](DATABASE-CONCURRENCY.md).
+`phpunit.xml` excluye `tests/Database`: esos casos requieren motores reales y pcntl, no
+se sustituyen por simulaciones ni se cuentan como saltos de la suite SQLite.
 El subconjunto normativo propio suma 106 tests / 414 aserciones. Su lanzador genera JUnit
 y JSON en .runtime/conformance, sin publicación. Los cinco planes del harness oficial se ejecutan localmente con Docker/WSL y TLS privado. Ver
 [estado de instalación](OIDF-WINDOWS-SETUP.md) y [alcance](OIDC-CONFORMANCE.md).
@@ -49,6 +56,6 @@ En Windows composer analyse usa tools/analyse.php con --debug para evitar el blo
 manifiestos Testbench entre procesos. No modifica vendor ni reduce reglas/nivel de análisis.
 
 GitHub Actions define PHP 8.3/8.4/8.5 y las mismas verificaciones. Configurar una matriz no
-demuestra que se ejecutó: los entornos verificados figuran en ROADMAP. MySQL/PostgreSQL,
-concurrencia bajo carga, navegadores reales con políticas cross-site y la suite OpenID
-Foundation siguen siendo pasos de validación adicionales. No hay certificación oficial.
+demuestra que se ejecutó: los entornos verificados figuran en ROADMAP. Quedan campañas de
+carga prolongada, otros aislamientos/versiones y navegadores reales con políticas cross-site.
+MySQL/PostgreSQL y la suite OpenID Foundation sí se ejecutaron localmente. No hay certificación oficial.

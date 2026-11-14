@@ -85,9 +85,14 @@ final class LoginController
         $guard = Auth::guard(config('sso-client.guard'));
         $guard->login($user, false);
         $request->session()->regenerate();
+        $lifetime = max(1, (int) config('sso-client.local_session_ttl', 300));
+        if (is_int($response->json('expires_in')) && $response->json('expires_in') >= 0) {
+            $lifetime = min($lifetime, $response->json('expires_in'));
+        }
         DB::table('sso_local_sessions')->insert([
             'session_hash' => hash('sha256', $request->session()->getId()),
             'issuer' => $identity->issuer, 'subject' => $identity->subject, 'sid' => $identity->sessionId, 'revoked' => false,
+            'expires_at' => time() + $lifetime,
         ]);
         $request->session()->put('sso.id_token', $response->json('id_token'));
         $request->session()->put('sso.identity', [

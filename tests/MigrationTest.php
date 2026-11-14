@@ -23,13 +23,13 @@ final class MigrationTest extends TestCase
             $this->assertTrue(Schema::hasTable($table));
         }
 
-        DB::table('sso_clients')->insert(['client_id' => 'client-one']);
+        DB::table('sso_clients')->insert(['client_id' => '00000000-0000-4000-8000-000000000001']);
         $this->assertSame(1, (int) DB::table('sso_clients')->value('require_pkce'));
         DB::table('sso_auth_contexts')->insert(['code_id' => 'code-one', 'sid' => 'session-one']);
         $context = DB::table('sso_auth_contexts')->first();
         $this->assertNull($context->nonce);
         $this->assertNull($context->claims_request);
-        DB::table('sso_token_sessions')->insert(['token_id' => 'token-one', 'sid' => 'session-one', 'client_id' => 'client-one']);
+        DB::table('sso_token_sessions')->insert(['token_id' => 'token-one', 'sid' => 'session-one', 'client_id' => '00000000-0000-4000-8000-000000000001']);
         $token = DB::table('sso_token_sessions')->first();
         $this->assertNull($token->code_id);
         $this->assertNull($token->claims_request);

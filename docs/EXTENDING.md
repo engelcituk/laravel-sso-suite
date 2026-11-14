@@ -7,7 +7,10 @@ Para personalizar aprovisionamiento implementa
 `LaravelSso\Client\Contracts\ProvisionsUsers::provision(Identity): Authenticatable` y
 vincula el contrato en el service provider de tu aplicación. Conserva vinculación por
 issuer/subject, índice único, lista explícita de atributos y política local. El evento
-`IdentityProvisioned` se emite tras aprobación y actualización, sin tokens.
+`IdentityProvisioned` se emite tras aprobación, actualización y commit, sin tokens.
+Si el llamador abre una transacción en MySQL/PostgreSQL, debe reintentar la transacción
+completa ante deadlock/serialización, por ejemplo `DB::transaction(fn () => $users->provision($identity), 5)`.
+Los callbacks del evento se descartan al hacer rollback; no se publica el intento abortado.
 
 El proveedor Eloquent puede utilizar tu modelo y tabla. El esquema debe ofrecer las
 columnas de identidad; para otro mapeo implementa el aprovisionador y adapta explícitamente

@@ -56,7 +56,7 @@ final class LogoutController
                 $sessions->where('subject', $claims['sub']);
             }
             $sessions->update(['revoked' => true]);
-        });
+        }, 5);
 
         return response()->json((object) [])->header('Cache-Control', 'no-store');
     }

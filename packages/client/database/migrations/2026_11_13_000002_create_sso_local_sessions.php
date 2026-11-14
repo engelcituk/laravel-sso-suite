@@ -9,17 +9,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sso_local_sessions', function (Blueprint $table): void {
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                $table->collation('utf8mb4_bin');
+            }
             $table->char('session_hash', 64)->primary();
             $table->string('issuer', 191);
             $table->string('subject', 191);
             $table->string('sid', 64);
             $table->boolean('revoked')->default(false);
+            $table->unsignedBigInteger('expires_at')->nullable()->index();
             $table->index(['issuer', 'sid']);
             $table->index(['issuer', 'subject']);
         });
         Schema::create('sso_logout_receipts', function (Blueprint $table): void {
             $table->char('token_hash', 64)->primary();
-            $table->unsignedBigInteger('received_at');
+            $table->unsignedBigInteger('received_at')->index();
         });
     }
 

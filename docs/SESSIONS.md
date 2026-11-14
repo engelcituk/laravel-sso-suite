@@ -32,6 +32,8 @@ esa revisión periódica.
 Los access tokens caducan en 300 s por defecto. Al caducar, el RP cierra su sesión local y
 una nueva redirección recupera el acceso sin contraseña si la sesión global sigue vigente.
 No se utilizan refresh tokens ni ID Tokens como sesiones permanentes.
+El índice local también tiene `expires_at`: se toma el menor plazo entre `local_session_ttl`
+y el `expires_in` recibido. El middleware comprueba esa fecha antes de aceptar una caché positiva.
 
 ## Logout
 
@@ -59,20 +61,24 @@ llama también revokeAll en tu servicio administrativo.
 Revocación y bandeja sso_logout_deliveries se guardan en una transacción. El comando
 `sso:deliver-logouts` firma tokens con jti estable por entrega, sid, sub, issuer, audience,
 iat, exp y evento backchannel-logout. Reintenta fallos con espera creciente, hasta una hora
-entre intentos, sin límite de intentos. Una reserva de 60 s evita tomar la misma fila
-simultáneamente; si un proceso muere se recupera después de la reserva.
+entre intentos, sin límite de intentos. Una reserva de al menos 60 s (o timeout HTTP + 5 s,
+si es mayor) evita tomar la misma fila simultáneamente. MySQL/PostgreSQL usan SKIP LOCKED;
+si un proceso muere se recupera después de la reserva. La generación de attempts impide
+que un resultado tardío sobrescriba al nuevo dueño. La entrega sigue siendo al menos una vez.
 
 El RP valida los tokens sin nonce, registra un recibo atómico e invalida las filas vinculadas.
 Acepta exp omitido conforme al estándar y mantiene el límite max_token_age sobre iat;
 cuando exp está presente valida su tipo y vigencia. Sid es opcional si hay sub.
 Un duplicado firmado válido recibe 200 y no se reaplica. El navegador desconectado puede
 conservar su cookie, pero el índice revocado impide reutilizarla. Monitoriza intentos pendientes,
-alertas y tamaño de las tablas. La retención/limpieza automática y los workers distribuidos
-bajo carga todavía necesitan pruebas adicionales.
+alertas y tamaño de las tablas. `sso:prune-server` y `sso:prune-client` aplican retención
+conservadora mediante scheduler del anfitrión. La matriz prueba hasta ocho procesos
+concurrentes en MySQL/PostgreSQL; ver [resultados y plazos](DATABASE-CONCURRENCY.md).
 
 ## Pendiente
 
 Recordarme central persistente con rotación, replay y política por dispositivo; UI de
-administración de dispositivos; conformidad RP-Initiated/Back-Channel completa; carreras de
-revocación y entrega en MySQL/PostgreSQL. El ejemplo no ofrece Recordarme hasta validar
+administración de dispositivos; certificación externa; campañas prolongadas de carga y
+fallos de red/infraestructura. Las carreras concretas de revocación/entrega en MySQL y
+PostgreSQL ya se ejecutaron. El ejemplo no ofrece Recordarme hasta validar
 esa política: no se simula guardando un ID Token ni un remember token en los clientes.

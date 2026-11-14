@@ -23,6 +23,19 @@ abstract class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', ['driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '']);
+        if ($driver = getenv('SSO_TEST_DRIVER')) {
+            if (getenv('SSO_DATABASE_LAB') !== '1' || ! in_array($driver, ['mysql', 'pgsql'], true)) {
+                throw new \RuntimeException('Real-engine tests require the isolated database laboratory.');
+            }
+            $app['config']->set('database.connections.testing', [
+                'driver' => $driver, 'host' => getenv('SSO_TEST_HOST') ?: ($driver === 'mysql' ? 'mysql' : 'postgres'),
+                'port' => getenv('SSO_TEST_PORT') ?: ($driver === 'mysql' ? 3306 : 5432),
+                'database' => 'sso_lab_test', 'username' => 'sso_lab', 'password' => getenv('SSO_TEST_PASSWORD'),
+                'charset' => $driver === 'mysql' ? 'utf8mb4' : 'utf8',
+                'collation' => $driver === 'mysql' ? 'utf8mb4_unicode_ci' : null,
+                'prefix' => '', 'strict' => true,
+            ]);
+        }
         $app['config']->set('session.driver', 'array');
         $app['config']->set('auth.providers.users.model', CentralUser::class);
         $app['config']->set('auth.guards.local', ['driver' => 'session', 'provider' => 'locals']);
@@ -31,7 +44,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('sso-server.issuer', 'https://identity.test');
         $app['config']->set('sso-client.enabled', true);
         $app['config']->set('sso-client.issuer', 'https://identity.test');
-        $app['config']->set('sso-client.client_id', 'client-one');
+        $app['config']->set('sso-client.client_id', '00000000-0000-4000-8000-000000000001');
         $app['config']->set('sso-client.guard', 'local');
         $app['config']->set('sso-client.user_model', LocalUser::class);
         $app['config']->set('sso-client.redirect_uri', 'https://one.test/sso/callback');
@@ -67,6 +80,9 @@ abstract class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
+        if (getenv('SSO_DATABASE_LAB') === '1' && getenv('SSO_TEST_DRIVER')) {
+            Schema::dropAllTables();
+        }
         $this->loadMigrationsFrom(__DIR__.'/../vendor/laravel/passport/database/migrations');
         $this->loadMigrationsFrom(__DIR__.'/../packages/server/database/migrations');
         $this->loadMigrationsFrom(__DIR__.'/../packages/client/database/migrations');
@@ -81,6 +97,9 @@ abstract class TestCase extends Orchestra
             $table->timestamps();
         });
         Schema::create('users', function (Blueprint $table): void {
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                $table->collation('utf8mb4_bin');
+            }
             $table->id();
             $table->string('sso_issuer', 191);
             $table->string('sso_subject', 191);

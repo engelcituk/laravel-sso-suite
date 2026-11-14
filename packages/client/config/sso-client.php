@@ -16,6 +16,8 @@ return [
     'max_token_age' => 300,
     'max_age' => null, // Optional OIDC reauthentication policy, validated again in the ID Token.
     'session_check_interval' => 30,
+    'local_session_ttl' => 300, // Upper bound for a local index; shorter token lifetimes take precedence.
+    'receipt_retention' => 86400, // Pruning enforces at least max_token_age + 2*clock_skew + 1.
     'session_status_url' => env('SSO_SESSION_STATUS_URL'),
     'allow_http' => false,
     // Exact operator-trusted URLs, including discovery and all advertised endpoints.

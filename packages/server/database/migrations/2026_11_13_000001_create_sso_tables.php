@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('subject')->index();
             $table->unsignedBigInteger('auth_time');
             $table->unsignedBigInteger('last_seen');
-            $table->unsignedBigInteger('expires_at');
+            $table->unsignedBigInteger('expires_at')->index();
             $table->boolean('revoked')->default(false);
         });
         Schema::create('sso_auth_contexts', function (Blueprint $table): void {
@@ -44,6 +44,7 @@ return new class extends Migration
             $table->unsignedBigInteger('next_attempt');
             $table->unsignedBigInteger('delivered_at')->nullable();
             $table->unique(['sid', 'client_id']);
+            $table->index(['delivered_at', 'next_attempt']);
         });
     }
 

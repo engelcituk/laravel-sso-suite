@@ -5,9 +5,11 @@ namespace LaravelSso\Tests;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use LaravelSso\Client\EloquentProvisioner;
+use LaravelSso\Client\Events\IdentityProvisioned;
 use LaravelSso\Client\Exceptions\ProtocolException;
 use LaravelSso\Client\IdTokenValidator;
 use LaravelSso\Client\TrustedHttp;
@@ -21,7 +23,7 @@ final class ClientTest extends TestCase
 {
     private function claims(array $overrides = []): array
     {
-        return array_merge(['iss' => 'https://identity.test', 'sub' => 'central-7', 'aud' => 'client-one',
+        return array_merge(['iss' => 'https://identity.test', 'sub' => 'central-7', 'aud' => '00000000-0000-4000-8000-000000000001',
             'sid' => 'global-session', 'iat' => time(), 'exp' => time() + 300, 'auth_time' => time(),
             'nonce' => 'nonce-test', 'name' => 'Ada', 'email' => 'ada@example.test'], $overrides);
     }
@@ -66,7 +68,7 @@ final class ClientTest extends TestCase
         return [
             'issuer' => [['iss' => 'https://evil.test']], 'audience' => [['aud' => 'another-client']],
             'expired' => [['exp' => 1]], 'future' => [['iat' => PHP_INT_MAX]],
-            'nonce' => [['nonce' => 'wrong']], 'azp' => [['aud' => ['client-one', 'two']]],
+            'nonce' => [['nonce' => 'wrong']], 'azp' => [['aud' => ['00000000-0000-4000-8000-000000000001', 'two']]],
             'subject' => [['sub' => '']], 'session' => [['sid' => null]], 'auth_time' => [['auth_time' => '123']],
         ];
     }
@@ -122,6 +124,34 @@ final class ClientTest extends TestCase
         app(EloquentProvisioner::class)->provision(new Identity('https://identity.test', 'unknown', 'sid', time()));
     }
 
+    public function test_issuer_and_subject_keys_preserve_case_sensitive_identity(): void
+    {
+        config(['sso-client.provision' => 'automatic']);
+        $ids = [];
+        foreach ([['https://identity.test/Tenant', 'Subject'], ['https://identity.test/Tenant', 'subject'],
+            ['https://identity.test/tenant', 'Subject']] as [$issuer, $subject]) {
+            $ids[] = app(EloquentProvisioner::class)->provision(new Identity($issuer, $subject, 'sid', time()))->getAuthIdentifier();
+        }
+        $this->assertCount(3, array_unique($ids));
+        $this->assertSame(3, LocalUser::count());
+    }
+
+    public function test_provisioning_event_runs_after_commit_and_is_discarded_on_rollback(): void
+    {
+        config(['sso-client.provision' => 'automatic']);
+        Event::fake([IdentityProvisioned::class]);
+        $identity = new Identity('https://identity.test', 'transactional', 'sid', time());
+        DB::beginTransaction();
+        app(EloquentProvisioner::class)->provision($identity);
+        Event::assertNotDispatched(IdentityProvisioned::class);
+        DB::rollBack();
+        Event::assertNotDispatched(IdentityProvisioned::class);
+        $this->assertSame(0, LocalUser::count());
+        DB::transaction(fn () => app(EloquentProvisioner::class)->provision($identity), 5);
+        Event::assertDispatchedTimes(IdentityProvisioned::class, 1);
+        $this->assertSame(1, LocalUser::count());
+    }
+
     public function test_local_access_policy_can_deny_existing_user(): void
     {
         LocalUser::create(['sso_issuer' => 'https://identity.test', 'sso_subject' => 'known']);
@@ -145,7 +175,13 @@ final class ClientTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_redirect_uses_pkce_and_callback_logs_in_local_guard(): void
+    public static function tokenLifetimes(): array
+    {
+        return ['short token' => [45, 45], 'local bound' => [3600, 300]];
+    }
+
+    #[DataProvider('tokenLifetimes')]
+    public function test_redirect_uses_pkce_and_callback_logs_in_local_guard(int $tokenLifetime, int $expectedLifetime): void
     {
         config(['sso-client.provision' => 'automatic']);
         $metadata = app(ProtocolController::class)->discovery()->getData(true);
@@ -162,15 +198,20 @@ final class ClientTest extends TestCase
         // The callback consumes its transaction before contacting the token endpoint.
         Http::fake(['https://identity.test/oidc/token' => Http::response([
             'access_token' => 'opaque-access-token',
+            'expires_in' => $tokenLifetime,
             'id_token' => app(SigningKeys::class)->sign($this->claims(['nonce' => $query['nonce']])),
         ])]);
         $before = session()->getId();
+        $issuedAt = time();
         $this->get('/sso/callback?'.http_build_query(['state' => $query['state'], 'code' => 'authorization-code', 'iss' => 'https://identity.test']))->assertRedirect('/');
         $this->assertTrue(Auth::guard('local')->check());
         $this->assertSame('central-7', Auth::guard('local')->user()->sso_subject);
         $this->assertSame('From UserInfo', Auth::guard('local')->user()->name);
         $this->assertNotSame($before, session()->getId());
         $this->assertNull(session('sso.transaction'));
+        $expires = (int) DB::table('sso_local_sessions')->value('expires_at');
+        $this->assertGreaterThanOrEqual($issuedAt + $expectedLifetime, $expires);
+        $this->assertLessThanOrEqual(time() + $expectedLifetime, $expires);
         Http::assertSent(fn ($request) => $request->url() === 'https://identity.test/oidc/token'
             && $request['grant_type'] === 'authorization_code' && strlen($request['code_verifier']) === 64);
         $this->get('/sso/callback?'.http_build_query(['state' => $query['state'], 'code' => 'authorization-code']))->assertStatus(400);

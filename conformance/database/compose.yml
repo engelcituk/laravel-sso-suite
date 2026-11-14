@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: sso_lab_test
+      MYSQL_USER: sso_lab
+      MYSQL_PASSWORD: ${LAB_PASSWORD:?Run tools/database-lab.ps1 first}
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, 'MYSQL_PWD="$$MYSQL_PASSWORD" mysql -h127.0.0.1 -usso_lab sso_lab_test -e "SELECT 1" >/dev/null']
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    networks: [laboratory]
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: sso_lab_test
+      POSTGRES_USER: sso_lab
+      POSTGRES_PASSWORD: ${LAB_PASSWORD:?Run tools/database-lab.ps1 first}
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: [CMD, pg_isready, -U, sso_lab, -d, sso_lab_test]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    networks: [laboratory]
+  tests:
+    image: laravel-sso-database-php:local
+    build:
+      context: .
+    environment:
+      SSO_DATABASE_LAB: "1"
+      SSO_TEST_PASSWORD: ${LAB_PASSWORD:?Run tools/database-lab.ps1 first}
+      OPENSSL_CONF: /etc/ssl/openssl.cnf
+    volumes:
+      - application:/app
+      - ${LAB_RESULTS:?Run tools/database-lab.ps1 first}:/results
+    networks: [laboratory]
+networks:
+  laboratory:
+    internal: true
+volumes:
+  application:
+    external: true
+    name: laravel-sso-db-lab_application

@@ -99,3 +99,8 @@ Schedule::command('sso:deliver-logouts')->everyMinute()->withoutOverlapping();
 Activa `php artisan schedule:work` en desarrollo o el cron de Laravel en despliegue.
 Sin procesamiento, la bandeja permanece pendiente; la comprobación remota del cliente sigue
 siendo necesaria para acotar la revocación. Ver [sesiones](SESSIONS.md).
+
+Para la limpieza programa también `sso:prune-server --limit=1000`, por ejemplo cada hora
+con `withoutOverlapping()`. Conserva hints recientes, access tokens todavía vigentes y
+sesiones con entregas pendientes; sólo borra estado propio del paquete. El scheduler no
+se configura automáticamente. Plazos, límites y evidencia en [concurrencia y retención](DATABASE-CONCURRENCY.md).

@@ -1,7 +1,8 @@
 # Despliegue (criterios previos, proyecto experimental)
 
-No se recomienda producción todavía: faltan conformidad externa, auditoría, pruebas de
-compatibilidad de bases y validación operativa. Los ejemplos PHP built-in son sólo locales.
+No se recomienda producción todavía: faltan conformidad externa, auditoría y validación
+operativa/carga prolongada. La matriz local de MySQL 8.4/PostgreSQL 18 está documentada en
+[concurrencia](DATABASE-CONCURRENCY.md). Los ejemplos PHP built-in son sólo locales.
 
 Antes de un piloto controlado:
 
@@ -25,6 +26,8 @@ Antes de un piloto controlado:
   es 120 solicitudes/minuto/IP, que puede ser insuficiente en modo strict detrás de NAT.
 - Respaldar el estado de revocación y recibos; no limpiar esas tablas sin una política de
   retención que impida revivir sesiones. Probar restauración y caídas antes del piloto.
+- Programar `sso:prune-server` en el OP y `sso:prune-client` en cada RP según los plazos
+  documentados. Las entregas pendientes se conservan; monitorizar y resolver sus fallos.
 - Ejecutar migraciones revisadas y pruebas en tu motor/versión real. El mismo default DB
   debe contener Passport y SSO para conservar atomicidad. Redis sigue siendo opcional.
 

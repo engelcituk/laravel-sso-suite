@@ -1,6 +1,6 @@
 # Roadmap y evidencia
 
-Actualizado 2026-11-13. Primera vertical integrada **experimental**, sin publicación,
+Actualizado 2026-11-14. Primera vertical integrada **experimental**, sin publicación,
 certificación ni recomendación de producción. Una vertical no cierra toda su fase.
 
 | Fase | Estado real | Evidencia / cierre pendiente |
@@ -9,19 +9,23 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | 1 fundamento | base local verificada | tres paquetes, providers, Composer, CI configurada, Pint y Larastan; CI remota aún no ejecutada |
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
-| 4 identidad local | implementación inicial verificada | índice único, createOrFirst y ACL independiente; falta probar carreras en motores reales |
-| 5 sesiones | parcial | logout RP/back-channel, reintentos y revocación probados; Recordarme y dispositivos pendientes |
-| 6 instalación | laboratorio reproducido | tres apps, setup repetible y comandos documentados; falta instalación limpia en otros SO/motores |
+| 4 identidad local | concurrencia local verificada | índice sensible a mayúsculas, recuperación de conflicto y commit; carreras en MySQL/PostgreSQL, ACL independiente |
+| 5 sesiones | concurrencia y limpieza verificadas | revocación, outbox con reserva protegida y retención probados; Recordarme y dispositivos pendientes |
+| 6 instalación | laboratorios reproducidos | tres apps, Docker Linux, MySQL/PostgreSQL y comandos documentados; faltan otras versiones/entornos de despliegue |
 | 7 publicación | pendiente | calidad local aprobada; faltan auditoría externa, conformidad, matrices remotas y autorización |
 
 ## Resultados ejecutados
 
-- **146 tests / 584 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
+- **155 tests / 635 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
 - PHPStan/Larastan nivel 5: sin errores y sin baseline. Laravel Pint: aprobado.
 - Esquema del servidor consolidado en una migración inicial; prueba de creación,
-  reversión y recreación aprobada. No se avanza de fase ni se reinician bases existentes.
+  reversión y recreación aprobada. Los ajustes se mantienen en una migración por paquete.
+- Matriz completa en Linux PHP 8.3.36: MySQL **8.4.13 / REPEATABLE READ**, **166 pruebas /
+  691 aserciones**; PostgreSQL **18.7 / READ COMMITTED**, **166 / 689**, sin fallos ni saltos.
+  Diez carreras con hasta ocho procesos por motor, limpieza de estado y recibos durables.
+  Ver [informe de concurrencia](DATABASE-CONCURRENCY.md) y su JSON sin secretos.
 - Grupo de conformidad propio: **106 tests / 414 aserciones**, sin saltos; informes JUnit/JSON
   locales. Ver [alcance](OIDC-CONFORMANCE.md) y [resultados](OIDC-CONFORMANCE-RESULTS.md).
 - Suite oficial descargada y fijada a `daca6ad2068468d42557ea1152f899cc3ac01a10`.
@@ -31,7 +35,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 - Revisión de las observaciones OIDC: seis advertencias corregidas; ensayo final con
   58 PASSED, 0 WARNING/FAILED, 16 evidencias REVIEW verificadas y 10 SKIPPED justificados.
   OP/worker trasladados al volumen y red Linux; transporte HTTPS 80/80, cuatro simultáneas.
-  Se mantiene esta fase: no se avanzó al siguiente bloque del roadmap ni se publicó.
+  La fase posterior de concurrencia ya se ejecutó; no se publicó ni se solicitó certificación.
 - Siete manifiestos Composer: validate --strict aprobado. Composer audit --locked:
   sin avisos conocidos en la consulta realizada; no equivale a auditar el código propio.
 - Resolución independiente del cliente: 77 paquetes, sin Passport ni laravel-sso/server.
@@ -43,8 +47,9 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   dos entregas back-channel. Verificó además POST externo de authorize/logout y rechazo
   CSRF en la confirmación. Los procesos temporales quedaron detenidos.
 
-No ejecutado: GitHub Actions remoto, MySQL, PostgreSQL, OpenID Foundation, navegadores
-reales ni revisión independiente. La matriz PHP local comparte un lockfile resuelto con
+No ejecutado: GitHub Actions remoto, navegadores reales cross-site, campañas prolongadas
+de carga ni revisión independiente/certificación externa. MySQL, PostgreSQL y el harness
+OpenID Foundation sí se ejecutaron localmente. La matriz PHP comparte un lockfile resuelto con
 plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependencias.
 
 ## Matriz requisito → componente → prueba
@@ -56,7 +61,7 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 | ACL independiente | Gate + ReportPolicy | E2E permiso sólo en A, 403 en B |
 | Código de un uso / S256 | AuthCodeRepository + League | ProtocolTest: replay, verifier, plain, callback y cliente |
 | ID Token / rotación | SigningKeys / IdTokenValidator | ClientTest negativos y KeyRotationTest |
-| Aprovisionamiento | EloquentProvisioner | ClientTest: restricted, allowed, sin email linking/roles/password |
+| Aprovisionamiento | EloquentProvisioner | ClientTest y carreras reales: una identidad, sin email linking/roles/password, evento después de commit |
 | Caducidad / suspensión | GlobalSessions | SessionTest y ProtocolTest |
 | Logout central nativo | evento Laravel Logout | SessionTest |
 | Logout RP | LogoutEndpointController | Conformance/RpInitiatedLogoutTest: sin cookie/hint, cancelación, redirects, cuentas; E2E |
@@ -64,21 +69,22 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 | Revisión estricta | EnsureGlobalSession | ClientTest OP 503 falla cerrado; E2E B recibe 401 |
 | Independencia | manifests / ejemplos | cliente sin Passport; E2E bases y APP_KEY distintas |
 | Recordarme | política central persistente | **sin implementar ni demostrar** |
-| Compatibilidad DB / carreras | migraciones y transacciones | SQLite secuencial; MySQL/PostgreSQL y cargas pendientes |
+| Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18, diez carreras con procesos independientes; carga prolongada pendiente |
 | Perfil Code normativo local | tests/Conformance | **106 tests / 414 aserciones**; no equivale al harness oficial |
 | Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
 
 ## Próxima fase
 
-1. La ejecución local de los cinco planes quedó atendida; mantener su reproducción según
-   OIDF-WINDOWS-SETUP y el resumen OIDC-CONFORMANCE-RESULTS. La evaluación o certificación
-   externa constituye otro alcance y no se solicitó ni publicó.
-2. Probar consumo concurrente de códigos, aprovisionamiento, revocación y workers en
-   MySQL/PostgreSQL. Definir retención/limpieza del estado persistente.
-3. Implementar Recordarme central con rotación y revocación por dispositivo; probarlo
+El bloque de concurrencia y retención queda atendido en los motores/aislamientos
+documentados. Se conserva la reproducción de los cinco planes OIDC y sus evidencias.
+
+1. Implementar Recordarme central con rotación y revocación por dispositivo; probarlo
    antes de habilitar UI o anunciar soporte.
-4. Ampliar eventos de auditoría y comandos de instalación/diagnóstico; verificar Linux limpio.
-5. Revisión independiente, canal privado de reportes, nombre público y split de paquetes;
+2. Ampliar eventos de auditoría y comandos de instalación/diagnóstico; validar otros
+   despliegues, navegadores cross-site y campañas prolongadas de carga/fallos de infraestructura.
+3. Ejecutar la matriz CI remota y ampliar versiones/aislamientos, sin atribuirle resultados locales.
+4. Revisión independiente, evaluación/certificación externa, canal privado de reportes,
+   nombre público y split de paquetes;
    autorización explícita antes de publicar versiones.
 
 ## Registro de ejecución

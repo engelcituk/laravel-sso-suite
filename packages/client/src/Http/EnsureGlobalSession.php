@@ -29,6 +29,7 @@ final class EnsureGlobalSession
             && $user->getAttribute('sso_issuer') === $identity['iss'];
         $binding = DB::table('sso_local_sessions')->where('session_hash', hash('sha256', $request->session()->getId()))->first();
         $valid = $valid && $binding !== null && ! $binding->revoked
+            && ($binding->expires_at === null || $binding->expires_at > time())
             && $binding->issuer === $identity['iss'] && $binding->subject === $identity['sub'] && $binding->sid === $identity['sid'];
         if ($valid && ($policy === 'strict' || time() - $identity['checked_at'] >= max(0, (int) config('sso-client.session_check_interval')))) {
             try {

@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\Protocol\IdTokenHint;
 use LaravelSso\Server\Protocol\InvalidRequest;
@@ -31,6 +32,9 @@ final class LogoutEndpointController
             if (! is_string($clientId) || ! in_array($clientId, $aud, true)) {
                 throw new InvalidRequest;
             }
+        }
+        if ($clientId !== null && ! Str::isUuid($clientId)) {
+            throw new InvalidRequest;
         }
         $client = $clientId !== null ? DB::table('sso_clients')->where('client_id', $clientId)->first() : null;
         if ($clientId !== null && ! $client) {

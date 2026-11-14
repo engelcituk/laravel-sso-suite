@@ -10,12 +10,15 @@ php artisan vendor:publish --tag=sso-client-migrations
 php artisan migrate
 ```
 
-Este paquete no instala Passport. Las migraciones sólo agregan el índice de sesiones y
-recibos de logout; no crean ni modifican tu tabla users. Publica las migraciones una sola vez.
+Este paquete no instala Passport. Su única migración agrega el índice de sesiones y
+recibos de logout; no crea ni modifica tu tabla users. Publícala una sola vez.
 Modifica o crea mediante una migración propia el modelo local, con campos:
 
 ```php
 Schema::create('users', function (Blueprint $table) {
+    if (Schema::getConnection()->getDriverName() === 'mysql') {
+        $table->collation('utf8mb4_bin');
+    }
     $table->id();
     $table->string('sso_issuer', 191);
     $table->string('sso_subject', 191);
@@ -25,6 +28,10 @@ Schema::create('users', function (Blueprint $table) {
     $table->timestamps();
 });
 ```
+
+`issuer` y `subject` son identificadores sensibles a mayúsculas. Usa una comparación
+binaria/case-sensitive para esas columnas y su índice único; el ejemplo lo aplica a la
+tabla completa en MySQL. El índice de sesiones del paquete protege también `sid`.
 
 No agregues password ni remember_token. En tablas existentes prepara una migración
 controlada, sin eliminar información ni vincular cuentas por coincidencia de correo.
@@ -79,3 +86,10 @@ un destino de configuración fijo (`after_login`), sin aceptar destinos del visi
 El formulario de logout envía POST a `route('sso.logout')` e incluye `@csrf`.
 La ruta back-channel se registra sin middleware web/CSRF: su autenticación es la firma
 del Logout Token, su audiencia, tiempos y recibo persistente de un uso.
+
+El callback registra una expiración local acotada por `local_session_ttl` y por
+`expires_in` del access token. El middleware deniega un índice vencido aunque la caché
+central siga reciente. Programa `sso:prune-client --limit=1000` cada hora para retirar
+índices revocados/vencidos y recibos fuera del plazo seguro; ver [retención](DATABASE-CONCURRENCY.md).
+La limpieza no elimina usuarios ni permisos. Los cambios de esquema de esta versión en
+desarrollo están integrados en la migración inicial; copiarla no altera bases ya creadas.

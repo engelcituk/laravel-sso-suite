@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache" failOnWarning="true" failOnRisky="true">
-    <testsuites><testsuite name="SSO"><directory>tests</directory></testsuite></testsuites>
+    <testsuites><testsuite name="SSO"><directory>tests</directory><exclude>tests/Database</exclude></testsuite></testsuites>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_KEY" value="base64:MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI="/>

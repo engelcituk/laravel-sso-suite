@@ -13,7 +13,7 @@ no conceden roles. Las cookies y bases de datos no se comparten entre dominios.
 | Login CSRF y replay | state/nonce únicos con TTL, callback consume transacción | ClientTest y E2E CSRF |
 | Intercepción/inyección de código | PKCE S256, client y redirect ligados al código | ProtocolTest con Passport real |
 | JWT adulterado/confusión de algoritmos | sólo RS256, kid conocido, iss/aud/azp/tiempos/nonce | ClientTest negativos |
-| Vinculación errónea de cuentas | UNIQUE issuer/subject, jamás email | ClientTest; concurrencia pendiente |
+| Vinculación errónea de cuentas | UNIQUE issuer/subject sensible a mayúsculas, jamás email | ClientTest y concurrencia MySQL/PostgreSQL |
 | Session fixation | SessionGuard login + regenerate | ClientTest callback |
 | SSRF | allowlist de endpoints exactos, HTTPS, redirects desactivados | ClientTest transporte |
 | Mix-up de proveedor | iss en respuesta de autorización y validación antes de enviar código/secreto | Conformance/RelyingPartyValidationTest |
@@ -34,7 +34,9 @@ peticiones ya iniciadas y el fallo cerrado se documentan en SESSIONS.md. Se prob
 entre dos RP, suspensión, caída del OP simulada y reintentos HTTP 503.
 Back-channel valida firma, evento, audiencia, sid/sub, TTL y jti; usa recibos atómicos,
 índice persistente y bandeja durable. Reconoce duplicados sin reaplicarlos. Los ensayos
-secuenciales SQLite no prueban concurrencia distribuida ni conformidad completa.
+secuenciales SQLite se complementan con diez carreras en MySQL/PostgreSQL con hasta
+ocho procesos, reservas protegidas y limpieza probada. No equivalen a campañas de carga
+prolongada ni a certificación externa.
 La ampliación del perfil y las pruebas normativas se documentan en OIDC-CONFORMANCE.md.
 El harness oficial se ejecutó localmente en Docker tras el reinicio de Windows. Sus
 resultados, advertencias y revisiones se conservan separados del grupo PHPUnit propio.
@@ -53,4 +55,5 @@ para entregar ese error; nunca se aceptan su redirect, identidad, state, scopes 
 ## Validación externa pendiente
 
 Los tests propios no equivalen a certificación OIDC. Faltan revisión independiente,
-certificación externa de OpenID Foundation, pruebas MySQL/PostgreSQL y evaluación operativa.
+certificación externa de OpenID Foundation y evaluación operativa/carga prolongada.
+Los motores, aislamientos y límites ya ensayados están en DATABASE-CONCURRENCY.md.

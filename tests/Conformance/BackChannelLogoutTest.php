@@ -14,7 +14,7 @@ final class BackChannelLogoutTest extends TestCase
 {
     private function claims(array $extra = []): array
     {
-        return array_merge(['iss' => 'https://identity.test', 'aud' => 'client-one', 'sub' => 'subject',
+        return array_merge(['iss' => 'https://identity.test', 'aud' => '00000000-0000-4000-8000-000000000001', 'sub' => 'subject',
             'iat' => time(), 'jti' => 'delivery', 'events' => ['http://schemas.openid.net/event/backchannel-logout' => (object) []]], $extra);
     }
 
@@ -29,7 +29,7 @@ final class BackChannelLogoutTest extends TestCase
 
     public static function invalidTokens(): array
     {
-        return ['audience must contain strings' => [['aud' => ['client-one', 123]]],
+        return ['audience must contain strings' => [['aud' => ['00000000-0000-4000-8000-000000000001', 123]]],
             'null sid is not omitted' => [['sid' => null]], 'null sub is invalid' => [['sub' => null, 'sid' => 'session']],
             'nonce even null forbidden' => [['nonce' => null]], 'null exp invalid' => [['exp' => null]],
             'old token without exp rejected' => [['iat' => 1]], 'missing logout event' => [['events' => (object) []]],

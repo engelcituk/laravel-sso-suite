@@ -22,7 +22,7 @@ final class SsoClientServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([Console\DoctorCommand::class]);
+            $this->commands([Console\DoctorCommand::class, Console\PruneStateCommand::class]);
         }
         $this->app['router']->aliasMiddleware('sso.session', EnsureGlobalSession::class);
         $this->publishes([__DIR__.'/../config/sso-client.php' => config_path('sso-client.php')], 'sso-client-config');

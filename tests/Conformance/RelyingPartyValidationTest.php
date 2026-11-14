@@ -17,7 +17,7 @@ final class RelyingPartyValidationTest extends TestCase
 {
     private function claims(array $extra = []): array
     {
-        return array_merge(['iss' => 'https://identity.test', 'aud' => 'client-one', 'sub' => 'subject',
+        return array_merge(['iss' => 'https://identity.test', 'aud' => '00000000-0000-4000-8000-000000000001', 'sub' => 'subject',
             'sid' => 'global', 'iat' => time(), 'exp' => time() + 300, 'auth_time' => time(), 'nonce' => 'nonce'], $extra);
     }
 
@@ -34,9 +34,9 @@ final class RelyingPartyValidationTest extends TestCase
     public static function invalidClaims(): array
     {
         return ['null hash' => [['at_hash' => null]], 'wrong hash' => [['at_hash' => 'wrong']],
-            'audience types' => [['aud' => ['client-one', 123], 'azp' => 'client-one']],
-            'missing azp' => [['aud' => ['client-one', 'another']]],
-            'wrong azp' => [['aud' => ['client-one', 'another'], 'azp' => 'another']],
+            'audience types' => [['aud' => ['00000000-0000-4000-8000-000000000001', 123], 'azp' => '00000000-0000-4000-8000-000000000001']],
+            'missing azp' => [['aud' => ['00000000-0000-4000-8000-000000000001', 'another']]],
+            'wrong azp' => [['aud' => ['00000000-0000-4000-8000-000000000001', 'another'], 'azp' => 'another']],
             'JWT confusion' => [['events' => (object) []]]];
     }
 

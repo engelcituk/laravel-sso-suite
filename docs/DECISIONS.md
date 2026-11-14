@@ -12,8 +12,8 @@
   mantener pruebas de intercambio real en CI, sin modificar vendor.
 - ADR-007: endpoints remotos del RP deben coincidir con allowlist explícita. Sin redirects
   HTTP, sin emisores suministrados por requests y sin descubrimiento multi-tenant abierto.
-- ADR-008: SQLite para pruebas locales, MySQL/PostgreSQL en CI antes de declarar soporte
-  probado. No dependencia obligatoria de Redis.
+- ADR-008: SQLite y matrices reales MySQL/PostgreSQL. Distinguir motores/aislamientos
+  ejecutados localmente de la matriz CI remota aún sin ejecutar. Redis no es obligatorio.
 - ADR-009: fases abiertas hasta cumplir sus criterios, no simular logout ni conformidad.
 - ADR-010: ampliar Code con nonce/state opcionales en OP, S256 obligatorio por defecto, Basic,
   form_post y RFC 9207. El RP propio sigue creando transacciones con state/nonce y sid.
@@ -40,6 +40,15 @@
   su propia migración. Durante este desarrollo los cambios se incorporan al esquema
   inicial, sin acumular migraciones incrementales. Consolidar archivos no altera datos
   ni reescribe el historial de bases ya instaladas.
+- ADR-019: canje, revocación y limpieza final se serializan mediante el bloqueo de sid;
+  se leen vinculaciones actuales y se conserva la señal de replay tras rollback. La matriz
+  prueba MySQL REPEATABLE READ y PostgreSQL READ COMMITTED con conexiones independientes.
+- ADR-020: outbox con SKIP LOCKED y generación de reserva en attempts. Un resultado
+  tardío no puede modificar un intento posterior. El transporte sigue siendo al menos una vez.
+- ADR-021: retención con comandos explícitos por rol; no borrar entregas pendientes,
+  hints recientes, recibos útiles ni grants ajenos. Caducidad explícita del índice local.
+- ADR-022: claves issuer/subject/sid sensibles a mayúsculas y evento de aprovisionamiento
+  después del commit. Las transacciones del llamador deben reintentarse completas ante deadlock.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

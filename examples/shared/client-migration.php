@@ -9,6 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table): void {
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                $table->collation('utf8mb4_bin');
+            }
             $table->id();
             $table->string('sso_issuer', 191);
             $table->string('sso_subject', 191);

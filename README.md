@@ -96,6 +96,7 @@ composer audit --locked
 ```
 
 [Guía de pruebas](docs/TESTING.md), [evidencia y pendientes](docs/ROADMAP.md),
+[concurrencia MySQL/PostgreSQL y retención](docs/DATABASE-CONCURRENCY.md),
 [modelo de seguridad](docs/SECURITY-MODEL.md), [arquitectura](docs/ARCHITECTURE.md),
 [decisiones y fuentes](docs/DECISIONS.md), [Auth](docs/LARAVEL-AUTH.md),
 [ACL local](docs/LOCAL-ACL.md), [sesiones y logout](docs/SESSIONS.md),

@@ -1,22 +1,23 @@
 # Resultados OIDC y revisión de observaciones
 
-2026-11-13. Se revisaron las 6 advertencias, 16 revisiones y 10 saltos de la evaluación
-anterior y se corrigieron las carencias detectadas. **Resultado final: 84 módulos FINISHED,
-58 PASSED, 0 FAILED, 0 WARNING, 16 REVIEW y 10 SKIPPED.** No se avanzó a otra fase del
-roadmap ni se publicó nada. Estos resultados locales no son una certificación externa.
+2026-11-14. Se repitieron los cinco planes tras las correcciones de concurrencia y limpieza.
+Se mantienen resueltas las 6 advertencias anteriores; se auditaron de nuevo las 16 revisiones
+y los 10 saltos. **Resultado final: 84 módulos FINISHED, 58 PASSED, 0 FAILED, 0 WARNING,
+16 REVIEW y 10 SKIPPED.** La fase de concurrencia se documenta en DATABASE-CONCURRENCY.md.
+No se publicó nada. Estos resultados locales no son una certificación externa.
 
 ## Evaluación oficial final
 
 Fuente oficial sin modificar: `daca6ad2068468d42557ea1152f899cc3ac01a10`.
-Inicio UTC: `2026-11-13T21:15:50+00:00`. Fin UTC: `2026-11-13T21:18:30+00:00`.
+Inicio UTC: `2026-11-14T19:58:31+00:00`. Fin UTC: `2026-11-14T20:01:24+00:00`.
 
 | Plan | ID oficial local | Total | PASS | WARN | REVIEW | SKIP | FAIL |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Discovery | `eQXv9MUAEVsHr` | 1 | 1 | 0 | 0 | 0 | 0 |
-| Basic query | `Juo55sGOzvw6n` | 35 | 26 | 0 | 4 | 5 | 0 |
-| Basic form_post | `7QVK5C0g1Xiya` | 35 | 26 | 0 | 4 | 5 | 0 |
-| RP-Initiated Logout | `bUws0MjoDcMZ2` | 11 | 3 | 0 | 8 | 0 | 0 |
-| Back-Channel Logout | `It87UwtlGAu2Y` | 2 | 2 | 0 | 0 | 0 | 0 |
+| Discovery | `4IdZBZf4yclsK` | 1 | 1 | 0 | 0 | 0 | 0 |
+| Basic query | `b8q9ksqmzCavV` | 35 | 26 | 0 | 4 | 5 | 0 |
+| Basic form_post | `Ye1wEkdTohPEK` | 35 | 26 | 0 | 4 | 5 | 0 |
+| RP-Initiated Logout | `sHa6f7pl4skQM` | 11 | 3 | 0 | 8 | 0 | 0 |
+| Back-Channel Logout | `iMkJHlPuNtTnG` | 2 | 2 | 0 | 0 | 0 | 0 |
 | Total | | 84 | 58 | 0 | 16 | 10 | 0 |
 
 Se ejecutaron todos los módulos que la suite seleccionó para discovery/static_client,
@@ -93,8 +94,8 @@ coincide entre el workspace y el OP de Linux; el registro está en runtime-check
 
 El primer ensayo Linux detectó permisos de claves heredados de Windows. Se corrigieron
 a 0600; no se desactivó la validación de permisos de Passport. Se conservan los intentos
-fallidos. La ejecución final completa no tuvo fallos ni advertencias. Una comprobación
-adicional de transporte hizo **80 solicitudes HTTPS, 4 simultáneas, 80 correctas, máximo
+fallidos. La ejecución final completa no tuvo fallos ni advertencias. La comprobación
+adicional de transporte del 2026-11-13 hizo **80 solicitudes HTTPS, 4 simultáneas, 80 correctas, máximo
 25,3 ms**, con plazo propio de 5 segundos. No es un módulo de conformidad ni una prueba de
 carga distribuida. El límite del navegador oficial no se aumentó.
 
@@ -105,24 +106,27 @@ credenciales devuelve 401 y las claves conservan permisos 0600. Los contenedores
 
 | Comprobación | Resultado |
 | --- | --- |
-| PHPUnit en PHP 8.3.36 / 8.4.27 / 8.5.12 | 145 tests / 566 aserciones en cada versión; aprobado |
+| PHPUnit en PHP 8.3.36 / 8.4.27 / 8.5.12 | 155 tests / 635 aserciones en cada versión; aprobado |
+| Matriz completa MySQL 8.4.13 / PostgreSQL 18.7 | 166 tests por motor; 691 / 689 aserciones; sin fallos ni saltos |
 | Grupo normativo propio | 106 tests / 414 aserciones; sin saltos; aprobado |
 | PHPStan/Larastan nivel 5, sin baseline | aprobado |
 | Pint | aprobado |
-| Composer validate/audit del lockfile conservado | aprobado / sin avisos conocidos en la consulta registrada |
+| Composer validate/audit del lockfile conservado | aprobado / sin avisos conocidos en la consulta del 2026-11-13; dependencias sin cambios |
 | E2E tres aplicaciones en Windows | SSO, UserInfo, ACL, CSRF, POST externo, logout y dos entregas back-channel aprobados |
 
 OP del ensayo oficial: Linux PHP 8.3.36, SQLite 3.40.1; Laravel 13.42.0,
 Passport 13.10.0, League OAuth2 Server 9.4.1 y firebase/php-jwt 7.2.1.
 Suite: Java Temurin 21.0.13+9, MongoDB 6.0.13 y nginx 1.27.3.
 Host: Windows, Docker Desktop 4.99.0, Engine 29.9.3, Compose v5.7.0 y WSL 3.0.5.
-Las pruebas PHP de Windows usan Herd y SQLite 3.53.4 en PHP 8.3. No se afirma una matriz
-MySQL/PostgreSQL, concurrencia distribuida ni una auditoría externa de seguridad.
+Las pruebas PHP de Windows usan Herd y SQLite 3.53.4 en PHP 8.3. La matriz MySQL/PostgreSQL
+se ejecutó por separado en Linux; ver DATABASE-CONCURRENCY.md. No se afirma una campaña
+de carga prolongada ni una auditoría externa de seguridad.
 
 ## Evidencias y reproducción
 
 - [Resumen oficial sin secretos](../conformance/oidf-results.json), [auditoría de revisiones/saltos](../conformance/oidf-review.json).
-- Originales JSON/HTML, firmas y diez ZIP: `.runtime/conformance/official-linux-final-20261113-211549/`.
+- Originales JSON/HTML y diez ZIP: `.runtime/conformance/official-database-regression-20261114-195830/`.
+- Regresión anterior, huellas e informe previo: `.runtime/conformance/official-linux-final-20261113-211549/`.
 - Verificación de transporte: `.runtime/conformance/transport-check.json`.
 - Comparación anterior de 6 advertencias: `.runtime/conformance/official-complete-20261113-200426/`.
 - Intentos intermedios, errores de red/permisos y ensayo estricto anterior: directorios official-*; se conservaron.

@@ -12,12 +12,13 @@ use LaravelSso\Server\LogoutDeliveries;
 use LaravelSso\Server\SigningKeys;
 use LaravelSso\Tests\Fixtures\CentralUser;
 use LaravelSso\Tests\Fixtures\LocalUser;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class LogoutTest extends TestCase
 {
     private function claims(array $overrides = []): array
     {
-        return array_merge(['iss' => 'https://identity.test', 'aud' => 'client-one', 'sub' => 'subject-one',
+        return array_merge(['iss' => 'https://identity.test', 'aud' => '00000000-0000-4000-8000-000000000001', 'sub' => 'subject-one',
             'sid' => 'global-one', 'iat' => time(), 'exp' => time() + 120, 'jti' => 'delivery-one',
             'events' => ['http://schemas.openid.net/event/backchannel-logout' => (object) []]], $overrides);
     }
@@ -58,14 +59,29 @@ final class LogoutTest extends TestCase
         }
     }
 
+    public function test_backchannel_sid_comparison_is_case_sensitive(): void
+    {
+        Http::fake([
+            'https://identity.test/.well-known/openid-configuration' => Http::response(app(ProtocolController::class)->discovery()->getData(true)),
+            'https://identity.test/oidc/jwks' => Http::response(app(SigningKeys::class)->jwks()),
+        ]);
+        foreach (['Session', 'session'] as $sid) {
+            DB::table('sso_local_sessions')->insert(['session_hash' => hash('sha256', $sid), 'issuer' => 'https://identity.test',
+                'subject' => 'subject-one', 'sid' => $sid, 'revoked' => false]);
+        }
+        $this->post('/sso/backchannel-logout', ['logout_token' => app(SigningKeys::class)->sign($this->claims(['sid' => 'Session']))])->assertOk();
+        $this->assertTrue((bool) DB::table('sso_local_sessions')->where('sid', 'Session')->value('revoked'));
+        $this->assertFalse((bool) DB::table('sso_local_sessions')->where('sid', 'session')->value('revoked'));
+    }
+
     public function test_durable_delivery_retries_after_outage_without_duplicate_outbox_rows(): void
     {
         $user = CentralUser::create(['name' => 'Ada', 'email' => 'ada@example.test', 'password' => bcrypt('secret')]);
         DB::table('sso_sessions')->insert(['sid' => 'global-one', 'subject' => (string) $user->id,
             'auth_time' => time(), 'last_seen' => time(), 'expires_at' => time() + 3600, 'revoked' => false]);
-        DB::table('sso_clients')->insert(['client_id' => 'client-one', 'auto_approve' => true,
+        DB::table('sso_clients')->insert(['client_id' => '00000000-0000-4000-8000-000000000001', 'auto_approve' => true,
             'backchannel_logout_uri' => 'https://one.test/sso/backchannel-logout']);
-        DB::table('sso_token_sessions')->insert(['token_id' => str_repeat('a', 80), 'sid' => 'global-one', 'client_id' => 'client-one']);
+        DB::table('sso_token_sessions')->insert(['token_id' => str_repeat('a', 80), 'sid' => 'global-one', 'client_id' => '00000000-0000-4000-8000-000000000001']);
         config(['sso-server.backchannel_allowed_urls' => ['https://one.test/sso/backchannel-logout']]);
         app(GlobalSessions::class)->revoke('global-one');
         app(GlobalSessions::class)->revoke('global-one');
@@ -82,12 +98,18 @@ final class LogoutTest extends TestCase
         Http::assertSentCount(2);
     }
 
-    public function test_revoked_local_index_denies_access_even_with_fresh_central_cache(): void
+    public static function inactiveIndexes(): array
+    {
+        return ['revoked' => [true, null], 'expired' => [false, 1]];
+    }
+
+    #[DataProvider('inactiveIndexes')]
+    public function test_inactive_local_index_denies_access_even_with_fresh_central_cache(bool $revoked, ?int $expires): void
     {
         $user = LocalUser::create(['sso_issuer' => 'https://identity.test', 'sso_subject' => 'subject-one']);
         $this->withSession([]);
         DB::table('sso_local_sessions')->insert(['session_hash' => hash('sha256', session()->getId()),
-            'issuer' => 'https://identity.test', 'subject' => 'subject-one', 'sid' => 'global-one', 'revoked' => true]);
+            'issuer' => 'https://identity.test', 'subject' => 'subject-one', 'sid' => 'global-one', 'revoked' => $revoked, 'expires_at' => $expires]);
         $this->withCredentials()->withCookie(config('session.cookie'), session()->getId());
         Http::fake();
         $this->actingAs($user, 'local')->withSession(['sso.identity' => ['iss' => 'https://identity.test', 'sub' => 'subject-one',
@@ -100,10 +122,10 @@ final class LogoutTest extends TestCase
         $user = CentralUser::create(['name' => 'Ada', 'email' => 'ada@example.test', 'password' => bcrypt('secret')]);
         DB::table('sso_sessions')->insert(['sid' => 'global-one', 'subject' => (string) $user->id,
             'auth_time' => time() - 1000, 'last_seen' => time(), 'expires_at' => time() + 3600, 'revoked' => false]);
-        DB::table('sso_clients')->insert(['client_id' => 'client-one', 'auto_approve' => true,
+        DB::table('sso_clients')->insert(['client_id' => '00000000-0000-4000-8000-000000000001', 'auto_approve' => true,
             'post_logout_redirect_uris' => json_encode(['https://one.test/logged-out'])]);
-        DB::table('sso_token_sessions')->insert(['token_id' => str_repeat('a', 80), 'sid' => 'global-one', 'client_id' => 'client-one']);
-        $hint = app(SigningKeys::class)->sign(['iss' => 'https://identity.test', 'aud' => 'client-one',
+        DB::table('sso_token_sessions')->insert(['token_id' => str_repeat('a', 80), 'sid' => 'global-one', 'client_id' => '00000000-0000-4000-8000-000000000001']);
+        $hint = app(SigningKeys::class)->sign(['iss' => 'https://identity.test', 'aud' => '00000000-0000-4000-8000-000000000001',
             'sub' => (string) $user->id, 'sid' => 'global-one', 'iat' => time() - 1000, 'exp' => time() - 500]);
         $this->actingAs($user, 'web')->withSession(['sso.sid' => 'global-one'])->get('/oidc/logout?'.http_build_query([
             'id_token_hint' => $hint, 'post_logout_redirect_uri' => 'https://evil.test',

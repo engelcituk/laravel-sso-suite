@@ -13,6 +13,14 @@ use LaravelSso\Tests\Fixtures\CentralUser;
 
 final class ProtocolTest extends TestCase
 {
+    public function test_malformed_client_identifiers_are_rejected_before_database_uuid_comparison(): void
+    {
+        $this->getJson('/oidc/authorize?'.http_build_query(['client_id' => 'invalid-client',
+            'redirect_uri' => 'https://evil.test/callback', 'response_type' => 'code']))->assertStatus(400);
+        $this->postJson('/oidc/token', ['client_id' => 'invalid-client', 'grant_type' => 'authorization_code', 'code' => 'invalid'])->assertStatus(401);
+        $this->getJson('/oidc/logout?client_id=invalid-client')->assertStatus(400);
+    }
+
     private function authorization(array $overrides = []): array
     {
         $user = CentralUser::create(['name' => 'Ada', 'email' => 'ada@example.test', 'password' => bcrypt('secret')]);

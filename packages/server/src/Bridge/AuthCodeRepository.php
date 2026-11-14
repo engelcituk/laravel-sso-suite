@@ -44,11 +44,14 @@ final class AuthCodeRepository extends \Laravel\Passport\Bridge\AuthCodeReposito
     public function revokeAuthCode(string $codeId): void
     {
         $context = DB::table('sso_auth_contexts')->where('code_id', $codeId)->first();
-        if (! $context || ! app(GlobalSessions::class)->valid($context->sid)) {
+        if (! $context || ! app(GlobalSessions::class)->valid($context->sid, lock: true)) {
             throw OAuthServerException::invalidGrant('The global session is no longer active.');
         }
         // Atomic consume: concurrent exchanges cannot both commit a successful response.
         if (Passport::authCode()->newQuery()->whereKey($codeId)->where('revoked', false)->update(['revoked' => true]) !== 1) {
+            // The initial read may predate a competing exchange. Preserve the replay
+            // signal across rollback so its committed token is revoked as well.
+            request()->attributes->set('sso.replayed_code', $codeId);
             throw OAuthServerException::invalidGrant('Authorization code already consumed.');
         }
         request()->attributes->set('sso.token_context', $context);

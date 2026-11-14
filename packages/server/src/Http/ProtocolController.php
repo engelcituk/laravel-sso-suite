@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\Response as PsrResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Laravel\Passport\Passport;
 use LaravelSso\Server\OidcServer;
 use LaravelSso\Server\Protocol\ClaimsRequest;
@@ -75,8 +76,11 @@ final class ProtocolController
             $body['client_secret'] = $secret;
             $psr = $psr->withoutHeader('Authorization');
         }
-        $client = Passport::client()->newQuery()->whereKey($body['client_id'] ?? '')->where('revoked', false)->first();
-        if (! $client || ! DB::table('sso_clients')->where('client_id', $body['client_id'] ?? '')->exists()
+        if (! Str::isUuid($body['client_id'] ?? '')) {
+            return $this->invalidClient();
+        }
+        $client = Passport::client()->newQuery()->whereKey($body['client_id'])->where('revoked', false)->first();
+        if (! $client || ! DB::table('sso_clients')->where('client_id', $body['client_id'])->exists()
             || ($client->confidential() && ($body['client_secret'] ?? '') === '')) {
             return $this->invalidClient();
         }

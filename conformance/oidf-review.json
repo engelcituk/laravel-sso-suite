@@ -1,15 +1,15 @@
 {
     "suite_revision": "daca6ad2068468d42557ea1152f899cc3ac01a10",
-    "checked_at_utc": "2026-11-13T21:20:07+00:00",
+    "checked_at_utc": "2026-11-14T20:04:10+00:00",
     "official_results_modified": false,
     "official_certification_claimed": false,
     "reviews": [
         {
             "module": "oidcc-prompt-login",
-            "id": "vZqsLAu5veEbxJi",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "VxnxNVZJ1KyjM8v",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "REVIEW",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -23,10 +23,10 @@
         },
         {
             "module": "oidcc-max-age-1",
-            "id": "wCmlOUSoANvzOdd",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "zuyNFo7lRUsNGfI",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "REVIEW",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -40,10 +40,10 @@
         },
         {
             "module": "oidcc-ensure-registered-redirect-uri",
-            "id": "nQ9cBErIQj3NSpw",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "JafjiHGONIzFSTU",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "REVIEW",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -57,10 +57,10 @@
         },
         {
             "module": "oidcc-ensure-request-object-with-redirect-uri",
-            "id": "EG9Bi9pLkgTnzBw",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "5VdNTgpmidw9D7P",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "REVIEW",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -74,10 +74,10 @@
         },
         {
             "module": "oidcc-prompt-login",
-            "id": "V1GwvzQfCzJ96KF",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "QHjidtGt5xQL8wE",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "REVIEW",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -91,10 +91,10 @@
         },
         {
             "module": "oidcc-max-age-1",
-            "id": "fNf7x8legfpUj64",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "4pBEb8FvdJiNR1E",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "REVIEW",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -108,10 +108,10 @@
         },
         {
             "module": "oidcc-ensure-registered-redirect-uri",
-            "id": "V8KHaFUqvKHLYNq",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "DBzrNKPX5gv64YX",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "REVIEW",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -125,10 +125,10 @@
         },
         {
             "module": "oidcc-ensure-request-object-with-redirect-uri",
-            "id": "HgR0Dv4s07JveKK",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "GwTk4ChssE15bax",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "REVIEW",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -142,10 +142,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-bad-post-logout-redirect-uri",
-            "id": "qgZom77caBMddEb",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "uud8HcDSFMYdtIX",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -159,10 +159,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-modified-id-token-hint",
-            "id": "xt49E0Rdoi4O98J",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "YoEm96WPuK15zSW",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -176,10 +176,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-no-id-token-hint",
-            "id": "RYSQPOg5jUWTZvg",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "u8qGtJJZkxkcaFz",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -193,10 +193,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-no-params",
-            "id": "FNYuTczJSwgSsua",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "luUakD3vVgtnqV7",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -211,10 +211,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-no-post-logout-redirect-uri",
-            "id": "jqeIU56cTbeY5ok",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "SuXvkrCAY4e9BD4",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -229,10 +229,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-only-state",
-            "id": "6EaCOXhxWdP1rHW",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "zbDIGddjSaoQJ6w",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -247,10 +247,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-query-added-to-post-logout-redirect-uri",
-            "id": "dG8MSGwQpDu8rbw",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "kwGL3n3aalEkUrh",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -264,10 +264,10 @@
         },
         {
             "module": "oidcc-rp-initiated-logout-bad-id-token-hint",
-            "id": "cMbYJTgNGb1KygW",
-            "plan_id": "bUws0MjoDcMZ2",
+            "id": "lfazlErNOItQwvt",
+            "plan_id": "sHa6f7pl4skQM",
             "official_result": "REVIEW",
-            "export_sha256": "c2cb519bb9f0c8d3355b5551c3f2a459efe71ddd1e758ad5182810c1f6d7cea1",
+            "export_sha256": "920dd390d7decf155110fcb5e99fb1367ab7518e5b81342a92aab83e49df814b",
             "checks": {
                 "finished": true,
                 "captured_dom": true,
@@ -283,91 +283,91 @@
     "skips": [
         {
             "module": "oidcc-scope-address",
-            "id": "s1tj4xnp54x7AOG",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "Tk3r3gGvIsfYFNQ",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "SKIPPED",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "reason": "address not advertised",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-scope-phone",
-            "id": "PSpSc7etCcqHSR0",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "jc9sdRAjN4E1Zrg",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "SKIPPED",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "reason": "phone not advertised",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-scope-all",
-            "id": "bqDms1N3WAV0BWO",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "Rp6O1ep1gzyUGIi",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "SKIPPED",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "reason": "address and phone not advertised",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-unsigned-request-object-supported-correctly-or-rejected-as-unsupported",
-            "id": "icJg0n7MKNK1lwV",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "RtUT7zUPcDwdUxA",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "SKIPPED",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "reason": "Request Objects explicitly unsupported",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-refresh-token",
-            "id": "V5tEZxj8mvyCWcA",
-            "plan_id": "Juo55sGOzvw6n",
+            "id": "mB3B3ZGjHhKGNuQ",
+            "plan_id": "b8q9ksqmzCavV",
             "official_result": "SKIPPED",
-            "export_sha256": "b935b884b1f901b4047c2feafdabefede87f5340e815c22909b3c1cbcc375d91",
+            "export_sha256": "0125a2c0c1b4b4f9d4f68806aeeb150de600a5fbb57aa5a4bd718a8b83b9d92f",
             "reason": "refresh grant not advertised",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-scope-address",
-            "id": "ueSfxnyXDxS3xaB",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "BQpCGWppsD9TQvT",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "SKIPPED",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "reason": "address not advertised",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-scope-phone",
-            "id": "SfaiWTCb37SiP96",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "iQrADOikrh5C6cU",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "SKIPPED",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "reason": "phone not advertised",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-scope-all",
-            "id": "D5QYDm53vHyciva",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "hgqryulacQnKtNv",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "SKIPPED",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "reason": "address and phone not advertised",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-unsigned-request-object-supported-correctly-or-rejected-as-unsupported",
-            "id": "HsIAm8di6Mf0GEy",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "tu4j4HU2KfKy2ut",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "SKIPPED",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "reason": "Request Objects explicitly unsupported",
             "capability_gate_verified": true
         },
         {
             "module": "oidcc-refresh-token",
-            "id": "O9K1G28cuLyPcQ1",
-            "plan_id": "7QVK5C0g1Xiya",
+            "id": "RVcU8PTisN8ERYO",
+            "plan_id": "Ye1wEkdTohPEK",
             "official_result": "SKIPPED",
-            "export_sha256": "59f5752f404f2460bea349f547c2a09370bec97c20ae8cdd246559e718fa3fe1",
+            "export_sha256": "4a88447978004d451eec6c8b040454eed012e801c68908156b6c9336e18615a0",
             "reason": "refresh grant not advertised",
             "capability_gate_verified": true
         }

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Passport;
 use LaravelSso\Server\GlobalSessions;
@@ -31,9 +32,12 @@ final class CodeAuthorizationController
         AuthorizationInput $rules, OidcServer $factory, GlobalSessions $sessions, ClaimsRequest $claims): Response
     {
         $input = $parameters->read($request);
+        if (! Str::isUuid($input['client_id'] ?? '')) {
+            return response()->json(['error' => 'invalid_request'], 400)->header('Cache-Control', 'no-store');
+        }
         // Never redirect until BOTH registration and exact redirect URI are trusted.
-        $client = Passport::client()->newQuery()->whereKey($input['client_id'] ?? '')->where('revoked', false)->first();
-        $registration = DB::table('sso_clients')->where('client_id', $input['client_id'] ?? '')->first();
+        $client = Passport::client()->newQuery()->whereKey($input['client_id'])->where('revoked', false)->first();
+        $registration = DB::table('sso_clients')->where('client_id', $input['client_id'])->first();
         $redirect = $input['redirect_uri'] ?? '';
         if (! $client || ! $registration || ! app(RedirectUri::class)->safe($redirect)
             || ! in_array($redirect, $client->getAttribute('redirect_uris'), true)) {

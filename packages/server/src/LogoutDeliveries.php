@@ -11,17 +11,19 @@ final class LogoutDeliveries
 {
     public function deliverOne(): bool
     {
-        $delivery = DB::transaction(function () {
-            $row = DB::table('sso_logout_deliveries')->whereNull('delivered_at')->where('next_attempt', '<=', time())
-                ->orderBy('next_attempt')->lockForUpdate()->first();
+        $timeout = max(1, (int) config('sso-server.backchannel_timeout'));
+        $delivery = DB::transaction(function () use ($timeout) {
+            $query = DB::table('sso_logout_deliveries')->whereNull('delivered_at')->where('next_attempt', '<=', time())
+                ->orderBy('next_attempt')->orderBy('id');
+            $row = $query->lock(DB::getDriverName() === 'sqlite' ? true : 'for update skip locked')->first();
             if ($row) {
                 DB::table('sso_logout_deliveries')->where('id', $row->id)->update([
-                    'attempts' => $row->attempts + 1, 'next_attempt' => time() + 60,
+                    'attempts' => $row->attempts + 1, 'next_attempt' => time() + max(60, $timeout + 5),
                 ]);
             }
 
             return $row;
-        });
+        }, 5);
         if (! $delivery) {
             return false;
         }
@@ -41,17 +43,20 @@ final class LogoutDeliveries
                 'events' => ['http://schemas.openid.net/event/backchannel-logout' => (object) []],
             ]);
             try {
-                $success = Http::asForm()->timeout(config('sso-server.backchannel_timeout'))
-                    ->connectTimeout(config('sso-server.backchannel_timeout'))->withoutRedirecting()
+                $success = Http::asForm()->timeout($timeout)
+                    ->connectTimeout($timeout)->withoutRedirecting()
                     ->post($url, ['logout_token' => $token])->successful();
             } catch (\Throwable) {
                 $success = false;
             }
         }
-        DB::table('sso_logout_deliveries')->where('id', $delivery->id)->update([
-            'delivered_at' => $success ? time() : null,
-            'next_attempt' => time() + min(3600, 2 ** min(10, $delivery->attempts + 1) * 5),
-        ]);
+        // attempts is the lease generation. A late owner cannot overwrite a newer
+        // attempt after its reservation has expired or undo a successful delivery.
+        DB::table('sso_logout_deliveries')->where('id', $delivery->id)->whereNull('delivered_at')
+            ->where('attempts', $delivery->attempts + 1)->update([
+                'delivered_at' => $success ? time() : null,
+                'next_attempt' => time() + min(3600, 2 ** min(10, $delivery->attempts + 1) * 5),
+            ]);
 
         return true;
     }

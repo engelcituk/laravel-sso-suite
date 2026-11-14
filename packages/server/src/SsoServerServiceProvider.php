@@ -28,7 +28,7 @@ final class SsoServerServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([Console\KeysCommand::class, Console\RegisterClientCommand::class, Console\DeliverLogoutCommand::class]);
+            $this->commands([Console\KeysCommand::class, Console\RegisterClientCommand::class, Console\DeliverLogoutCommand::class, Console\PruneStateCommand::class]);
         }
         $this->publishes([__DIR__.'/../config/sso-server.php' => config_path('sso-server.php')], 'sso-server-config');
         $this->publishesMigrations([__DIR__.'/../database/migrations' => database_path('migrations')], 'sso-server-migrations');

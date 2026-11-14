@@ -6,6 +6,7 @@ namespace LaravelSso\Client;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\UniqueConstraintViolationException;
 use LaravelSso\Client\Contracts\ProvisionsUsers;
 use LaravelSso\Client\Events\IdentityProvisioned;
 use LaravelSso\Client\Exceptions\ProtocolException;
@@ -26,14 +27,22 @@ final class EloquentProvisioner implements ProvisionsUsers
                 throw new ProtocolException('Identity has not been approved by this application.');
             }
             // createOrFirst retries the unique-key conflict using a savepoint. No email linking.
-            $user = $model::query()->createOrFirst($key, $attributes);
+            try {
+                $user = $model::query()->createOrFirst($key, $attributes);
+            } catch (UniqueConstraintViolationException $error) {
+                // MySQL REPEATABLE READ may hide the winner from createOrFirst's
+                // fallback SELECT inside an existing transaction. Read current state.
+                $user = $model::query()->where($key)->lockForUpdate()->first() ?? throw $error;
+            }
         }
         $allowed = config('sso-client.allowed');
         if ($allowed !== null && ! $allowed($user, $identity)) {
             throw new ProtocolException('Local access policy rejected this identity.');
         }
         $user->forceFill($attributes)->save();
-        event(new IdentityProvisioned($user, $identity));
+        // The caller may own a transaction and retry it after a database deadlock.
+        // Publish the event only for the committed attempt.
+        $user->getConnection()->afterCommit(fn () => event(new IdentityProvisioned($user, $identity)));
 
         return $user;
     }

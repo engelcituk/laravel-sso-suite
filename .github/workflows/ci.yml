@@ -35,3 +35,49 @@ jobs:
           php-version: '8.3'
           tools: composer:v2
       - run: for package in packages/* examples/app-one examples/app-two examples/identity-server; do composer validate --strict --no-check-lock "$package/composer.json"; done
+  database-concurrency:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database: [mysql, pgsql]
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+          MYSQL_DATABASE: sso_lab_test
+          MYSQL_USER: sso_lab
+          MYSQL_PASSWORD: disposable-ci-fixture
+        ports: ["13306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h127.0.0.1 --silent"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: sso_lab_test
+          POSTGRES_USER: sso_lab
+          POSTGRES_PASSWORD: disposable-ci-fixture
+        ports: ["15432:5432"]
+        options: >-
+          --health-cmd="pg_isready -U sso_lab -d sso_lab_test"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    env:
+      SSO_DATABASE_LAB: "1"
+      SSO_TEST_DRIVER: ${{ matrix.database }}
+      SSO_TEST_HOST: 127.0.0.1
+      SSO_TEST_PORT: ${{ matrix.database == 'mysql' && '13306' || '15432' }}
+      SSO_TEST_PASSWORD: disposable-ci-fixture
+      SSO_LAB_RESULTS: ${{ github.workspace }}/.runtime/database-lab/results
+      SSO_LAB_RUN: ci-${{ matrix.database }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, openssl, pdo_mysql, pdo_pgsql, pdo_sqlite, pcntl, dom
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist
+      - run: mkdir -p "$SSO_LAB_RESULTS"
+      - run: php vendor/phpunit/phpunit/phpunit --configuration phpunit.database.xml

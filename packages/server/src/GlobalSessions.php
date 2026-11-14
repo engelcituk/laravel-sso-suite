@@ -22,9 +22,16 @@ final class GlobalSessions
         return $user instanceof Model && (bool) $user->getAttribute($column) ? $user : null;
     }
 
-    public function valid(string $sid, bool $touch = false): ?object
+    public function valid(string $sid, bool $touch = false, bool $lock = false): ?object
     {
-        $session = DB::table('sso_sessions')->where('sid', $sid)->first();
+        $query = DB::table('sso_sessions')->where('sid', $sid);
+        if ($lock) {
+            if (DB::transactionLevel() === 0) {
+                throw new \LogicException('A session lock requires an enclosing transaction.');
+            }
+            $query->lockForUpdate();
+        }
+        $session = $query->first();
         if (! $session || $session->revoked || $session->expires_at <= time()
             || $session->last_seen + config('sso-server.session_idle') <= time()
             || ! $this->activeUser($session->subject)) {
@@ -64,7 +71,10 @@ final class GlobalSessions
                 return;
             }
             DB::table('sso_sessions')->where('sid', $sid)->update(['revoked' => true]);
-            $clients = DB::table('sso_token_sessions')->where('sid', $sid)->distinct()->pluck('client_id');
+            // Current locking read also sees bindings committed while a MySQL snapshot
+            // was waiting for the session lock. Keep the same lock order as exchange.
+            $bindings = DB::table('sso_token_sessions')->where('sid', $sid)->orderBy('token_id')->lockForUpdate()->get();
+            $clients = $bindings->pluck('client_id')->unique();
             foreach ($clients as $clientId) {
                 if (DB::table('sso_clients')->where('client_id', $clientId)->whereNotNull('backchannel_logout_uri')->exists()) {
                     DB::table('sso_logout_deliveries')->insertOrIgnore([
@@ -72,9 +82,9 @@ final class GlobalSessions
                     ]);
                 }
             }
-            $ids = DB::table('sso_token_sessions')->where('sid', $sid)->pluck('token_id');
+            $ids = $bindings->pluck('token_id');
             DB::table('oauth_access_tokens')->whereIn('id', $ids)->update(['revoked' => true]);
-        });
+        }, 5);
     }
 
     public function revokeAll(string $subject): void

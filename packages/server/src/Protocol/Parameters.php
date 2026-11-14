@@ -14,10 +14,11 @@ final class Parameters
     public function read(Request $request): array
     {
         $raw = $request->isMethod('GET') ? $request->server('QUERY_STRING', '') : $request->getContent();
+        $json = ! $request->isMethod('GET') && $request->isJson();
         if (strlen($raw) > 32768) {
             throw new InvalidRequest;
         }
-        if ($raw !== '' && ! $request->isJson()) {
+        if ($raw !== '' && ! $json) {
             $values = [];
             foreach (explode('&', $raw) as $pair) {
                 if ($pair === '') {
@@ -34,7 +35,7 @@ final class Parameters
             return $values;
         }
         $values = $request->isMethod('GET') ? $request->query->all() : $request->post();
-        if ($request->isJson()) {
+        if ($json) {
             $values = $request->json()->all();
         }
         foreach ($values as $key => $value) {
