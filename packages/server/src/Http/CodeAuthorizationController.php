@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Passport;
+use LaravelSso\Server\Audit;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\OidcServer;
 use LaravelSso\Server\Protocol\AuthorizationInput;
@@ -149,10 +150,13 @@ final class CodeAuthorizationController
             return $this->login($request, $pending['input'], $guard);
         }
         if (! $input['approve']) {
+            app(Audit::class)->record('consent.denied', ['client' => $pending['input']['client_id'], 'sid' => $session->sid]);
+
             return $this->error($pending['input'], 'access_denied');
         }
         /** @var AuthorizationRequestInterface $authorization */
         $authorization = unserialize($pending['authorization']);
+        app(Audit::class)->record('consent.approved', ['client' => $pending['input']['client_id'], 'sid' => $session->sid]);
 
         return $this->complete($request, $authorization, $pending['context'], $pending['input'], $factory);
     }
@@ -177,6 +181,7 @@ final class CodeAuthorizationController
     /** @param array<string, string> $input */
     private function error(array $input, string $error): Response
     {
+        app(Audit::class)->record('authorization.rejected');
         $parameters = ['error' => $error];
         if (isset($input['state'])) {
             $parameters['state'] = $input['state'];

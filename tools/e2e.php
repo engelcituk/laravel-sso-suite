@@ -72,6 +72,21 @@ try {
         check($ready, 'Server did not become ready: '.$host);
     }
     check(count(array_unique($appKeys)) === 3, 'Examples must have distinct APP_KEY values.');
+    $diagnostics = ['checked_at' => gmdate(DATE_ATOM), 'applications' => []];
+    foreach ($bases as $name => $host) {
+        $command = $name === 'identity-server' ? 'sso:doctor-server' : 'sso:doctor';
+        $base = $root.'/examples/'.$name;
+        $process = proc_open([PHP_BINARY, $base.'/artisan', $command, '--json'],
+            [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['file', $root.'/.runtime/operations-doctor-errors.log', 'a']], $pipes, $base);
+        check(is_resource($process), 'Cannot start diagnosis for '.$name);
+        fclose($pipes[0]);
+        $report = json_decode(stream_get_contents($pipes[1]), true, 512, JSON_THROW_ON_ERROR);
+        fclose($pipes[1]);
+        check(proc_close($process) === 0 && $report['passed'] === true, 'Deployment diagnosis failed for '.$name);
+        $diagnostics['applications'][$name] = $report;
+    }
+    file_put_contents($root.'/.runtime/operations-e2e-diagnostics.json', json_encode($diagnostics, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)."\n");
+    echo "OP local doctor and both RP online discovery/JWKS doctors passed.\n";
     $jar = new CookieJar;
     $browser = new Client(['cookies' => $jar, 'http_errors' => false, 'allow_redirects' => false, 'timeout' => 10, 'proxy' => '']);
     $follow = function (string $url, string $method = 'GET', array $form = []) use ($browser): array {

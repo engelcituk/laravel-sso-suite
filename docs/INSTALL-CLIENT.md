@@ -5,13 +5,15 @@ Agrega el repositorio path de [la guía del servidor](INSTALL-SERVER.md), con ve
 
 ```sh
 composer require laravel-sso/client:0.1.x-dev
-php artisan vendor:publish --tag=sso-client-config
-php artisan vendor:publish --tag=sso-client-migrations
+php artisan sso:install-client
 php artisan migrate
 ```
 
 Este paquete no instala Passport. Su única migración agrega el índice de sesiones y
-recibos de logout; no crea ni modifica tu tabla users. Publícala una sola vez.
+recibos de logout; no crea ni modifica tu tabla users. El instalador conserva archivos
+y el timestamp de una copia existente, incluso al repetirlo. Tras configurar/activar,
+usa `sso:doctor --offline` para comprobaciones locales y `sso:doctor --json` para añadir
+discovery/JWKS reales. Ver [auditoría y operaciones](AUDIT-OPERATIONS.md).
 Modifica o crea mediante una migración propia el modelo local, con campos:
 
 ```php

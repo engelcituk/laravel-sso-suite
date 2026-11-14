@@ -59,6 +59,12 @@
   de credenciales invalida dispositivos. Los metadatos del navegador no autentican hardware.
 - ADR-026: bloqueo dispositivo → sesión y lectura actual de sus sid. Revocar un sid
   retira el acceso del dispositivo completo y sus futuras recuperaciones Recordarme.
+- ADR-027: AuditEvent v1 compartido sin framework, catálogo cerrado y referencias HMAC
+  por rol/tipo. Emisión después de commit en la conexión propietaria; sink privado opt-in,
+  sin modelos, credenciales ni tabla/outbox nueva. Límites de entrega documentados.
+- ADR-028: instaladores por rol conservan archivos y timestamp de una única migración.
+  Migrar/generar claves requiere opción explícita; doctores locales/online separados,
+  informe JSON sin secretos y código de salida útil para comprobaciones automatizadas.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

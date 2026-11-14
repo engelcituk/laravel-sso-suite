@@ -1,10 +1,10 @@
 {
-    "checked_at_utc": "2026-11-14T21:08:49+00:00",
-    "run": "remember-final-20261114-210314",
+    "checked_at_utc": "2026-11-14T21:54:25+00:00",
+    "run": "audit-final-20261114-215054",
     "official_conformance_claimed": false,
     "engines": {
         "mysql": {
-            "checked_at_utc": "2026-11-14T21:03:56+00:00",
+            "checked_at_utc": "2026-11-14T21:51:49+00:00",
             "php": "8.3.36",
             "os": "Linux",
             "driver": "mysql",
@@ -12,7 +12,7 @@
             "isolation": "REPEATABLE-READ",
             "pcntl": true,
             "pdo_client": "mysqlnd 8.3.36",
-            "source_sha256": "fe773984f884f048e5a751974bd607b740a694e785822b8de416f9a5794c815e",
+            "source_sha256": "e26d74553cce8248de426bc6edea3dab80fec4685856eff9dffb46a78ef50f50",
             "collations": {
                 "connection": "utf8mb4_unicode_ci",
                 "local_index": "utf8mb4_bin"
@@ -22,8 +22,8 @@
             "oauth2_server": "9.4.1",
             "phpunit": "12.5.44",
             "counts": {
-                "tests": 199,
-                "assertions": 883,
+                "tests": 224,
+                "assertions": 1055,
                 "failures": 0,
                 "errors": 0,
                 "skipped": 0
@@ -47,10 +47,10 @@
                 "test_eight_separate_devices_can_restore_without_revoking_each_other"
             ],
             "maximum_workers": 8,
-            "junit_sha256": "031858c6700cdbc9d50f95207c806ea44cc63886251dd6931d034db930e1f847"
+            "junit_sha256": "4a4d4853a2b867a9261b63df3afe816fcc662843e1a4f3f8860ddb04e5415fec"
         },
         "pgsql": {
-            "checked_at_utc": "2026-11-14T21:04:51+00:00",
+            "checked_at_utc": "2026-11-14T21:52:41+00:00",
             "php": "8.3.36",
             "os": "Linux",
             "driver": "pgsql",
@@ -58,15 +58,15 @@
             "isolation": "read committed",
             "pcntl": true,
             "pdo_client": "15.20",
-            "source_sha256": "fe773984f884f048e5a751974bd607b740a694e785822b8de416f9a5794c815e",
+            "source_sha256": "e26d74553cce8248de426bc6edea3dab80fec4685856eff9dffb46a78ef50f50",
             "collations": null,
             "laravel": "v13.42.0",
             "passport": "v13.10.0",
             "oauth2_server": "9.4.1",
             "phpunit": "12.5.44",
             "counts": {
-                "tests": 199,
-                "assertions": 881,
+                "tests": 224,
+                "assertions": 1053,
                 "failures": 0,
                 "errors": 0,
                 "skipped": 0
@@ -90,7 +90,7 @@
                 "test_eight_separate_devices_can_restore_without_revoking_each_other"
             ],
             "maximum_workers": 8,
-            "junit_sha256": "b1e517a5057434b14813a61f6dd735d60c105c2d6a8b27e34ab84ecab1066ab1"
+            "junit_sha256": "97b79d65daa5721c0d15acee06b40e59588c616d22d7a6159ab807bf00d4600f"
         }
     },
     "images": [
@@ -109,9 +109,9 @@
             "tag": "postgres:18"
         },
         {
-            "id": "sha256:469b6d8b48a4a7959cd159b42778dba0d39cd675d5cf756ec650da58b417e414",
+            "id": "sha256:7d54bdaa1948ee127db924332695d908e71a455cf8a6ed20c3a051cf1bef60d8",
             "repo_digests": [
-                "laravel-sso-database-php@sha256:469b6d8b48a4a7959cd159b42778dba0d39cd675d5cf756ec650da58b417e414"
+                "laravel-sso-database-php@sha256:7d54bdaa1948ee127db924332695d908e71a455cf8a6ed20c3a051cf1bef60d8"
             ],
             "tag": "laravel-sso-database-php:local"
         }

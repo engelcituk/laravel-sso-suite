@@ -10,6 +10,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use LaravelSso\Server\Audit;
 use LaravelSso\Server\DeviceSessions;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,11 +58,14 @@ final class DeviceController
         $input = $request->validate(['password' => 'required|string|max:1024']);
         $guard = Auth::guard(config('sso-server.guard'));
         if (! $guard instanceof SessionGuard || ! $guard->getProvider()->validateCredentials($user, $input)) {
+            app(Audit::class)->record('password.rejected', ['subject' => (string) $user->getAuthIdentifier()]);
+
             return $request->expectsJson() ? response()->json(['message' => 'Password confirmation failed.'], 422)
                 : back()->withErrors(['password' => 'La contraseña no es correcta. Inténtalo de nuevo.']);
         }
         $request->session()->put('sso.password_confirmed_at', time());
         $request->session()->put('sso.confirmed_subject', (string) $user->getAuthIdentifier());
+        app(Audit::class)->record('password.confirmed', ['subject' => (string) $user->getAuthIdentifier()]);
 
         return $this->success($request, 'Contraseña confirmada. Ya puedes administrar tus dispositivos.');
     }
@@ -70,6 +74,7 @@ final class DeviceController
     {
         $subject = (string) $this->user()->getAuthIdentifier();
         if (! $devices->confirmed($request, $subject)) {
+            app(Audit::class)->record('password.required', ['subject' => $subject]);
             if ($request->expectsJson()) {
                 abort(403, 'Confirma tu contraseña antes de continuar.');
             }
@@ -87,6 +92,7 @@ final class DeviceController
         $this->requireConfirmation($request, $devices);
         $input = $request->validate(['label' => ['required', 'string', 'max:100', 'regex:/^[^\p{C}]+$/u']]);
         DB::table('sso_devices')->where('id', $device)->where('subject', $subject)->update(['label' => $input['label']]);
+        app(Audit::class)->record('device.renamed', ['subject' => $subject, 'device' => $device]);
 
         return $this->success($request, 'Nombre del dispositivo actualizado.');
     }

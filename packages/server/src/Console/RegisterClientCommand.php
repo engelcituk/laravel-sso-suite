@@ -7,6 +7,7 @@ namespace LaravelSso\Server\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\ClientRepository;
+use LaravelSso\Server\Audit;
 
 final class RegisterClientCommand extends Command
 {
@@ -51,6 +52,7 @@ final class RegisterClientCommand extends Command
                 'backchannel_logout_uri' => $this->option('backchannel'),
                 'post_logout_redirect_uris' => $this->option('post-logout') ? json_encode([$this->option('post-logout')]) : null,
             ]);
+            app(Audit::class)->record('client.registered', ['client' => (string) $client->getKey()]);
 
             return $client;
         });

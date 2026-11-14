@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Passport\Passport;
+use LaravelSso\Server\Audit;
 use LaravelSso\Server\OidcServer;
 use LaravelSso\Server\Protocol\ClaimsRequest;
 use LaravelSso\Server\Protocol\Parameters;
@@ -57,9 +58,13 @@ final class ProtocolController
         $request->attributes->remove('sso.authenticated_client');
         $body = $parameters->read($request);
         if (($body['grant_type'] ?? '') === '') {
+            app(Audit::class)->record('token.rejected');
+
             return response()->json(['error' => 'invalid_request'], 400)->header('Cache-Control', 'no-store');
         }
         if ($body['grant_type'] !== 'authorization_code') {
+            app(Audit::class)->record('token.rejected');
+
             return response()->json(['error' => 'unsupported_grant_type'], 400)->header('Cache-Control', 'no-store');
         }
         $header = $psr->getHeaderLine('Authorization');
@@ -94,8 +99,13 @@ final class ProtocolController
             if (is_string($codeId = $request->attributes->get('sso.replayed_code'))) {
                 Passport::token()->newQuery()->whereIn('id', DB::table('sso_token_sessions')->where('code_id', $codeId)->select('token_id'))
                     ->update(['revoked' => true]);
+                app(Audit::class)->record('token.replayed', ['client' => $body['client_id']]);
             }
+            app(Audit::class)->record('token.rejected');
             $response = $e->generateHttpResponse(new PsrResponse);
+        }
+        if ($response->getStatusCode() === 200) {
+            app(Audit::class)->record('token.issued', ['client' => $body['client_id']]);
         }
 
         return (new HttpFoundationFactory)->createResponse($response);
@@ -103,6 +113,8 @@ final class ProtocolController
 
     private function invalidClient(): Response
     {
+        app(Audit::class)->record('token.rejected');
+
         return response()->json(['error' => 'invalid_client'], 401)->header('Cache-Control', 'no-store')
             ->header('WWW-Authenticate', 'Basic realm="oidc"');
     }

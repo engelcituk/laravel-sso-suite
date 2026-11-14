@@ -31,9 +31,14 @@ tienen base de datos, cookies y APP_KEY independientes.
 
 ## Límites de extensión
 
-Contracts sólo comparte la identidad verificada. El contrato de aprovisionamiento pertenece
-al cliente. Los modelos, guard y políticas son configurables. No se instala ACL ni UI.
-Las rutas tienen prefijos propios y los comandos publican archivos sin sobreescribirlos.
+Contracts comparte identidad verificada, DTO de auditoría y utilidades PHP para archivos
+de instalación e informes, sin Laravel/Passport. El contrato de aprovisionamiento pertenece
+al cliente. Los modelos, guard y políticas son configurables; no hay ACL ni frontend externo
+obligatorio. El OP incluye vistas Blade de consentimiento/logout y dispositivos propios.
+Las rutas tienen prefijos propios. Los instaladores conservan archivos y una sola migración
+por paquete. Los doctores son de lectura y añaden HTTP sólo en el RP online.
+Los eventos de seguridad se emiten con referencias HMAC después de commit; sink privado
+opt-in y límites en [auditoría y operaciones](AUDIT-OPERATIONS.md).
 
 La integración con los repositorios Bridge y ResponseTypeInterface de Passport/League
 no está documentada como API estable por Laravel: es un riesgo de compatibilidad explícito.

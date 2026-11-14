@@ -25,8 +25,9 @@ confirmación, back-channel firmado y notificaciones durables con reintentos.
 
 La primera vertical está probada con tres aplicaciones y hosts independientes. No hay
 certificación OpenID, auditoría externa ni validación operativa para producción. Recordarme
-central y la administración de dispositivos están implementados y probados, incluidas
-carreras en MySQL/PostgreSQL. El alcance y lo pendiente figuran en [ROADMAP](docs/ROADMAP.md).
+central, dispositivos, eventos de auditoría e instaladores/diagnósticos están implementados
+y probados, incluidas carreras en MySQL/PostgreSQL. El alcance y lo pendiente figuran en
+[ROADMAP](docs/ROADMAP.md).
 No se admite refresh OIDC: al expirar el access token se repite una redirección silenciosa
 si la sesión central sigue activa. No se anuncia un grant que no esté habilitado.
 
@@ -75,7 +76,7 @@ por defecto. Back-channel marca la sesión revocada antes de la siguiente operac
 
 | Paquete | Responsabilidad |
 | --- | --- |
-| `packages/contracts` | Identidad verificada compartida, sin framework |
+| `packages/contracts` | Identidad, evento de auditoría y utilidades PHP sin framework |
 | `packages/server` | Códigos Passport, OIDC y sesiones centrales |
 | `packages/client` | OIDC RP, usuario Eloquent y sesión Laravel |
 
@@ -98,6 +99,7 @@ composer audit --locked
 [Guía de pruebas](docs/TESTING.md), [evidencia y pendientes](docs/ROADMAP.md),
 [concurrencia MySQL/PostgreSQL y retención](docs/DATABASE-CONCURRENCY.md),
 [Recordarme y dispositivos](docs/REMEMBER-DEVICES.md),
+[auditoría, instalación y diagnóstico](docs/AUDIT-OPERATIONS.md),
 [modelo de seguridad](docs/SECURITY-MODEL.md), [arquitectura](docs/ARCHITECTURE.md),
 [decisiones y fuentes](docs/DECISIONS.md), [Auth](docs/LARAVEL-AUTH.md),
 [ACL local](docs/LOCAL-ACL.md), [sesiones y logout](docs/SESSIONS.md),

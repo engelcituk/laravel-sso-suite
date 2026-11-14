@@ -6,6 +6,7 @@ namespace LaravelSso\Server\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use LaravelSso\Server\Audit;
 
 final class KeysCommand extends Command
 {
@@ -44,6 +45,7 @@ final class KeysCommand extends Command
         fwrite($handle, $details['key']);
         fclose($handle);
         $this->info('OIDC keys created. Configure filesystem ACLs on Windows.');
+        app(Audit::class)->record('keys.created');
 
         return self::SUCCESS;
     }

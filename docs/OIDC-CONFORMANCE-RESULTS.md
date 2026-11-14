@@ -1,6 +1,7 @@
 # Resultados OIDC y revisión de observaciones
 
-2026-11-14. Se repitieron los cinco planes al incorporar Recordarme central y dispositivos.
+2026-11-14. Se repitieron los cinco planes tras ampliar auditoría y operaciones, después
+del cierre de Recordarme central y dispositivos.
 Se mantienen resueltas las 6 advertencias anteriores; se auditaron de nuevo las 16 revisiones
 y los 10 saltos. **Resultado final: 84 módulos FINISHED, 58 PASSED, 0 FAILED, 0 WARNING,
 16 REVIEW y 10 SKIPPED.** Ver DATABASE-CONCURRENCY.md y REMEMBER-DEVICES.md para las otras matrices.
@@ -9,15 +10,15 @@ No se publicó nada. Estos resultados locales no son una certificación externa.
 ## Evaluación oficial final
 
 Fuente oficial sin modificar: `daca6ad2068468d42557ea1152f899cc3ac01a10`.
-Inicio UTC: `2026-11-14T21:04:29+00:00`. Fin UTC: `2026-11-14T21:07:21+00:00`.
+Inicio UTC: `2026-11-14T21:53:24+00:00`. Fin UTC: `2026-11-14T21:56:13+00:00`.
 
 | Plan | ID oficial local | Total | PASS | WARN | REVIEW | SKIP | FAIL |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Discovery | `lR4QTM1e9VBL3` | 1 | 1 | 0 | 0 | 0 | 0 |
-| Basic query | `BlSoqFOQcv6NI` | 35 | 26 | 0 | 4 | 5 | 0 |
-| Basic form_post | `YXBRLbrX7Su7S` | 35 | 26 | 0 | 4 | 5 | 0 |
-| RP-Initiated Logout | `sNVg69uIrjOPq` | 11 | 3 | 0 | 8 | 0 | 0 |
-| Back-Channel Logout | `RpwcDiMOsao77` | 2 | 2 | 0 | 0 | 0 | 0 |
+| Discovery | `LE5vhiNSiydu1` | 1 | 1 | 0 | 0 | 0 | 0 |
+| Basic query | `O9EWMvpQQIMRB` | 35 | 26 | 0 | 4 | 5 | 0 |
+| Basic form_post | `iELhDwiO4fHjr` | 35 | 26 | 0 | 4 | 5 | 0 |
+| RP-Initiated Logout | `NuTjGEUrAB7Mq` | 11 | 3 | 0 | 8 | 0 | 0 |
+| Back-Channel Logout | `fK514tWRuaoz3` | 2 | 2 | 0 | 0 | 0 | 0 |
 | Total | | 84 | 58 | 0 | 16 | 10 | 0 |
 
 Se ejecutaron todos los módulos que la suite seleccionó para discovery/static_client,
@@ -106,8 +107,8 @@ credenciales devuelve 401 y las claves conservan permisos 0600. Los contenedores
 
 | Comprobación | Resultado |
 | --- | --- |
-| PHPUnit en PHP 8.3.36 / 8.4.27 / 8.5.12 | 184 tests / 810 aserciones en cada versión; aprobado |
-| Matriz completa MySQL 8.4.13 / PostgreSQL 18.7 | 199 tests por motor; 883 / 881 aserciones; sin fallos ni saltos |
+| PHPUnit en PHP 8.3.36 / 8.4.27 / 8.5.12 | 209 tests / 982 aserciones en cada versión; aprobado |
+| Matriz completa MySQL 8.4.13 / PostgreSQL 18.7 | 224 tests por motor; 1055 / 1053 aserciones; sin fallos ni saltos |
 | Grupo normativo propio | 106 tests / 414 aserciones; sin saltos; aprobado |
 | PHPStan/Larastan nivel 5, sin baseline | aprobado |
 | Pint | aprobado |
@@ -125,7 +126,12 @@ de carga prolongada ni una auditoría externa de seguridad.
 ## Evidencias y reproducción
 
 - [Resumen oficial sin secretos](../conformance/oidf-results.json), [auditoría de revisiones/saltos](../conformance/oidf-review.json).
-- Originales JSON/HTML y diez ZIP: `.runtime/conformance/official-remembered-devices-20261114-210428/`.
+- Originales JSON/HTML y diez ZIP actuales: `.runtime/conformance/official-audit-operations-20261114-215322/`.
+- `runtime-check.json` en ese directorio confirma que paquetes, código compartido y
+  dependencias del OP Linux coinciden con el workspace. La revisión de los 16 REVIEW y
+  10 SKIPPED se repitió sobre sus exports, manteniendo los estados oficiales. El runner
+  devuelve código 1 por REVIEW: no equivale a un módulo FAILED.
+- Cierre anterior de Recordarme: `.runtime/conformance/official-remembered-devices-20261114-210428/`.
 - Regresión tras concurrencia y su informe previo: `.runtime/conformance/official-database-regression-20261114-195830/`.
 - Regresión anterior, huellas e informe previo: `.runtime/conformance/official-linux-final-20261113-211549/`.
 - Verificación de transporte: `.runtime/conformance/transport-check.json`.

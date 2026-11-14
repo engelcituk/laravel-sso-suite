@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use LaravelSso\Client\Audit;
 use LaravelSso\Client\TrustedHttp;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -53,6 +54,7 @@ final class EnsureGlobalSession
 
     private function deny(Request $request, StatefulGuard $guard): Response
     {
+        app(Audit::class)->record('session.denied');
         $guard->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

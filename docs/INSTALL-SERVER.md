@@ -13,15 +13,15 @@ tu configuración). Ajusta la ruta a este checkout:
 ```sh
 composer require laravel-sso/server:0.1.x-dev
 php artisan vendor:publish --tag=passport-migrations
-php artisan vendor:publish --tag=sso-server-config
-php artisan vendor:publish --tag=sso-server-migrations
+php artisan sso:install-server
 php artisan migrate
 php artisan passport:keys
 php artisan sso:keys
 ```
 
-Publica las migraciones **una sola vez**: el publisher de Laravel cambia timestamps y
-repetirlo puede generar copias. Los ejemplos evitan esto en su script de setup.
+`sso:install-server` se puede repetir: conserva configuración, timestamp y una única
+migración publicada. El publisher genérico de Laravel cambia timestamps al repetirlo;
+prefiere el instalador. Opciones y diagnóstico en [auditoría y operaciones](AUDIT-OPERATIONS.md).
 Si Passport ya está instalado conserva sus migraciones y claves existentes.
 El paquete contiene una única migración, `create_sso_tables.php`, que crea las siete tablas
 con su esquema final: política PKCE, nonce opcional, contexto de claims, enlace código/token
@@ -32,6 +32,7 @@ del directorio de migraciones y actualiza la copia de `create_sso_tables.php`.
 Esto no modifica una base ya migrada ni su historial; la definición consolidada se aplica
 a instalaciones nuevas. No ejecutes `migrate:fresh` sobre datos que debas conservar.
 `sso:keys` nunca reemplaza archivos existentes; genera RSA 3072, sin exponer la clave privada.
+Tras configurar y activar el OP ejecuta `php artisan sso:doctor-server --json`.
 
 Activa `SSO_SERVER_ENABLED=true` y configura `SSO_ISSUER=https://identity.example.org` sin
 slash final. El issuer debe coincidir exactamente con el origen/ruta pública real del OP.

@@ -52,11 +52,15 @@ final class LogoutDeliveries
         }
         // attempts is the lease generation. A late owner cannot overwrite a newer
         // attempt after its reservation has expired or undo a successful delivery.
-        DB::table('sso_logout_deliveries')->where('id', $delivery->id)->whereNull('delivered_at')
+        $updated = DB::table('sso_logout_deliveries')->where('id', $delivery->id)->whereNull('delivered_at')
             ->where('attempts', $delivery->attempts + 1)->update([
                 'delivered_at' => $success ? time() : null,
                 'next_attempt' => time() + min(3600, 2 ** min(10, $delivery->attempts + 1) * 5),
             ]);
+        if ($updated === 1) {
+            app(Audit::class)->record($success ? 'logout.delivered' : 'logout.retry',
+                ['delivery' => $delivery->id, 'sid' => $delivery->sid, 'client' => $delivery->client_id], ['attempt' => (int) $delivery->attempts + 1]);
+        }
 
         return true;
     }

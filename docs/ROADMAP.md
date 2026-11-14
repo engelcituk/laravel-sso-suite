@@ -11,25 +11,30 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
 | 4 identidad local | concurrencia local verificada | índice sensible a mayúsculas, recuperación de conflicto y commit; carreras en MySQL/PostgreSQL, ACL independiente |
 | 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
-| 6 instalación | laboratorios reproducidos | tres apps, Docker Linux, MySQL/PostgreSQL y comandos documentados; faltan otras versiones/entornos de despliegue |
+| 6 instalación | comandos y auditoría verificados localmente | instaladores repetibles, diagnósticos OP/RP en JSON, eventos sin secretos, tres apps y matrices SQL; faltan otros despliegues |
 | 7 publicación | pendiente | calidad local aprobada; faltan auditoría externa, conformidad, matrices remotas y autorización |
 
 ## Resultados ejecutados
 
-- **184 tests / 810 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
+- **209 tests / 982 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
 - PHPStan/Larastan nivel 5: sin errores y sin baseline. Laravel Pint: aprobado.
 - Esquema del servidor consolidado en una migración inicial; prueba de creación,
   reversión y recreación aprobada. Los ajustes se mantienen en una migración por paquete.
-- Matriz completa en Linux PHP 8.3.36: MySQL **8.4.13 / REPEATABLE READ**, **199 pruebas /
-  883 aserciones**; PostgreSQL **18.7 / READ COMMITTED**, **199 / 881**, sin fallos ni saltos.
+- Matriz completa en Linux PHP 8.3.36: MySQL **8.4.13 / REPEATABLE READ**, **224 pruebas /
+  1055 aserciones**; PostgreSQL **18.7 / READ COMMITTED**, **224 / 1053**, sin fallos ni saltos.
   Catorce carreras con hasta ocho procesos por motor: diez de protocolo y cuatro de Recordarme.
   Ver [informe de concurrencia](DATABASE-CONCURRENCY.md) y su JSON sin secretos.
 - Recordarme: cookie central host-only con vencimiento absoluto, secretos aleatorios
   guardados como hash, rotación de un uso y revocación de familia ante replay. La pantalla
   `/sso/devices` permite nombrar/revocar dispositivos propios con CSRF y contraseña reciente.
   [Alcance, política estricta y resultados](REMEMBER-DEVICES.md).
+- Auditoría: 34 eventos de catálogo cerrado con referencias HMAC; cambios después de commit,
+  rollback sin eventos de transición y sink de log opt-in. Instaladores OP/RP repetidos sin
+  sobrescrituras ni migraciones duplicadas; diagnósticos JSON y casos negativos aprobados.
+  E2E: doctor OP y ambos doctores RP con discovery/JWKS reales aprobados.
+  [Comandos, catálogo, garantías y límites](AUDIT-OPERATIONS.md).
 - Grupo de conformidad propio: **106 tests / 414 aserciones**, sin saltos; informes JUnit/JSON
   locales. Ver [alcance](OIDC-CONFORMANCE.md) y [resultados](OIDC-CONFORMANCE-RESULTS.md).
 - Suite oficial descargada y fijada a `daca6ad2068468d42557ea1152f899cc3ac01a10`.
@@ -38,6 +43,8 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   [resultados](OIDC-CONFORMANCE-RESULTS.md). No se necesitó otro reinicio de Windows.
 - Revisión de las observaciones OIDC: seis advertencias corregidas; ensayo final con
   58 PASSED, 0 WARNING/FAILED, 16 evidencias REVIEW verificadas y 10 SKIPPED justificados.
+  Repetición tras auditoría/operaciones: `official-audit-operations-20261114-215322`,
+  mismos conteos y revisión repetida, con huella del OP coincidente con el workspace.
   OP/worker trasladados al volumen y red Linux; transporte HTTPS 80/80, cuatro simultáneas.
   La fase posterior de concurrencia ya se ejecutó; no se publicó ni se solicitó certificación.
 - Siete manifiestos Composer: validate --strict aprobado. Composer audit --locked:
@@ -76,17 +83,21 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 | Independencia | manifests / ejemplos | cliente sin Passport; E2E bases y APP_KEY distintas |
 | Recordarme | DeviceSessions + SessionGuard | rotación, replay, password reset, expiración y carreras reales; auth_time original conservado |
 | Dispositivos propios | DeviceController + middleware central | listado, nombres, cierre individual/otros/todos, aislamiento, contraseña reciente, CSRF y E2E |
+| Auditoría | AuditEvent + Audit por componente | AuditTest: rollback, replay, secretos excluidos, duplicados y logs opt-in; ProtocolTest: códigos/tokens reales |
+| Instalación y diagnóstico | install-server/install-client/doctor-server/doctor | OperationsTest: conservación, migración real, claves y fallos múltiples; doctores OP/RP reales en E2E |
 | Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18, catorce carreras con procesos independientes; carga prolongada pendiente |
 | Perfil Code normativo local | tests/Conformance | **106 tests / 414 aserciones**; no equivale al harness oficial |
 | Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
 
 ## Próxima fase
 
-Los bloques de concurrencia/retención y Recordarme/dispositivos quedan atendidos en el
-alcance local documentado. Se conserva la reproducción de los cinco planes OIDC y sus evidencias.
+Los bloques de concurrencia/retención, Recordarme/dispositivos y auditoría/instalación/
+diagnóstico quedan atendidos en el alcance local documentado. Se conserva la reproducción
+de los cinco planes OIDC y sus evidencias. El destino y retención de auditoría se configuran
+en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
-1. Ampliar eventos de auditoría y comandos de instalación/diagnóstico; validar otros
-   despliegues, navegadores cross-site y campañas prolongadas de carga/fallos de infraestructura.
+1. Validar otros despliegues, navegadores cross-site y campañas prolongadas de carga/fallos
+   de infraestructura.
 2. Ejecutar la matriz CI remota y ampliar versiones/aislamientos, sin atribuirle resultados locales.
 3. Revisión independiente, evaluación/certificación externa, canal privado de reportes,
    nombre público y split de paquetes;

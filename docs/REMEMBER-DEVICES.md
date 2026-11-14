@@ -117,6 +117,10 @@ proxy HTTPS y conserva cifrado, CSRF y almacenamiento de sesión del grupo web.
 
 ## Resultados reales
 
+Esta tabla conserva el cierre original de Recordarme/dispositivos. La regresión posterior
+de auditoría/operaciones pasó **209 / 982** en cada PHP, **224 / 1055** en MySQL y
+**224 / 1053** en PostgreSQL; ver [resultados actuales](TESTING.md).
+
 | Evaluación | Resultado |
 | --- | --- |
 | PHP 8.3.36 / 8.4.27 / 8.5.12, SQLite | 184 pruebas / 810 aserciones en cada versión; aprobado |
@@ -129,8 +133,9 @@ La matriz incluye cuatro carreras nuevas de Recordarme, además de las diez exis
 ocho usos de una credencial, revocación antes de rotar, revocación desde un snapshot
 anterior a la recuperación y ocho dispositivos independientes. Las conexiones y
 bloqueos son reales; las cuatro carreras específicas suman 17 aserciones por motor.
-La ejecución completa es `remember-final-20261114-210314`; ver
-[informe con huellas y versiones](../conformance/database-results.json).
+La ejecución original es `remember-final-20261114-210314`; el
+[informe con huellas y versiones](../conformance/database-results.json) corresponde ahora
+a la regresión completa `audit-final-20261114-215054`. Los originales previos se conservan.
 Las catorce carreras pasaron además tres rondas por motor, cada una con 14 pruebas y
 68 aserciones, bajo las etiquetas `remember-stable-1`, `remember-stable-2` y `remember-stable-3`.
 Los logs PHP, E2E y análisis están en `.runtime/remember-*`; las evidencias oficiales

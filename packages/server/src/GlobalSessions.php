@@ -72,6 +72,7 @@ final class GlobalSessions
                 'auth_time' => $request->session()->get('sso.auth_time', $now),
                 'last_seen' => $now, 'expires_at' => min((int) $device->expires_at, $now + config('sso-server.session_max')), 'revoked' => false,
             ]);
+            app(Audit::class)->record('session.created', ['sid' => $sid, 'subject' => (string) $user->getAuthIdentifier(), 'device' => $deviceId]);
         }, 5);
         $request->session()->put('sso.sid', $sid);
 
@@ -96,6 +97,9 @@ final class GlobalSessions
                 return;
             }
             DB::table('sso_sessions')->where('sid', $sid)->update(['revoked' => true]);
+            if (! $session->revoked) {
+                app(Audit::class)->record('session.revoked', ['sid' => $sid, 'subject' => $session->subject]);
+            }
             // Current locking read also sees bindings committed while a MySQL snapshot
             // was waiting for the session lock. Keep the same lock order as exchange.
             $bindings = DB::table('sso_token_sessions')->where('sid', $sid)->orderBy('token_id')->lockForUpdate()->get();

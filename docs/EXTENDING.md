@@ -17,7 +17,9 @@ columnas de identidad; para otro mapeo implementa el aprovisionador y adapta exp
 la comprobación de sesión. La implementación predeterminada espera sso_issuer/sso_subject.
 
 Los servicios `GlobalSessions` y `LogoutDeliveries` se resuelven por DI. No son APIs
-administrativas HTTP. Agrega autorización y auditoría en las operaciones que los invoquen.
+administrativas HTTP. Conserva autorización propia al invocarlos; sus transiciones
+emiten ahora `AuditEvent` con referencias HMAC después de commit. Conecta un destino
+privado según [el catálogo y las garantías de auditoría](AUDIT-OPERATIONS.md).
 Las vistas `sso-server::consent` y `sso-server::logout` se pueden sobrescribir siguiendo la
 convención Laravel resources/views/vendor/sso-server. Conserva CSRF y transacciones opacas.
 La vista `sso-server::devices` expone administración propia con contraseña reciente.

@@ -9,14 +9,15 @@ Las imágenes y sus digests, versiones, aislamiento, huella de código y conteos
 
 | Entorno | Aislamiento | Suite completa |
 | --- | --- | --- |
-| MySQL 8.4.13 / InnoDB | REPEATABLE READ | 199 pruebas, 883 aserciones, sin fallos ni saltos |
-| PostgreSQL 18.7 | READ COMMITTED | 199 pruebas, 881 aserciones, sin fallos ni saltos |
-| SQLite / Windows PHP 8.3.36, 8.4.27 y 8.5.12 | pruebas secuenciales | 184 pruebas, 810 aserciones en cada versión |
+| MySQL 8.4.13 / InnoDB | REPEATABLE READ | 224 pruebas, 1055 aserciones, sin fallos ni saltos |
+| PostgreSQL 18.7 | READ COMMITTED | 224 pruebas, 1053 aserciones, sin fallos ni saltos |
+| SQLite / Windows PHP 8.3.36, 8.4.27 y 8.5.12 | pruebas secuenciales | 209 pruebas, 982 aserciones en cada versión |
 
 La diferencia de dos aserciones comprueba las collations de MySQL. El runner Linux usa
 PHP 8.3.36, Laravel 13.42.0, Passport 13.10.0, League 9.4.1 y PHPUnit 12.5.44.
-Ejecución completa exportada: `remember-final-20261114-210314`, con sus JUnit y versiones bajo
-`.runtime/database-lab/results/`. Después pasaron tres rondas adicionales por motor:
+Ejecución completa exportada tras auditoría/operaciones: `audit-final-20261114-215054`,
+con sus JUnit y versiones bajo `.runtime/database-lab/results/`. La anterior,
+`remember-final-20261114-210314`, se conserva. En esa fase pasaron tres rondas adicionales por motor:
 `remember-stable-1`, `remember-stable-2` y `remember-stable-3`, cada una con
 **14 pruebas / 68 aserciones** sin fallos. La matriz anterior y sus logs también se conservan.
 Se ejecuta toda la regresión, no sólo pruebas con SQL simulado. Cada prueba parte de un

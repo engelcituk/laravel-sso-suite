@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'audit_log' => env('SSO_SERVER_AUDIT_LOG', false),
+    'audit_channel' => env('SSO_SERVER_AUDIT_CHANNEL'),
     'enabled' => env('SSO_SERVER_ENABLED', false),
     'issuer' => env('SSO_ISSUER', 'https://identity.example.test'),
     'guard' => 'web',

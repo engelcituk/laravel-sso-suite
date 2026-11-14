@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'audit_log' => env('SSO_CLIENT_AUDIT_LOG', false),
+    'audit_channel' => env('SSO_CLIENT_AUDIT_CHANNEL'),
     'enabled' => env('SSO_CLIENT_ENABLED', false),
     'issuer' => env('SSO_ISSUER', 'https://identity.example.test'),
     'client_id' => env('SSO_CLIENT_ID'),

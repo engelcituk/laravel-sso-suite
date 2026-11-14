@@ -22,11 +22,14 @@ final class SsoClientServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([Console\DoctorCommand::class, Console\PruneStateCommand::class]);
+            $this->commands([Console\InstallCommand::class, Console\DoctorCommand::class, Console\PruneStateCommand::class]);
         }
         $this->app['router']->aliasMiddleware('sso.session', EnsureGlobalSession::class);
         $this->publishes([__DIR__.'/../config/sso-client.php' => config_path('sso-client.php')], 'sso-client-config');
         $this->publishesMigrations([__DIR__.'/../database/migrations' => database_path('migrations')], 'sso-client-migrations');
+        if ($this->app->runningConsoleCommand('sso:doctor', 'sso:install-client')) {
+            return;
+        }
         if (config('sso-client.enabled')) {
             if (config('session.driver') === 'cookie') {
                 throw new \RuntimeException('SSO requires server-side sessions; the cookie session driver is not supported.');

@@ -24,6 +24,7 @@ final class EloquentProvisioner implements ProvisionsUsers
         $user = $model::query()->where($key)->first();
         if (! $user) {
             if (config('sso-client.provision') !== 'automatic') {
+                app(Audit::class)->record('identity.rejected', ['issuer' => $identity->issuer, 'subject' => $identity->subject], [], (new $model)->getConnection());
                 throw new ProtocolException('Identity has not been approved by this application.');
             }
             // createOrFirst retries the unique-key conflict using a savepoint. No email linking.
@@ -37,12 +38,15 @@ final class EloquentProvisioner implements ProvisionsUsers
         }
         $allowed = config('sso-client.allowed');
         if ($allowed !== null && ! $allowed($user, $identity)) {
+            app(Audit::class)->record('identity.rejected', ['issuer' => $identity->issuer, 'subject' => $identity->subject], [], $user->getConnection());
             throw new ProtocolException('Local access policy rejected this identity.');
         }
         $user->forceFill($attributes)->save();
         // The caller may own a transaction and retry it after a database deadlock.
         // Publish the event only for the committed attempt.
         $user->getConnection()->afterCommit(fn () => event(new IdentityProvisioned($user, $identity)));
+        app(Audit::class)->record('identity.provisioned', ['issuer' => $identity->issuer, 'subject' => $identity->subject],
+            ['created' => $user->wasRecentlyCreated], $user->getConnection());
 
         return $user;
     }

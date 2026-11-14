@@ -75,6 +75,7 @@ final class DeviceSessions
                 'credential_hash' => $this->credentialHash($user), 'auth_time' => $request->session()->get('sso.auth_time', $now),
                 'created_at' => $now, 'last_seen' => $now, 'expires_at' => $expires, 'remember_until' => $remember ? $expires : null,
             ]);
+            app(Audit::class)->record('device.registered', ['subject' => $subject, 'device' => $id], ['remembered' => (bool) $remember]);
 
             return $remember ? $this->newToken($id, $expires) : null;
         }, 5);
@@ -126,12 +127,14 @@ final class DeviceSessions
             }
             if ($token->used_at !== null) {
                 $this->revoke($device->id);
+                app(Audit::class)->record('remember.replayed', ['subject' => $device->subject, 'device' => $device->id]);
 
                 return null;
             }
             $active = $this->active($device->id, true);
             if (! $active || $device->remember_until === null || $device->remember_until <= time() || $token->expires_at <= time()) {
                 $this->revoke($device->id);
+                app(Audit::class)->record('remember.expired', ['subject' => $device->subject, 'device' => $device->id]);
 
                 return null;
             }
@@ -178,6 +181,7 @@ final class DeviceSessions
             $request->session()->put('sso.remembered', true);
             $request->session()->forget(['sso.password_confirmed_at', 'sso.confirmed_subject', 'sso.login_epoch']);
             $this->queueToken($result['token']['id'], $result['token']['secret'], (int) $device->remember_until);
+            app(Audit::class)->record('remember.restored', ['subject' => $device->subject, 'device' => $device->id, 'sid' => $result['sid']]);
         } finally {
             $request->attributes->remove('sso.restoring_device');
         }
@@ -193,6 +197,9 @@ final class DeviceSessions
                 return false;
             }
             DB::table('sso_devices')->where('id', $id)->update(['revoked_at' => $device->revoked_at ?? time()]);
+            if ($device->revoked_at === null) {
+                app(Audit::class)->record('device.revoked', ['subject' => $device->subject, 'device' => $id]);
+            }
             foreach (DB::table('sso_sessions')->where('device_id', $id)->orderBy('sid')->lockForUpdate()->pluck('sid') as $sid) {
                 app(GlobalSessions::class)->revokeSession($sid);
             }

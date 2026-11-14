@@ -5,8 +5,10 @@ namespace LaravelSso\Tests;
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\ClientRepository;
+use LaravelSso\Contracts\AuditEvent;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\SigningKeys;
 use LaravelSso\Tests\Fixtures\CentralUser;
@@ -46,6 +48,10 @@ final class ProtocolTest extends TestCase
 
     public function test_real_passport_code_exchange_id_token_userinfo_and_replay(): void
     {
+        $events = [];
+        Event::listen(AuditEvent::class, function (AuditEvent $event) use (&$events): void {
+            $events[] = $event;
+        });
         [$response, $client, $verifier, $user] = $this->authorization();
         $response->assertRedirect();
         parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $query);
@@ -60,6 +66,13 @@ final class ProtocolTest extends TestCase
             ->assertJsonPath('sub', (string) $user->id)->assertJsonPath('name', 'Ada');
         $this->exchange($client, $query['code'], $verifier)->assertStatus(400);
         $this->assertSame(1, DB::table('oauth_access_tokens')->count());
+        foreach (['code.issued', 'token.issued', 'token.replayed', 'token.rejected'] as $name) {
+            $this->assertContains($name, array_column($events, 'name'));
+        }
+        $serialized = json_encode($events);
+        foreach ([$query['code'], $verifier, $token->json('access_token'), $token->json('id_token'), 'nonce-test', 'state-test', 'ada@example.test'] as $secret) {
+            $this->assertStringNotContainsString($secret, $serialized);
+        }
     }
 
     public function test_wrong_pkce_does_not_consume_code(): void

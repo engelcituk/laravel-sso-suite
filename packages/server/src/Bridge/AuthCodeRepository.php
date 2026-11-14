@@ -6,6 +6,7 @@ namespace LaravelSso\Server\Bridge;
 
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Passport;
+use LaravelSso\Server\Audit;
 use LaravelSso\Server\GlobalSessions;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -38,6 +39,7 @@ final class AuthCodeRepository extends \Laravel\Passport\Bridge\AuthCodeReposito
                 'code_id' => $authCodeEntity->getIdentifier(), 'nonce' => $context['nonce'], 'sid' => $context['sid'],
                 'claims_request' => json_encode($context['claims'] ?? [], JSON_THROW_ON_ERROR),
             ]);
+            app(Audit::class)->record('code.issued', ['sid' => $context['sid'], 'client' => $authCodeEntity->getClient()->getIdentifier()]);
         });
     }
 

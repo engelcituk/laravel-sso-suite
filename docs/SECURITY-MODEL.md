@@ -61,6 +61,12 @@ La revocación cierra el dispositivo completo, incluidas las sesiones anteriores
 recuperación. PasswordReset y el fingerprint de credenciales impiden reutilizar acceso
 tras cambios de contraseña. Ver política y límites en REMEMBER-DEVICES.md.
 
+La auditoría usa un catálogo cerrado y referencias HMAC separadas por instalación y rol;
+no registra tokens, códigos, credenciales, atributos personales ni requests/modelos.
+Los callbacks esperan commit y desaparecen en rollback. El sink de log es opt-in, con
+retención y permisos del anfitrión; no es una outbox durable de auditoría. Los diagnósticos
+no exponen valores de configuración ni excepciones. Ver [garantías y operación](AUDIT-OPERATIONS.md).
+
 ## Validación externa pendiente
 
 Los tests propios no equivalen a certificación OIDC. Faltan revisión independiente,

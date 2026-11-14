@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use LaravelSso\Client\Audit;
 use LaravelSso\Client\Contracts\ProvisionsUsers;
 use LaravelSso\Client\Exceptions\ProtocolException;
 use LaravelSso\Client\IdTokenValidator;
@@ -40,6 +41,17 @@ final class LoginController
     }
 
     public function callback(Request $request, Provider $provider, TrustedHttp $http,
+        IdTokenValidator $validator, ProvisionsUsers $users): RedirectResponse
+    {
+        try {
+            return $this->completeCallback($request, $provider, $http, $validator, $users);
+        } catch (ProtocolException $error) {
+            app(Audit::class)->record('login.rejected');
+            throw $error;
+        }
+    }
+
+    private function completeCallback(Request $request, Provider $provider, TrustedHttp $http,
         IdTokenValidator $validator, ProvisionsUsers $users): RedirectResponse
     {
         $transaction = $request->session()->pull('sso.transaction');
@@ -99,6 +111,7 @@ final class LoginController
             'iss' => $identity->issuer, 'sub' => $identity->subject, 'sid' => $identity->sessionId,
             'access_token' => $response->json('access_token'), 'checked_at' => 0,
         ]);
+        app(Audit::class)->record('login.completed', ['issuer' => $identity->issuer, 'subject' => $identity->subject, 'sid' => $identity->sessionId]);
 
         return redirect(config('sso-client.after_login', '/'))->header('Cache-Control', 'no-store')->header('Referrer-Policy', 'no-referrer');
     }

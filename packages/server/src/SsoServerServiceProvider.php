@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelSso\Server;
 
 use Illuminate\Auth\Events\CurrentDeviceLogout;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\PasswordReset;
@@ -38,11 +39,14 @@ final class SsoServerServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([Console\KeysCommand::class, Console\RegisterClientCommand::class, Console\DeliverLogoutCommand::class, Console\PruneStateCommand::class]);
+            $this->commands([Console\InstallCommand::class, Console\DoctorCommand::class, Console\KeysCommand::class, Console\RegisterClientCommand::class, Console\DeliverLogoutCommand::class, Console\PruneStateCommand::class]);
         }
         $this->publishes([__DIR__.'/../config/sso-server.php' => config_path('sso-server.php')], 'sso-server-config');
         $this->publishesMigrations([__DIR__.'/../database/migrations' => database_path('migrations')], 'sso-server-migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'sso-server');
+        if ($this->app->runningConsoleCommand('sso:doctor-server', 'sso:install-server')) {
+            return; // Diagnosis and initial installation must survive invalid runtime configuration.
+        }
         if (! config('sso-server.enabled')) {
             return;
         }
@@ -63,6 +67,11 @@ final class SsoServerServiceProvider extends ServiceProvider
         Event::listen(Validated::class, function (Validated $event): void {
             if ($event->guard === config('sso-server.guard')) {
                 request()->attributes->set('sso.validated_subject', (string) $event->user->getAuthIdentifier());
+            }
+        });
+        Event::listen(Failed::class, function (Failed $event): void {
+            if ($event->guard === config('sso-server.guard')) {
+                app(Audit::class)->record('auth.failed');
             }
         });
         Event::listen(Login::class, function (Login $event): void {
@@ -99,6 +108,7 @@ final class SsoServerServiceProvider extends ServiceProvider
                     $request->session()->put('sso.confirmed_subject', (string) $event->user->getAuthIdentifier());
                 }
                 app(DeviceSessions::class)->register($request, $event->user, $event->remember || ($fresh && $request->boolean('remember')));
+                app(Audit::class)->record('auth.login', ['subject' => (string) $event->user->getAuthIdentifier()]);
             }
         });
         $onLogout = function (Logout|CurrentDeviceLogout $event): void {
@@ -122,6 +132,7 @@ final class SsoServerServiceProvider extends ServiceProvider
             $model = config('auth.providers.'.$provider.'.model');
             if (is_string($model) && $event->user instanceof $model) {
                 app(DeviceSessions::class)->revokeAll((string) $event->user->getAuthIdentifier());
+                app(Audit::class)->record('auth.password_reset', ['subject' => (string) $event->user->getAuthIdentifier()]);
             }
         });
         Route::middleware(['web', 'throttle:30,1,sso-devices'])->prefix(config('sso-server.devices_path'))->name('sso-server.devices.')->group(function (): void {

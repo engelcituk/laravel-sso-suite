@@ -19,6 +19,9 @@ instalación global. El sandbox Windows permitía leer pero hacía que is_readab
 false; las comprobaciones PHP se ejecutaron fuera de ese sandbox. No es un requisito
 normal de instalación del paquete.
 
-`php artisan sso:doctor` comprueba metadatos/RS256/S256 y JWKS. No valida credenciales,
+`php artisan sso:doctor-server --json` comprueba el OP local; `sso:doctor --offline --json`
+el RP local y `sso:doctor --json` añade metadatos/RS256/S256 y JWKS. Los códigos estables
+separan esquema, claves, guard, configuración y outbox atrasada; mensajes y límites en
+[operaciones](AUDIT-OPERATIONS.md). No valida credenciales,
 no comprueba conformidad y no sustituye una prueba de login completo. Evita compartir
 traces con tokens, secretos, cookies o cuerpos del endpoint token.
