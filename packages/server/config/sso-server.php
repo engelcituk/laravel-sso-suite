@@ -21,6 +21,12 @@ return [
     'session_max' => 28800,
     'logout_hint_retention' => 86400, // Accept signed expired hints only for current/recent RP session bindings.
     'state_retention' => 86400, // Additional retention after expiry; minimum one hour during pruning.
+    'remember_enabled' => true,
+    'remember_ttl' => 2592000, // Absolute 30 days, never extended by cookie rotation.
+    'remember_cookie' => 'sso_remember', // __Host- prefix is applied when HTTPS is required.
+    'devices_path' => 'sso/devices',
+    'device_password_timeout' => 300,
+    'device_record_ip' => false,
     'signing_kid' => env('SSO_SIGNING_KID', 'initial'),
     'private_key' => env('SSO_PRIVATE_KEY', storage_path('sso/private.pem')),
     // Retain old PUBLIC keys until all tokens they signed have expired.

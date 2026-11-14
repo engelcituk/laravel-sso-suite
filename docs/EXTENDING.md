@@ -20,6 +20,10 @@ Los servicios `GlobalSessions` y `LogoutDeliveries` se resuelven por DI. No son 
 administrativas HTTP. Agrega autorización y auditoría en las operaciones que los invoquen.
 Las vistas `sso-server::consent` y `sso-server::logout` se pueden sobrescribir siguiendo la
 convención Laravel resources/views/vendor/sso-server. Conserva CSRF y transacciones opacas.
+La vista `sso-server::devices` expone administración propia con contraseña reciente.
+El provider incorpora el middleware al kernel web y escucha Login/Validated, ambos
+eventos de logout nativos y PasswordReset. No sustituyas la restauración por un login
+que avance auth_time; usa la política documentada en REMEMBER-DEVICES.md.
 
 El OP ofrece atributos normales profile/email desde el Eloquent central mediante
 `sso-server.claim_attributes`. El mapeo puede apuntar a columnas o atributos JSON casteados;

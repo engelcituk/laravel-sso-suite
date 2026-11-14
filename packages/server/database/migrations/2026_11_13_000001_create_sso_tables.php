@@ -16,8 +16,12 @@ return new class extends Migration
             $table->text('backchannel_logout_uri')->nullable();
         });
         Schema::create('sso_sessions', function (Blueprint $table): void {
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                $table->collation('utf8mb4_bin');
+            }
             $table->string('sid', 64)->primary();
             $table->string('subject')->index();
+            $table->char('device_id', 64)->nullable()->index();
             $table->unsignedBigInteger('auth_time');
             $table->unsignedBigInteger('last_seen');
             $table->unsignedBigInteger('expires_at')->index();
@@ -46,10 +50,37 @@ return new class extends Migration
             $table->unique(['sid', 'client_id']);
             $table->index(['delivered_at', 'next_attempt']);
         });
+        Schema::create('sso_devices', function (Blueprint $table): void {
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                $table->collation('utf8mb4_bin');
+            }
+            $table->char('id', 64)->primary();
+            $table->string('subject')->index();
+            $table->string('label', 100);
+            $table->string('user_agent', 512);
+            $table->string('ip_address', 45)->nullable();
+            $table->char('credential_hash', 64);
+            $table->unsignedBigInteger('auth_time');
+            $table->unsignedBigInteger('created_at');
+            $table->unsignedBigInteger('last_seen');
+            $table->unsignedBigInteger('expires_at')->index();
+            $table->unsignedBigInteger('remember_until')->nullable();
+            $table->unsignedBigInteger('revoked_at')->nullable()->index();
+        });
+        Schema::create('sso_remember_tokens', function (Blueprint $table): void {
+            $table->char('id', 64)->primary();
+            $table->char('device_id', 64)->index();
+            $table->char('token_hash', 64);
+            $table->unsignedBigInteger('created_at');
+            $table->unsignedBigInteger('expires_at')->index();
+            $table->unsignedBigInteger('used_at')->nullable();
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('sso_remember_tokens');
+        Schema::dropIfExists('sso_devices');
         Schema::dropIfExists('sso_logout_deliveries');
         Schema::dropIfExists('sso_token_sessions');
         Schema::dropIfExists('sso_auth_contexts');

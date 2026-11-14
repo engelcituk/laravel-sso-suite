@@ -35,7 +35,7 @@
 - ADR-017: REVIEW conserva el estado oficial. La auditoría local verifica semántica de
   DOM/formularios/CSRF y respuestas 400; los SKIPPED se contrastan con discovery y pruebas
   negativas de capacidades. Nada se convierte artificialmente en PASSED.
-- ADR-018: una migración inicial por paquete. El servidor crea sus cinco tablas con
+- ADR-018: una migración inicial por paquete. El servidor crea sus siete tablas con
   todos los campos e índices definitivos en `create_sso_tables.php`; el cliente conserva
   su propia migración. Durante este desarrollo los cambios se incorporan al esquema
   inicial, sin acumular migraciones incrementales. Consolidar archivos no altera datos
@@ -49,6 +49,16 @@
   hints recientes, recibos útiles ni grants ajenos. Caducidad explícita del índice local.
 - ADR-022: claves issuer/subject/sid sensibles a mayúsculas y evento de aprovisionamiento
   después del commit. Las transacciones del llamador deben reintentarse completas ante deadlock.
+- ADR-023: Recordarme sólo en el OP, por dispositivo, con selector/verificador aleatorios,
+  hash en base, cookie cifrada host-only y vencimiento absoluto. Se retira el recaller nativo
+  compartido; los RP no adquieren credenciales persistentes propias.
+- ADR-024: rotación de un uso. Replay con secreto correcto revoca la familia; no hay
+  ventana de reutilización, ni siquiera para recuperaciones simultáneas de una cookie.
+- ADR-025: restaurar no avanza auth_time ni acredita contraseña reciente. La administración
+  propia requiere CSRF y confirmación del proveedor central; reset de contraseña/fingerprint
+  de credenciales invalida dispositivos. Los metadatos del navegador no autentican hardware.
+- ADR-026: bloqueo dispositivo → sesión y lectura actual de sus sid. Revocar un sid
+  retira el acceso del dispositivo completo y sus futuras recuperaciones Recordarme.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

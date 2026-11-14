@@ -33,17 +33,21 @@ php tools/e2e.php
 E2E requiere puertos loopback 9100/9101/9102 libres, proc_open y PDO SQLite. Se niega a
 reutilizar servidores ajenos y detiene únicamente los procesos que inicia. El setup es
 repetible, conserva bases y secretos, y E2E retira su identidad temporal al terminar.
+La versión actual prueba también pérdida de la cookie de sesión central, rotación de
+Recordarme, confirmación de contraseña, cierre de otro navegador y tres entregas de logout.
 
-Resultado local final (2026-11-14): 155 tests / 635 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
+Resultado local final (2026-11-14): 184 tests / 810 aserciones en PHP 8.3.36, 8.4.27 y 8.5.12, todos
 aprobados; E2E, Pint, PHPStan, validación Composer y auditoría también aprobados.
-La consolidación del esquema añade `MigrationTest`: crea, revierte y recrea las cinco
+La consolidación del esquema añade `MigrationTest`: crea, revierte y recrea las siete
 tablas del servidor desde un solo archivo; comprueba PKCE por defecto, campos opcionales
 e índices. Las repeticiones están en `.runtime/conformance/consolidated-schema-php*-verified.log`.
 La fase de bases añade limpieza, eventos después de commit, expiración local y comparación
-sensible a mayúsculas. Logs actuales: `.runtime/database-lab-php*-final.log`.
-La configuración `phpunit.database.xml` ejecuta toda la suite más diez casos concurrentes
-y la comprobación de entorno: MySQL 8.4.13, **166 pruebas / 691 aserciones**;
-PostgreSQL 18.7, **166 / 689**, sin fallos ni saltos. Ver [reproducción y límites](DATABASE-CONCURRENCY.md).
+sensible a mayúsculas; la fase Recordarme añade rotación, replay, autenticación fresca y
+administración de dispositivos. Logs actuales: `.runtime/remember-php*-final.log`.
+La configuración `phpunit.database.xml` ejecuta toda la suite más catorce casos concurrentes
+y la comprobación de entorno: MySQL 8.4.13, **199 pruebas / 883 aserciones**;
+PostgreSQL 18.7, **199 / 881**, sin fallos ni saltos. Ver [reproducción y límites](DATABASE-CONCURRENCY.md)
+y [Recordarme/dispositivos](REMEMBER-DEVICES.md).
 `phpunit.xml` excluye `tests/Database`: esos casos requieren motores reales y pcntl, no
 se sustituyen por simulaciones ni se cuentan como saltos de la suite SQLite.
 El subconjunto normativo propio suma 106 tests / 414 aserciones. Su lanzador genera JUnit
@@ -54,6 +58,9 @@ localmente y 10 SKIPPED contrastados con discovery y pruebas negativas. El infor
 sin secretos está en conformance/oidf-review.json. Los estados oficiales se conservan.
 En Windows composer analyse usa tools/analyse.php con --debug para evitar el bloqueo de
 manifiestos Testbench entre procesos. No modifica vendor ni reduce reglas/nivel de análisis.
+Ejecuta PHPStan y PHPUnit en serie: una ejecución simultánea produjo 17 errores de rename
+de services.php en Windows. El intento se conservó; la repetición normativa en serie pasó
+106 tests / 414 aserciones, registrada en `.runtime/remember-own-conformance-verified.log`.
 
 GitHub Actions define PHP 8.3/8.4/8.5 y las mismas verificaciones. Configurar una matriz no
 demuestra que se ejecutó: los entornos verificados figuran en ROADMAP. Quedan campañas de

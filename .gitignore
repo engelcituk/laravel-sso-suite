@@ -2,6 +2,7 @@
 /.phpunit.cache/
 /.phpstan-cache/
 /.runtime/
+/.impeccable/review/
 /.env
 *.pem
 *.key

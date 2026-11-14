@@ -28,6 +28,9 @@ Antes de un piloto controlado:
   retención que impida revivir sesiones. Probar restauración y caídas antes del piloto.
 - Programar `sso:prune-server` en el OP y `sso:prune-client` en cada RP según los plazos
   documentados. Las entregas pendientes se conservan; monitorizar y resolver sus fallos.
+- Revisar el plazo absoluto de Recordarme y proteger `/sso/devices`, su confirmación de
+  contraseña y el almacenamiento de sesión. Conservar el middleware web y HTTPS para la
+  cookie host-only. Aplicar revocación explícita al suspender cuentas o responder a incidentes.
 - Ejecutar migraciones revisadas y pruebas en tu motor/versión real. El mismo default DB
   debe contener Passport y SSO para conservar atomicidad. Redis sigue siendo opcional.
 

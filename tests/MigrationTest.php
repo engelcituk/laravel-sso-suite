@@ -12,7 +12,7 @@ final class MigrationTest extends TestCase
         $files = glob(__DIR__.'/../packages/server/database/migrations/*.php');
         $this->assertCount(1, $files);
         $migration = require $files[0];
-        $tables = ['sso_clients', 'sso_sessions', 'sso_auth_contexts', 'sso_token_sessions', 'sso_logout_deliveries'];
+        $tables = ['sso_clients', 'sso_sessions', 'sso_auth_contexts', 'sso_token_sessions', 'sso_logout_deliveries', 'sso_devices', 'sso_remember_tokens'];
 
         $migration->down();
         foreach ($tables as $table) {

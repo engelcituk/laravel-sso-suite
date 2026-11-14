@@ -34,7 +34,7 @@ peticiones ya iniciadas y el fallo cerrado se documentan en SESSIONS.md. Se prob
 entre dos RP, suspensión, caída del OP simulada y reintentos HTTP 503.
 Back-channel valida firma, evento, audiencia, sid/sub, TTL y jti; usa recibos atómicos,
 índice persistente y bandeja durable. Reconoce duplicados sin reaplicarlos. Los ensayos
-secuenciales SQLite se complementan con diez carreras en MySQL/PostgreSQL con hasta
+secuenciales SQLite se complementan con catorce carreras en MySQL/PostgreSQL con hasta
 ocho procesos, reservas protegidas y limpieza probada. No equivalen a campañas de carga
 prolongada ni a certificación externa.
 La ampliación del perfil y las pruebas normativas se documentan en OIDC-CONFORMANCE.md.
@@ -51,6 +51,15 @@ El replay revoca sólo tokens ligados al código y al cliente autenticado. UserI
 tener el mismo sub que el ID Token validado antes de crear o actualizar al usuario local.
 Los Request Objects siguen rechazados: se puede leer de forma acotada sólo response_mode
 para entregar ese error; nunca se aceptan su redirect, identidad, state, scopes ni PKCE.
+
+Recordarme guarda sólo el hash de un secreto aleatorio por dispositivo y mantiene
+vencimiento absoluto, rotación y detección estricta de replay. La cookie central es
+host-only/HttpOnly/SameSite=Lax y Secure con HTTPS; no contiene ID Tokens ni contraseña.
+La restauración no acredita autenticación fresca ni confirmación de contraseña. El listado
+y las mutaciones se aíslan por sujeto; CSRF y contraseña reciente protegen los cambios.
+La revocación cierra el dispositivo completo, incluidas las sesiones anteriores a una
+recuperación. PasswordReset y el fingerprint de credenciales impiden reutilizar acceso
+tras cambios de contraseña. Ver política y límites en REMEMBER-DEVICES.md.
 
 ## Validación externa pendiente
 

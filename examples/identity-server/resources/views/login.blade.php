@@ -6,5 +6,8 @@
     @csrf
     <label>Correo <input name="email" type="email" autocomplete="username" required></label>
     <label>Contraseña <input name="password" type="password" autocomplete="current-password" required></label>
+    @if (config('sso-server.remember_enabled'))
+        <label><input name="remember" type="checkbox" value="1"> Recordarme en este dispositivo</label>
+    @endif
     <button>Entrar</button>
 </form></html>

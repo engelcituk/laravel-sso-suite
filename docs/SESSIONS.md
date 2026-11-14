@@ -53,7 +53,8 @@ cierre global no se confirma; el operador/usuario debe reintentarlo en el OP.
 
 El evento Laravel Logout del guard central también revoca su sid. Administración puede
 inyectar `GlobalSessions` y llamar `revoke($sid)` para un dispositivo/sesión o
-`revokeAll($subject)` para todos. Esas APIs deben exponerse sólo tras autorización y CSRF
+`revokeAll($subject)` para todos. `revoke($sid)` también retira el acceso persistente y
+los otros sid del mismo dispositivo, para que Recordarme no reabra el logout. Esas APIs deben exponerse sólo tras autorización y CSRF
 en tu aplicación, nunca como endpoints públicos por sujeto. Marcar is_active=false bloquea
 las verificaciones; para invalidar definitivamente las sesiones al suspender una cuenta,
 llama también revokeAll en tu servicio administrativo.
@@ -75,10 +76,13 @@ alertas y tamaño de las tablas. `sso:prune-server` y `sso:prune-client` aplican
 conservadora mediante scheduler del anfitrión. La matriz prueba hasta ocho procesos
 concurrentes en MySQL/PostgreSQL; ver [resultados y plazos](DATABASE-CONCURRENCY.md).
 
-## Pendiente
+## Recordarme y administración de dispositivos
 
-Recordarme central persistente con rotación, replay y política por dispositivo; UI de
-administración de dispositivos; certificación externa; campañas prolongadas de carga y
-fallos de red/infraestructura. Las carreras concretas de revocación/entrega en MySQL y
-PostgreSQL ya se ejecutaron. El ejemplo no ofrece Recordarme hasta validar
-esa política: no se simula guardando un ID Token ni un remember token en los clientes.
+El ejemplo central ofrece Recordarme opt-in y `/sso/devices`. La credencial persistente
+se rota en cada recuperación, conserva la fecha de autenticación original y no extiende
+su vencimiento absoluto. Replay verificado revoca el dispositivo; una contraseña reciente
+y CSRF protegen la administración. Los RP siguen sin credenciales Recordarme propias.
+Ver [política, integración, limpieza y resultados reales](REMEMBER-DEVICES.md).
+
+Quedan certificación externa, campañas prolongadas de carga y fallos de red/infraestructura.
+Las carreras concretas de revocación, entrega y recuperación en MySQL/PostgreSQL ya se ejecutaron.

@@ -24,9 +24,9 @@ Hay sesiones centrales con caducidad, comprobación remota con fallo cerrado, lo
 confirmación, back-channel firmado y notificaciones durables con reintentos.
 
 La primera vertical está probada con tres aplicaciones y hosts independientes. No hay
-certificación OpenID, auditoría externa ni validación operativa para producción. Recordarme,
-interoperabilidad completa con RPs de terceros, pruebas de carrera en motores reales,
-política de dispositivos y otros requisitos siguen abiertos en [ROADMAP](docs/ROADMAP.md).
+certificación OpenID, auditoría externa ni validación operativa para producción. Recordarme
+central y la administración de dispositivos están implementados y probados, incluidas
+carreras en MySQL/PostgreSQL. El alcance y lo pendiente figuran en [ROADMAP](docs/ROADMAP.md).
 No se admite refresh OIDC: al expirar el access token se repite una redirección silenciosa
 si la sesión central sigue activa. No se anuncia un grant que no esté habilitado.
 
@@ -97,6 +97,7 @@ composer audit --locked
 
 [Guía de pruebas](docs/TESTING.md), [evidencia y pendientes](docs/ROADMAP.md),
 [concurrencia MySQL/PostgreSQL y retención](docs/DATABASE-CONCURRENCY.md),
+[Recordarme y dispositivos](docs/REMEMBER-DEVICES.md),
 [modelo de seguridad](docs/SECURITY-MODEL.md), [arquitectura](docs/ARCHITECTURE.md),
 [decisiones y fuentes](docs/DECISIONS.md), [Auth](docs/LARAVEL-AUTH.md),
 [ACL local](docs/LOCAL-ACL.md), [sesiones y logout](docs/SESSIONS.md),

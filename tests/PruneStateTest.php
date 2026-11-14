@@ -35,7 +35,7 @@ final class PruneStateTest extends TestCase
                 DB::table('sso_auth_contexts')->insert(['code_id' => $code, 'sid' => 'old']);
             }
         }
-        $this->assertSame(['deliveries' => 1, 'contexts' => 1, 'codes' => 1, 'bindings' => 1, 'tokens' => 1, 'sessions' => 1],
+        $this->assertSame(['deliveries' => 1, 'contexts' => 1, 'codes' => 1, 'bindings' => 1, 'tokens' => 1, 'sessions' => 1, 'remember_tokens' => 0, 'devices' => 0],
             app(ServerState::class)->prune(1));
         $this->assertSame(['active-session', 'active-token', 'pending', 'recent-hint'], DB::table('sso_sessions')->orderBy('sid')->pluck('sid')->all());
         $this->assertTrue(DB::table('oauth_access_tokens')->where('id', 'host-owned')->exists());
@@ -72,6 +72,6 @@ final class PruneStateTest extends TestCase
         }
         $this->artisan('sso:prune-client', ['--limit' => 1])->expectsOutput('{"sessions":1,"receipts":0}')->assertSuccessful();
         $this->assertSame(2, DB::table('sso_local_sessions')->count());
-        $this->artisan('sso:prune-server')->expectsOutput('{"deliveries":0,"contexts":0,"codes":0,"bindings":0,"tokens":0,"sessions":0}')->assertSuccessful();
+        $this->artisan('sso:prune-server')->expectsOutput('{"deliveries":0,"contexts":0,"codes":0,"bindings":0,"tokens":0,"sessions":0,"remember_tokens":0,"devices":0}')->assertSuccessful();
     }
 }

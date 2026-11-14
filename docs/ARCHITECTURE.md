@@ -46,3 +46,9 @@ rutas ni respuesta OAuth de la aplicación anfitriona.
 Una sesión global opaca se guarda por separado de la sesión web central. Cada código y
 token OIDC queda ligado a ella. El cliente verifica su vigencia antes de operaciones
 autenticadas; la política estricta falla cerrada. Ver `SECURITY-MODEL.md` y el roadmap.
+
+En el OP, `sso_devices` agrupa los sid de un navegador y `sso_remember_tokens` conserva
+hashes e historial de rotación. Un dispositivo puede recuperar una sesión web hasta el
+vencimiento absoluto elegido, conservando auth_time. Sus controles propios exigen
+contraseña reciente y CSRF. Revocación y emisión se coordinan con el bloqueo del
+dispositivo antes del sid; la limpieza respeta hints y entregas pendientes.

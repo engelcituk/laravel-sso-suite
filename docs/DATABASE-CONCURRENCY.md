@@ -9,15 +9,16 @@ Las imágenes y sus digests, versiones, aislamiento, huella de código y conteos
 
 | Entorno | Aislamiento | Suite completa |
 | --- | --- | --- |
-| MySQL 8.4.13 / InnoDB | REPEATABLE READ | 166 pruebas, 691 aserciones, sin fallos ni saltos |
-| PostgreSQL 18.7 | READ COMMITTED | 166 pruebas, 689 aserciones, sin fallos ni saltos |
-| SQLite / Windows PHP 8.3.36, 8.4.27 y 8.5.12 | pruebas secuenciales | 155 pruebas, 635 aserciones en cada versión |
+| MySQL 8.4.13 / InnoDB | REPEATABLE READ | 199 pruebas, 883 aserciones, sin fallos ni saltos |
+| PostgreSQL 18.7 | READ COMMITTED | 199 pruebas, 881 aserciones, sin fallos ni saltos |
+| SQLite / Windows PHP 8.3.36, 8.4.27 y 8.5.12 | pruebas secuenciales | 184 pruebas, 810 aserciones en cada versión |
 
 La diferencia de dos aserciones comprueba las collations de MySQL. El runner Linux usa
 PHP 8.3.36, Laravel 13.42.0, Passport 13.10.0, League 9.4.1 y PHPUnit 12.5.44.
-Ejecución completa exportada: `verified-20261114-200059`, con sus JUnit y versiones bajo
+Ejecución completa exportada: `remember-final-20261114-210314`, con sus JUnit y versiones bajo
 `.runtime/database-lab/results/`. Después pasaron tres rondas adicionales por motor:
-`stable-1`, `stable-2` y `stable-3`, cada una con **10 pruebas / 51 aserciones** sin fallos.
+`remember-stable-1`, `remember-stable-2` y `remember-stable-3`, cada una con
+**14 pruebas / 68 aserciones** sin fallos. La matriz anterior y sus logs también se conservan.
 Se ejecuta toda la regresión, no sólo pruebas con SQL simulado. Cada prueba parte de un
 esquema nuevo en `sso_lab_test`; la creación y reversión usan las migraciones únicas de
 los paquetes y las originales de Passport.
@@ -44,6 +45,10 @@ coinciden en cada carrera:
    reservas vigentes, y todas las entregas confirmadas.
 10. Ocho procesos de limpieza: cada fila vencida se cuenta una vez y se conservan las
     sesiones con entregas pendientes.
+
+`RememberConcurrencyTest` añade cuatro casos: un consumidor por credencial con revocación
+ante replay, revocación antes de rotar, revocación de una recuperación recién confirmada
+desde un snapshot anterior y ocho dispositivos independientes. Ver [política y evidencia](REMEMBER-DEVICES.md).
 
 Las respuestas HTTP externas de estos casos se simulan para controlar las pausas y los
 errores 503; las transacciones y bloqueos son reales. El E2E de tres aplicaciones y la
@@ -130,7 +135,8 @@ GitHub Actions tiene una matriz adicional para estos motores; **no se ejecutó r
 Los tests fuerzan carreras concretas a los aislamientos indicados; no acreditan otros
 aislamientos/versiones, clústeres, pérdida de red real ni campañas de carga prolongada.
 La entrega back-channel sigue siendo al menos una vez y el RP debe reconocer duplicados.
-La siguiente fase funcional es Recordarme central y dispositivos, todavía sin implementar.
+Recordarme central y dispositivos ya están implementados y evaluados. La siguiente fase
+del roadmap amplía auditoría/diagnóstico y validación operativa.
 
 Las decisiones de bloqueo se contrastaron con la documentación primaria de
 [MySQL 8.4](https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html),

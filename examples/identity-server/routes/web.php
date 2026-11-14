@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/login', 'login')->name('login');
 Route::post('/login', function (Request $request) {
-    $credentials = $request->validate(['email' => 'required|email', 'password' => 'required|string']);
+    $input = $request->validate(['email' => 'required|email', 'password' => 'required|string', 'remember' => 'sometimes|boolean']);
+    $credentials = array_intersect_key($input, array_flip(['email', 'password']));
     if (! Auth::attempt($credentials + ['is_active' => true], false)) {
         return back()->withErrors(['email' => 'Credenciales inválidas.']);
     }
@@ -14,4 +15,4 @@ Route::post('/login', function (Request $request) {
 
     return redirect()->intended('/');
 })->middleware('throttle:5,1,central-login');
-Route::get('/', fn () => 'Identity Provider de desarrollo. Accede desde una aplicación cliente.');
+Route::view('/', 'home');

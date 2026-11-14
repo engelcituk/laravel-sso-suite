@@ -10,22 +10,26 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
 | 4 identidad local | concurrencia local verificada | índice sensible a mayúsculas, recuperación de conflicto y commit; carreras en MySQL/PostgreSQL, ACL independiente |
-| 5 sesiones | concurrencia y limpieza verificadas | revocación, outbox con reserva protegida y retención probados; Recordarme y dispositivos pendientes |
+| 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
 | 6 instalación | laboratorios reproducidos | tres apps, Docker Linux, MySQL/PostgreSQL y comandos documentados; faltan otras versiones/entornos de despliegue |
 | 7 publicación | pendiente | calidad local aprobada; faltan auditoría externa, conformidad, matrices remotas y autorización |
 
 ## Resultados ejecutados
 
-- **155 tests / 635 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
+- **184 tests / 810 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
 - PHPStan/Larastan nivel 5: sin errores y sin baseline. Laravel Pint: aprobado.
 - Esquema del servidor consolidado en una migración inicial; prueba de creación,
   reversión y recreación aprobada. Los ajustes se mantienen en una migración por paquete.
-- Matriz completa en Linux PHP 8.3.36: MySQL **8.4.13 / REPEATABLE READ**, **166 pruebas /
-  691 aserciones**; PostgreSQL **18.7 / READ COMMITTED**, **166 / 689**, sin fallos ni saltos.
-  Diez carreras con hasta ocho procesos por motor, limpieza de estado y recibos durables.
+- Matriz completa en Linux PHP 8.3.36: MySQL **8.4.13 / REPEATABLE READ**, **199 pruebas /
+  883 aserciones**; PostgreSQL **18.7 / READ COMMITTED**, **199 / 881**, sin fallos ni saltos.
+  Catorce carreras con hasta ocho procesos por motor: diez de protocolo y cuatro de Recordarme.
   Ver [informe de concurrencia](DATABASE-CONCURRENCY.md) y su JSON sin secretos.
+- Recordarme: cookie central host-only con vencimiento absoluto, secretos aleatorios
+  guardados como hash, rotación de un uso y revocación de familia ante replay. La pantalla
+  `/sso/devices` permite nombrar/revocar dispositivos propios con CSRF y contraseña reciente.
+  [Alcance, política estricta y resultados](REMEMBER-DEVICES.md).
 - Grupo de conformidad propio: **106 tests / 414 aserciones**, sin saltos; informes JUnit/JSON
   locales. Ver [alcance](OIDC-CONFORMANCE.md) y [resultados](OIDC-CONFORMANCE-RESULTS.md).
 - Suite oficial descargada y fijada a `daca6ad2068468d42557ea1152f899cc3ac01a10`.
@@ -41,10 +45,12 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 - Resolución independiente del cliente: 77 paquetes, sin Passport ni laravel-sso/server.
 - Setup de ejemplos ejecutado y repetido conservando bases y secretos.
 - E2E con tres servidores HTTP reales: hosts 127.0.0.1, 127.0.0.2 y 127.0.0.3,
-  cookies separadas, tres SQLite y tres APP_KEY distintas; una entrada de credenciales,
-  misma identidad, ACL aislada y ausencia de contraseñas RP.
+  cookies separadas, tres SQLite y tres APP_KEY distintas; el primer navegador conecta
+  dos RP con una entrada de credenciales. Un segundo verifica revocación aislada; misma
+  identidad, ACL independiente y ausencia de contraseñas RP.
 - E2E rechazó login sin CSRF, cerró globalmente desde A, obtuvo 401 en B y procesó las
-  dos entregas back-channel. Verificó además POST externo de authorize/logout y rechazo
+  tres entregas back-channel. Verificó además recuperación/rotación tras perder la cookie
+  de sesión central, revocación de otro dispositivo, POST externo de authorize/logout y rechazo
   CSRF en la confirmación. Los procesos temporales quedaron detenidos.
 
 No ejecutado: GitHub Actions remoto, navegadores reales cross-site, campañas prolongadas
@@ -68,22 +74,21 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 | Back-channel durable | LogoutDeliveries / LogoutController | LogoutTest: 503, reintento, duplicado y sid aislado; E2E |
 | Revisión estricta | EnsureGlobalSession | ClientTest OP 503 falla cerrado; E2E B recibe 401 |
 | Independencia | manifests / ejemplos | cliente sin Passport; E2E bases y APP_KEY distintas |
-| Recordarme | política central persistente | **sin implementar ni demostrar** |
-| Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18, diez carreras con procesos independientes; carga prolongada pendiente |
+| Recordarme | DeviceSessions + SessionGuard | rotación, replay, password reset, expiración y carreras reales; auth_time original conservado |
+| Dispositivos propios | DeviceController + middleware central | listado, nombres, cierre individual/otros/todos, aislamiento, contraseña reciente, CSRF y E2E |
+| Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18, catorce carreras con procesos independientes; carga prolongada pendiente |
 | Perfil Code normativo local | tests/Conformance | **106 tests / 414 aserciones**; no equivale al harness oficial |
 | Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
 
 ## Próxima fase
 
-El bloque de concurrencia y retención queda atendido en los motores/aislamientos
-documentados. Se conserva la reproducción de los cinco planes OIDC y sus evidencias.
+Los bloques de concurrencia/retención y Recordarme/dispositivos quedan atendidos en el
+alcance local documentado. Se conserva la reproducción de los cinco planes OIDC y sus evidencias.
 
-1. Implementar Recordarme central con rotación y revocación por dispositivo; probarlo
-   antes de habilitar UI o anunciar soporte.
-2. Ampliar eventos de auditoría y comandos de instalación/diagnóstico; validar otros
+1. Ampliar eventos de auditoría y comandos de instalación/diagnóstico; validar otros
    despliegues, navegadores cross-site y campañas prolongadas de carga/fallos de infraestructura.
-3. Ejecutar la matriz CI remota y ampliar versiones/aislamientos, sin atribuirle resultados locales.
-4. Revisión independiente, evaluación/certificación externa, canal privado de reportes,
+2. Ejecutar la matriz CI remota y ampliar versiones/aislamientos, sin atribuirle resultados locales.
+3. Revisión independiente, evaluación/certificación externa, canal privado de reportes,
    nombre público y split de paquetes;
    autorización explícita antes de publicar versiones.
 

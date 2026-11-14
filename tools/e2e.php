@@ -39,12 +39,15 @@ try {
     }
     $appKeys = [];
     $clientIds = [];
+    $sessionCookies = [];
     foreach ($bases as $name => $host) {
         $base = $root.'/examples/'.$name;
         $env = file_get_contents($base.'/.env');
         check(str_contains($env, 'APP_ENV=local'), 'E2E may only operate local development examples.');
         preg_match('/^APP_KEY=(.+)$/m', $env, $match);
         $appKeys[] = trim($match[1]);
+        preg_match('/^SESSION_COOKIE=(.+)$/m', $env, $sessionMatch);
+        $sessionCookies[$name] = trim($sessionMatch[1]);
         if (preg_match('/^SSO_CLIENT_ID=(.+)$/m', $env, $clientMatch)) {
             $clientIds[$name] = trim($clientMatch[1]);
         }
@@ -69,7 +72,8 @@ try {
         check($ready, 'Server did not become ready: '.$host);
     }
     check(count(array_unique($appKeys)) === 3, 'Examples must have distinct APP_KEY values.');
-    $browser = new Client(['cookies' => new CookieJar, 'http_errors' => false, 'allow_redirects' => false, 'timeout' => 10, 'proxy' => '']);
+    $jar = new CookieJar;
+    $browser = new Client(['cookies' => $jar, 'http_errors' => false, 'allow_redirects' => false, 'timeout' => 10, 'proxy' => '']);
     $follow = function (string $url, string $method = 'GET', array $form = []) use ($browser): array {
         $response = $browser->request($method, $url, $form ? ['form_params' => $form] : []);
         for ($i = 0; $response->getStatusCode() >= 300 && $response->getStatusCode() < 400; $i++) {
@@ -85,7 +89,7 @@ try {
     $csrf = field((string) $response->getBody(), '_token');
     check($browser->post($url, ['form_params' => ['email' => $email, 'password' => $password]])->getStatusCode() === 419,
         'Central login accepted a request without CSRF.');
-    [$url, $response] = $follow($url, 'POST', ['_token' => $csrf, 'email' => $email, 'password' => $password]);
+    [$url, $response] = $follow($url, 'POST', ['_token' => $csrf, 'email' => $email, 'password' => $password, 'remember' => '1']);
     check(rtrim($url, '/') === 'http://127.0.0.2:9101' && $response->getStatusCode() === 200,
         'First OIDC callback failed at '.parse_url($url, PHP_URL_HOST).parse_url($url, PHP_URL_PATH).' (HTTP '.$response->getStatusCode().').');
     $one = json_decode((string) $browser->get('http://127.0.0.2:9101/me')->getBody(), true);
@@ -104,6 +108,38 @@ try {
         $columns = $db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_COLUMN, 1);
         check(! in_array('password', $columns, true) && ! in_array('remember_token', $columns, true), 'RP stores local credentials.');
     }
+    $remembered = $jar->getCookieByName('sso_remember');
+    check($remembered !== null && $remembered->getHttpOnly() && $remembered->getDomain() === '127.0.0.1', 'Host-only remembered cookie missing.');
+    $originalRememberedValue = $remembered->getValue();
+    $jar->clear('127.0.0.1', '/', $sessionCookies['identity-server']);
+    $devicesPage = $browser->get('http://127.0.0.1:9100/sso/devices');
+    check($devicesPage->getStatusCode() === 200, 'Persistent credential did not recover the central session.');
+    check($jar->getCookieByName('sso_remember')->getValue() !== $originalRememberedValue, 'Persistent credential was not rotated.');
+    $devicesHtml = (string) $devicesPage->getBody();
+    check(str_contains($devicesHtml, 'Confirmar contraseña'), 'Remembered authentication skipped password confirmation.');
+    $devicesCsrf = field($devicesHtml, '_token');
+    check($browser->post('http://127.0.0.1:9100/sso/devices/revoke-others')->getStatusCode() === 419, 'Device mutation accepted missing CSRF.');
+    check($browser->post('http://127.0.0.1:9100/sso/devices/revoke-others', ['headers' => ['Accept' => 'application/json'],
+        'form_params' => ['_token' => $devicesCsrf]])->getStatusCode() === 403, 'Device mutation accepted missing password confirmation.');
+    check($browser->post('http://127.0.0.1:9100/sso/devices/confirm', ['form_params' => [
+        '_token' => $devicesCsrf, 'password' => $password]])->getStatusCode() === 302, 'Device password confirmation failed.');
+
+    $otherJar = new CookieJar;
+    $otherBrowser = new Client(['cookies' => $otherJar, 'http_errors' => false, 'allow_redirects' => false, 'timeout' => 10, 'proxy' => '']);
+    $otherLogin = $otherBrowser->get('http://127.0.0.1:9100/login');
+    check($otherBrowser->post('http://127.0.0.1:9100/login', ['form_params' => [
+        '_token' => field((string) $otherLogin->getBody(), '_token'), 'email' => $email, 'password' => $password, 'remember' => '1',
+    ]])->getStatusCode() === 302, 'Second device login failed.');
+    check($otherBrowser->get('http://127.0.0.2:9101/sso/login', ['allow_redirects' => ['max' => 12]])->getStatusCode() === 200,
+        'Second device could not access its RP.');
+    check($browser->post('http://127.0.0.1:9100/sso/devices/revoke-others', ['form_params' => ['_token' => $devicesCsrf]])->getStatusCode() === 302,
+        'Other-device revocation failed.');
+    check($otherBrowser->get('http://127.0.0.2:9101/me', ['headers' => ['Accept' => 'application/json']])->getStatusCode() === 401,
+        'RP accepted a revoked device.');
+    $otherJar->clear('127.0.0.1', '/', $sessionCookies['identity-server']);
+    check($otherBrowser->get('http://127.0.0.1:9100/sso/devices', ['headers' => ['Accept' => 'application/json']])->getStatusCode() === 401,
+        'Revoked device recovered access with its remembered cookie.');
+    check($browser->get('http://127.0.0.3:9102/me')->getStatusCode() === 200, 'Other-device revocation affected the current device.');
     $externalAuthorization = $browser->post('http://127.0.0.1:9100/oidc/authorize', ['form_params' => [
         'response_type' => 'code', 'client_id' => $clientIds['app-one'], 'redirect_uri' => 'http://127.0.0.2:9101/sso/callback',
         'scope' => 'openid', 'code_challenge_method' => 'S256',
@@ -130,7 +166,7 @@ try {
     check(is_resource($process) && proc_close($process) === 0, 'Back-channel delivery command failed.');
     $pending = $identityDb->query('SELECT COUNT(*) FROM sso_logout_deliveries WHERE delivered_at IS NULL')->fetchColumn();
     check((int) $pending === 0, 'Back-channel deliveries remain pending.');
-    echo "PASS: one login, two hosts, same identity, independent ACL/databases/APP_KEY, no RP passwords, global logout and back-channel.\n";
+    echo "PASS: SSO/ACL isolation, remembered-session recovery and rotation, CSRF/password confirmation, per-device revocation, global logout and back-channel.\n";
 } finally {
     foreach ($processes as $process) {
         proc_terminate($process);
@@ -147,6 +183,24 @@ try {
             $db->prepare('DELETE FROM sso_local_sessions WHERE subject=?')->execute([$subject]);
             $db->prepare('DELETE FROM users WHERE id=?')->execute([$id]);
         }
+    }
+    $sids = $identityDb->prepare('SELECT sid FROM sso_sessions WHERE subject=?');
+    $sids->execute([$subject]);
+    foreach ($sids->fetchAll(PDO::FETCH_COLUMN) as $sid) {
+        foreach (['sso_logout_deliveries', 'sso_token_sessions', 'sso_auth_contexts'] as $table) {
+            $identityDb->prepare('DELETE FROM '.$table.' WHERE sid=?')->execute([$sid]);
+        }
+    }
+    $devices = $identityDb->prepare('SELECT id FROM sso_devices WHERE subject=?');
+    $devices->execute([$subject]);
+    foreach ($devices->fetchAll(PDO::FETCH_COLUMN) as $device) {
+        $identityDb->prepare('DELETE FROM sso_remember_tokens WHERE device_id=?')->execute([$device]);
+    }
+    foreach (['sso_devices', 'sso_sessions'] as $table) {
+        $identityDb->prepare('DELETE FROM '.$table.' WHERE subject=?')->execute([$subject]);
+    }
+    foreach (['oauth_auth_codes', 'oauth_access_tokens'] as $table) {
+        $identityDb->prepare('DELETE FROM '.$table.' WHERE user_id=?')->execute([$subject]);
     }
     $identityDb->prepare('DELETE FROM users WHERE email=?')->execute([$email]);
 }

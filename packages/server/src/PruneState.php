@@ -14,7 +14,8 @@ final class PruneState
         $limit = max(1, min(10000, $limit));
         $cutoff = time() - max(3600, (int) config('sso-server.state_retention', 86400));
         $expired = gmdate('Y-m-d H:i:s', $cutoff);
-        $counts = ['deliveries' => 0, 'contexts' => 0, 'codes' => 0, 'bindings' => 0, 'tokens' => 0, 'sessions' => 0];
+        $counts = ['deliveries' => 0, 'contexts' => 0, 'codes' => 0, 'bindings' => 0, 'tokens' => 0, 'sessions' => 0,
+            'remember_tokens' => 0, 'devices' => 0];
         $counts['deliveries'] = DB::transaction(function () use ($cutoff, $limit): int {
             $ids = DB::table('sso_logout_deliveries')->where('delivered_at', '<', $cutoff)
                 ->orderBy('id')->limit($limit)->lockForUpdate()->pluck('id');
@@ -49,9 +50,13 @@ final class PruneState
         foreach ($sids as $sid) {
             $deleted = DB::transaction(function () use ($sid, $sessionCutoff, $expired): array {
                 $empty = ['tokens' => 0, 'bindings' => 0, 'sessions' => 0];
-                // Same first lock as exchange/revocation, preventing dangling new bindings.
+                $deviceId = DB::table('sso_sessions')->where('sid', $sid)->value('device_id');
+                if (is_string($deviceId)) {
+                    DB::table('sso_devices')->where('id', $deviceId)->lockForUpdate()->first();
+                }
+                // Same device -> session order as exchange/revocation.
                 $session = DB::table('sso_sessions')->where('sid', $sid)->where('expires_at', '<', $sessionCutoff)->lockForUpdate()->first();
-                if (! $session || DB::table('sso_logout_deliveries')->where('sid', $sid)->exists()) {
+                if (! $session || DB::table('sso_logout_deliveries')->where('sid', $sid)->lockForUpdate()->first()) {
                     return $empty; // Pending deliveries are never discarded, regardless of age.
                 }
                 $bindings = DB::table('sso_token_sessions')->where('sid', $sid)->orderBy('token_id')->lockForUpdate()->get();
@@ -64,6 +69,29 @@ final class PruneState
                 return ['tokens' => DB::table('oauth_access_tokens')->whereIn('id', $ids)->delete(),
                     'bindings' => DB::table('sso_token_sessions')->whereIn('token_id', $ids)->delete(),
                     'sessions' => DB::table('sso_sessions')->where('sid', $sid)->delete()];
+            }, 5);
+            foreach ($deleted as $name => $count) {
+                $counts[$name] += $count;
+            }
+        }
+        $counts['remember_tokens'] = DB::transaction(function () use ($cutoff, $limit): int {
+            $ids = DB::table('sso_remember_tokens')->where('expires_at', '<', $cutoff)->orderBy('id')->limit($limit)->lockForUpdate()->pluck('id');
+
+            return DB::table('sso_remember_tokens')->whereIn('id', $ids)->delete();
+        }, 5);
+        $ids = DB::table('sso_devices')->where(fn ($query) => $query->where('expires_at', '<', $cutoff)->orWhere('revoked_at', '<', $cutoff))
+            ->whereNotExists(fn ($query) => $query->selectRaw('1')->from('sso_sessions')->whereColumn('sso_sessions.device_id', 'sso_devices.id'))
+            ->orderBy('id')->limit($limit)->pluck('id');
+        foreach ($ids as $id) {
+            $deleted = DB::transaction(function () use ($id, $cutoff): array {
+                $device = DB::table('sso_devices')->where('id', $id)->lockForUpdate()->first();
+                if (! $device || ($device->expires_at >= $cutoff && ($device->revoked_at === null || $device->revoked_at >= $cutoff))
+                    || DB::table('sso_sessions')->where('device_id', $id)->lockForUpdate()->first()) {
+                    return ['remember_tokens' => 0, 'devices' => 0];
+                }
+
+                return ['remember_tokens' => DB::table('sso_remember_tokens')->where('device_id', $id)->delete(),
+                    'devices' => DB::table('sso_devices')->where('id', $id)->delete()];
             }, 5);
             foreach ($deleted as $name => $count) {
                 $counts[$name] += $count;

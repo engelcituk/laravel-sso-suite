@@ -23,9 +23,9 @@ php artisan sso:keys
 Publica las migraciones **una sola vez**: el publisher de Laravel cambia timestamps y
 repetirlo puede generar copias. Los ejemplos evitan esto en su script de setup.
 Si Passport ya está instalado conserva sus migraciones y claves existentes.
-El paquete contiene una única migración, `create_sso_tables.php`, que crea las cinco tablas
+El paquete contiene una única migración, `create_sso_tables.php`, que crea las siete tablas
 con su esquema final: política PKCE, nonce opcional, contexto de claims, enlace código/token
-y entregas de logout. No hay migraciones incrementales en esta versión en desarrollo.
+y entregas de logout, dispositivos y credenciales Recordarme. No hay migraciones incrementales en esta versión en desarrollo.
 Los ejemplos sincronizan su copia de esa definición sin cambiar el timestamp ni duplicarla.
 Si conservas copias de las migraciones incrementales de un checkout anterior, retíralas
 del directorio de migraciones y actualiza la copia de `create_sso_tables.php`.
@@ -43,6 +43,10 @@ Configura el guard en `sso-server.guard` y su proveedor Eloquent. El modelo cent
 `is_active`). Las credenciales y recuperación son responsabilidad de tu aplicación central,
 usando Laravel Hash y SessionGuard. Define la ruta nombrada `login`. El ejemplo implementa
 un formulario Blade, CSRF y rate limiting. El paquete no reemplaza tu login existente.
+El ejemplo incluye Recordarme opt-in y un enlace a `/sso/devices`. El provider registra
+el middleware central y escucha los eventos nativos de autenticación/logout/reset de
+contraseña. La cookie por dispositivo sustituye el recaller persistente compartido;
+configuración, integración y política de replay en [Recordarme](REMEMBER-DEVICES.md).
 Las solicitudes externas GET/POST de /oidc/authorize y /oidc/logout no exigen CSRF de
 Laravel. Las decisiones locales usan /oidc/consent y /oidc/logout/confirm con CSRF.
 Conserva los nombres de rutas en las vistas personalizadas y utiliza SessionGuard::login

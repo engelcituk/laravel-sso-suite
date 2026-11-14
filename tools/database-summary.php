@@ -32,15 +32,19 @@ foreach (['mysql', 'pgsql'] as $driver) {
         $counts[$name] = (int) $suite->getAttribute($name);
     }
     $cases = [];
+    $rememberCases = [];
     foreach ($xpath->query('//testcase') as $case) {
         if (str_ends_with($case->getAttribute('class'), '\\Database\\ConcurrencyTest')) {
             $cases[] = $case->getAttribute('name');
         }
+        if (str_ends_with($case->getAttribute('class'), '\\Database\\RememberConcurrencyTest')) {
+            $rememberCases[] = $case->getAttribute('name');
+        }
     }
-    if ($counts['tests'] < 160 || $counts['failures'] + $counts['errors'] + $counts['skipped'] !== 0 || count($cases) !== 10) {
-        throw new RuntimeException('Only complete, passing runs with all ten concurrency cases can be exported.');
+    if ($counts['tests'] < 190 || $counts['failures'] + $counts['errors'] + $counts['skipped'] !== 0 || count($cases) !== 10 || count($rememberCases) !== 4) {
+        throw new RuntimeException('Only complete, passing runs with ten protocol and four remembered-device concurrency cases can be exported.');
     }
-    $report['engines'][$driver] = $environment + ['counts' => $counts, 'concurrency_cases' => $cases,
+    $report['engines'][$driver] = $environment + ['counts' => $counts, 'concurrency_cases' => $cases, 'remember_concurrency_cases' => $rememberCases,
         'maximum_workers' => 8, 'junit_sha256' => hash_file('sha256', $base.'.junit.xml')];
 }
 $path = $root.'/conformance/database-results.json';

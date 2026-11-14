@@ -24,6 +24,10 @@ final class GlobalSessions
 
     public function valid(string $sid, bool $touch = false, bool $lock = false): ?object
     {
+        $deviceId = DB::table('sso_sessions')->where('sid', $sid)->value('device_id');
+        if (is_string($deviceId) && ! app(DeviceSessions::class)->active($deviceId, $lock)) {
+            return null;
+        }
         $query = DB::table('sso_sessions')->where('sid', $sid);
         if ($lock) {
             if (DB::transactionLevel() === 0) {
@@ -39,6 +43,9 @@ final class GlobalSessions
         }
         if ($touch) {
             DB::table('sso_sessions')->where('sid', $sid)->where('revoked', false)->update(['last_seen' => time()]);
+            if (is_string($deviceId)) {
+                DB::table('sso_devices')->where('id', $deviceId)->whereNull('revoked_at')->update(['last_seen' => time()]);
+            }
         }
 
         return $session;
@@ -53,17 +60,35 @@ final class GlobalSessions
         }
         $sid = bin2hex(random_bytes(32));
         $now = time();
-        DB::table('sso_sessions')->insert([
-            'sid' => $sid, 'subject' => (string) $user->getAuthIdentifier(),
-            'auth_time' => $request->session()->get('sso.auth_time', $now),
-            'last_seen' => $now, 'expires_at' => $now + config('sso-server.session_max'), 'revoked' => false,
-        ]);
+        $deviceId = $request->session()->get('sso.device_id');
+        if (! is_string($deviceId)) {
+            $deviceId = app(DeviceSessions::class)->register($request, $user)->id;
+        }
+        DB::transaction(function () use ($deviceId, $sid, $user, $request, $now): void {
+            $device = app(DeviceSessions::class)->active($deviceId, true);
+            abort_unless($device && $device->subject === (string) $user->getAuthIdentifier(), 403, 'The device is no longer active.');
+            DB::table('sso_sessions')->insert([
+                'sid' => $sid, 'subject' => (string) $user->getAuthIdentifier(), 'device_id' => $deviceId,
+                'auth_time' => $request->session()->get('sso.auth_time', $now),
+                'last_seen' => $now, 'expires_at' => min((int) $device->expires_at, $now + config('sso-server.session_max')), 'revoked' => false,
+            ]);
+        }, 5);
         $request->session()->put('sso.sid', $sid);
 
         return DB::table('sso_sessions')->where('sid', $sid)->first();
     }
 
     public function revoke(string $sid): void
+    {
+        $deviceId = DB::table('sso_sessions')->where('sid', $sid)->value('device_id');
+        if (is_string($deviceId) && app(DeviceSessions::class)->revoke($deviceId)) {
+            return;
+        }
+        $this->revokeSession($sid);
+    }
+
+    /** @internal DeviceSessions owns device-wide revocation and lock ordering. */
+    public function revokeSession(string $sid): void
     {
         DB::transaction(function () use ($sid): void {
             $session = DB::table('sso_sessions')->where('sid', $sid)->lockForUpdate()->first();
@@ -89,8 +114,6 @@ final class GlobalSessions
 
     public function revokeAll(string $subject): void
     {
-        foreach (DB::table('sso_sessions')->where('subject', $subject)->pluck('sid') as $sid) {
-            $this->revoke($sid);
-        }
+        app(DeviceSessions::class)->revokeAll($subject);
     }
 }

@@ -1,10 +1,10 @@
 {
-    "checked_at_utc": "2026-11-14T20:04:47+00:00",
-    "run": "verified-20261114-200059",
+    "checked_at_utc": "2026-11-14T21:08:49+00:00",
+    "run": "remember-final-20261114-210314",
     "official_conformance_claimed": false,
     "engines": {
         "mysql": {
-            "checked_at_utc": "2026-11-14T20:01:35+00:00",
+            "checked_at_utc": "2026-11-14T21:03:56+00:00",
             "php": "8.3.36",
             "os": "Linux",
             "driver": "mysql",
@@ -12,7 +12,7 @@
             "isolation": "REPEATABLE-READ",
             "pcntl": true,
             "pdo_client": "mysqlnd 8.3.36",
-            "source_sha256": "f532cd452903bbf812d81a2069073c4e95e462a1d01140bfe2e4f3ca1cf03236",
+            "source_sha256": "fe773984f884f048e5a751974bd607b740a694e785822b8de416f9a5794c815e",
             "collations": {
                 "connection": "utf8mb4_unicode_ci",
                 "local_index": "utf8mb4_bin"
@@ -22,8 +22,8 @@
             "oauth2_server": "9.4.1",
             "phpunit": "12.5.44",
             "counts": {
-                "tests": 166,
-                "assertions": 691,
+                "tests": 199,
+                "assertions": 883,
                 "failures": 0,
                 "errors": 0,
                 "skipped": 0
@@ -40,11 +40,17 @@
                 "test_eight_workers_drain_sixteen_deliveries_without_duplicate_http_attempts",
                 "test_parallel_pruners_delete_each_expired_session_once_and_preserve_pending_work"
             ],
+            "remember_concurrency_cases": [
+                "test_eight_uses_of_one_credential_allow_one_rotation_and_replay_revokes_the_family",
+                "test_revocation_committed_before_rotation_prevents_remembered_login",
+                "test_revoke_with_an_old_snapshot_includes_the_newly_restored_session",
+                "test_eight_separate_devices_can_restore_without_revoking_each_other"
+            ],
             "maximum_workers": 8,
-            "junit_sha256": "3c5e0cb9c50bf223c5a016c2e8dbfa1a920bfdca65926849a08254ad961bbc05"
+            "junit_sha256": "031858c6700cdbc9d50f95207c806ea44cc63886251dd6931d034db930e1f847"
         },
         "pgsql": {
-            "checked_at_utc": "2026-11-14T20:02:05+00:00",
+            "checked_at_utc": "2026-11-14T21:04:51+00:00",
             "php": "8.3.36",
             "os": "Linux",
             "driver": "pgsql",
@@ -52,15 +58,15 @@
             "isolation": "read committed",
             "pcntl": true,
             "pdo_client": "15.20",
-            "source_sha256": "f532cd452903bbf812d81a2069073c4e95e462a1d01140bfe2e4f3ca1cf03236",
+            "source_sha256": "fe773984f884f048e5a751974bd607b740a694e785822b8de416f9a5794c815e",
             "collations": null,
             "laravel": "v13.42.0",
             "passport": "v13.10.0",
             "oauth2_server": "9.4.1",
             "phpunit": "12.5.44",
             "counts": {
-                "tests": 166,
-                "assertions": 689,
+                "tests": 199,
+                "assertions": 881,
                 "failures": 0,
                 "errors": 0,
                 "skipped": 0
@@ -77,31 +83,37 @@
                 "test_eight_workers_drain_sixteen_deliveries_without_duplicate_http_attempts",
                 "test_parallel_pruners_delete_each_expired_session_once_and_preserve_pending_work"
             ],
+            "remember_concurrency_cases": [
+                "test_eight_uses_of_one_credential_allow_one_rotation_and_replay_revokes_the_family",
+                "test_revocation_committed_before_rotation_prevents_remembered_login",
+                "test_revoke_with_an_old_snapshot_includes_the_newly_restored_session",
+                "test_eight_separate_devices_can_restore_without_revoking_each_other"
+            ],
             "maximum_workers": 8,
-            "junit_sha256": "616dd8289b7a3f8145a614bfd7154d8bd7e41a963595f30db11bf3106b1c1969"
+            "junit_sha256": "b1e517a5057434b14813a61f6dd735d60c105c2d6a8b27e34ab84ecab1066ab1"
         }
     },
     "images": [
         {
-            "tag": "mysql:8.4",
             "id": "sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902",
             "repo_digests": [
                 "mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902"
-            ]
+            ],
+            "tag": "mysql:8.4"
         },
         {
-            "tag": "postgres:18",
             "id": "sha256:b9f6b8ff03b62f3cfd9d9ba3fe56226a9991c79d3fb46fd46536263bf02be553",
             "repo_digests": [
                 "postgres@sha256:b9f6b8ff03b62f3cfd9d9ba3fe56226a9991c79d3fb46fd46536263bf02be553"
-            ]
+            ],
+            "tag": "postgres:18"
         },
         {
-            "tag": "laravel-sso-database-php:local",
-            "id": "sha256:ff0c591aefc61280103297a32b01f627d380f2386556d9be574667a9c908be36",
+            "id": "sha256:469b6d8b48a4a7959cd159b42778dba0d39cd675d5cf756ec650da58b417e414",
             "repo_digests": [
-                "laravel-sso-database-php@sha256:ff0c591aefc61280103297a32b01f627d380f2386556d9be574667a9c908be36"
-            ]
+                "laravel-sso-database-php@sha256:469b6d8b48a4a7959cd159b42778dba0d39cd675d5cf756ec650da58b417e414"
+            ],
+            "tag": "laravel-sso-database-php:local"
         }
     ]
 }
