@@ -38,7 +38,14 @@ final class EloquentProvisioner implements ProvisionsUsers
                 if (! $user) {
                     $connection = (new $model)->getConnection();
                     if ($connection->getDriverName() === 'pgsql' && $connection->transactionLevel() > 0) {
-                        throw new DeadlockException('Concurrent identity requires a fresh transaction snapshot.', 40001, $error);
+                        $diagnostic = explode("\n", $error->errorInfo[2] ?? '')[0];
+                        foreach ($connection->getSchemaBuilder()->getIndexes((new $model)->getTable()) as $index) {
+                            if ($index['unique'] && count($index['columns']) === 2
+                                && array_diff($index['columns'], ['sso_issuer', 'sso_subject']) === []
+                                && str_contains($diagnostic, '"'.$index['name'].'"')) {
+                                throw new DeadlockException('Concurrent identity requires a fresh transaction snapshot.', 40001, $error);
+                            }
+                        }
                     }
                     throw $error;
                 }

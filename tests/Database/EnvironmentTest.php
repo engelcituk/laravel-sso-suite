@@ -3,12 +3,40 @@
 namespace LaravelSso\Tests\Database;
 
 use Composer\InstalledVersions;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use LaravelSso\Client\EloquentProvisioner;
+use LaravelSso\Contracts\Identity;
+use LaravelSso\Tests\Fixtures\LocalUser;
 use LaravelSso\Tests\TestCase;
 use PHPUnit\Runner\Version;
 
 final class EnvironmentTest extends TestCase
 {
+    public function test_an_unrelated_unique_constraint_is_not_retried_as_an_identity_snapshot_conflict(): void
+    {
+        Schema::table('users', function (Blueprint $table): void {
+            $table->unique('email');
+        });
+        LocalUser::create(['sso_issuer' => 'https://other.test', 'sso_subject' => 'existing', 'email' => 'same@example.test']);
+        config(['sso-client.provision' => 'automatic']);
+        $attempts = 0;
+        try {
+            DB::transaction(function () use (&$attempts): void {
+                $attempts++;
+                app(EloquentProvisioner::class)->provision(new Identity('https://identity.test', 'different', 'session', time(),
+                    ['email' => 'same@example.test']));
+            }, 10);
+            $this->fail('An unrelated unique constraint must escape unchanged.');
+        } catch (UniqueConstraintViolationException) {
+            $this->assertSame(1, $attempts);
+        }
+        $this->assertSame(1, LocalUser::count());
+        $this->assertSame(0, LocalUser::where('sso_issuer', 'https://identity.test')->count());
+    }
+
     public function test_real_engine_and_isolation_are_recorded_without_credentials(): void
     {
         $driver = DB::getDriverName();
