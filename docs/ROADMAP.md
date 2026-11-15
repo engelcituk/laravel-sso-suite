@@ -1,21 +1,28 @@
 # Roadmap y evidencia
 
-Actualizado 2026-11-14. Primera vertical integrada **experimental**, sin publicación,
+Actualizado 2026-11-14. Primera vertical integrada **experimental**, sin publicación de versiones,
 certificación ni recomendación de producción. Una vertical no cierra toda su fase.
 
 | Fase | Estado real | Evidencia / cierre pendiente |
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
-| 1 fundamento | base local verificada | tres paquetes, providers, Composer, CI configurada, Pint y Larastan; CI remota aún no ejecutada |
+| 1 fundamento | base local y CI remota verificadas | tres paquetes, providers, Composer, Pint y Larastan; seis trabajos remotos aprobados en 6221d06 con checkout actualizado, cero advertencias del runner |
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
 | 4 identidad local | concurrencia local verificada | índice sensible a mayúsculas, recuperación de conflicto y commit; carreras en MySQL/PostgreSQL, ACL independiente |
 | 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
 | 6 instalación | despliegues y operación local verificados | Nginx/FPM/MySQL y Apache/PHP/PostgreSQL optimizados, 60 controles de navegador y campaña de 30 min; otros entornos/piloto externo fuera de alcance |
-| 7 publicación | pendiente | calidad local aprobada; faltan auditoría externa, conformidad, matrices remotas y autorización |
+| 7 publicación | pendiente | calidad local y matriz remota aprobadas; faltan auditoría/certificación externa y autorización para publicar versiones |
 
 ## Resultados ejecutados
 
+- GitHub Actions remoto: **6/6 trabajos aprobados** en `6221d06`, run `43674055824`,
+  2026-11-15 03:49:20–03:51:41 UTC (14 de noviembre en Cancún). PHP 8.3/8.4/8.5:
+  209 / 982 generales y 106 / 414 normativos por versión; MySQL 224 / 1055 y PostgreSQL
+  224 / 1053. Se revisaron los seis logs: **cero advertencias del runner y cero fallos**.
+  Checkout v7.0.1 fijado por SHA, con Node 24, validado localmente y en remoto; resuelve
+  las seis advertencias de la ejecución anterior. Cambios en rama codex autorizada,
+  sin modificar main ni publicar versiones. [Informe, IDs y límites](CI-REMOTE.md).
 - **209 tests / 982 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
@@ -70,7 +77,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   de sesión central, revocación de otro dispositivo, POST externo de authorize/logout y rechazo
   CSRF en la confirmación. Los procesos temporales quedaron detenidos.
 
-No ejecutado: GitHub Actions remoto, navegadores comerciales/Safari en sistemas físicos,
+No ejecutado: navegadores comerciales/Safari en sistemas físicos,
 carga distribuida o multijornada ni revisión independiente/certificación externa. Los dos
 despliegues, navegadores Linux cross-site y carga local de 30 min sí se ejecutaron. MySQL, PostgreSQL y el harness
 OpenID Foundation sí se ejecutaron localmente. La matriz PHP comparte un lockfile resuelto con
@@ -108,7 +115,8 @@ diagnóstico, despliegues y carga de 30 min quedan atendidos en el alcance local
 de los cinco planes OIDC y sus evidencias. El destino y retención de auditoría se configuran
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
-1. Ejecutar la matriz CI remota y ampliar versiones/aislamientos, sin atribuirle resultados locales.
+1. La matriz y la corrección de checkout quedan verificadas; ampliar versiones/dependencias/aislamientos según
+   los destinos concretos, sin convertir esa ampliación abierta en una garantía general.
 2. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
    móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.
 3. Revisión independiente, evaluación/certificación externa, canal privado de reportes,

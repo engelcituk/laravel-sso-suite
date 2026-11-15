@@ -79,8 +79,20 @@ Outbox vacías después de una pausa de 120 s; se conservó el intento fallido a
 se repitió la campaña completa. Ver [reproducción, métricas y alcance](DEPLOYMENT-VALIDATION.md)
 y [JSON sin secretos](../conformance/deployment-results.json).
 
-GitHub Actions define PHP 8.3/8.4/8.5 y las mismas verificaciones. Configurar una matriz no
-demuestra ejecución remota: siguen fuera del cierre CI remota, otros aislamientos/versiones,
-navegadores comerciales/móviles físicos y carga distribuida/multijornada.
-MySQL/PostgreSQL, navegadores Linux y el harness OIDF sí se ejecutaron localmente.
-No hay certificación oficial.
+GitHub Actions ejecutó la matriz del commit `6221d06` en Ubuntu 26.04.1: **seis trabajos
+aprobados**, run `43674055824`, 2026-11-15 03:49:20–03:51:41 UTC (14 de noviembre en
+Cancún). Cada PHP 8.3.36/8.4.27/8.5.12 pasó 209 / 982 generales, 106 / 414 normativos,
+Pint (137 archivos), Larastan, validate/install/audit y E2E. La consulta audit de esa
+ejecución no encontró avisos conocidos. MySQL 8.4.13 pasó 224 / 1055 y PostgreSQL 18.7
+224 / 1053; el trabajo de manifiestos también pasó.
+
+La ejecución previa pasó con seis advertencias por checkout@v4/Node 20. Tras actualizar
+la acción a v7.0.1 fijada por SHA y aprobar actionlint 1.7.12, se subió la corrección a
+`codex/ci-checkout-node24` con autorización. Los seis logs de la nueva matriz confirman
+el SHA fijado y **cero advertencias del runner**, sin fallos ni pruebas saltadas.
+Ver [evidencia remota y reproducción](CI-REMOTE.md)
+y [JSON sin secretos](../conformance/ci-results.json).
+
+Siguen fuera del cierre otros aislamientos/versiones, navegadores comerciales/móviles
+físicos y carga distribuida/multijornada. Los navegadores Linux y el harness OIDF conservan
+su evidencia local; esta CI no los ejecutó. No hay certificación oficial.

@@ -97,6 +97,7 @@ composer audit --locked
 ```
 
 [Guía de pruebas](docs/TESTING.md), [evidencia y pendientes](docs/ROADMAP.md),
+[matriz CI remota: seis trabajos aprobados con checkout actualizado](docs/CI-REMOTE.md),
 [concurrencia MySQL/PostgreSQL y retención](docs/DATABASE-CONCURRENCY.md),
 [Recordarme y dispositivos](docs/REMEMBER-DEVICES.md),
 [auditoría, instalación y diagnóstico](docs/AUDIT-OPERATIONS.md),
