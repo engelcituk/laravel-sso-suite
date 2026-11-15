@@ -95,6 +95,23 @@ el SHA fijado y **cero advertencias del runner**, sin fallos ni pruebas saltadas
 Ver [evidencia remota y reproducción](CI-REMOTE.md)
 y [JSON sin secretos](../conformance/ci-results.json).
 
-Siguen fuera del cierre otros aislamientos/versiones, navegadores comerciales/móviles
+La fase de compatibilidad posterior pasó **14/14 trabajos**, run `43679063708`, commit
+`4c925d3`, rama `codex/expanded-compatibility`. PHP 8.3/8.4/8.5 × locked/lowest/latest:
+**212 / 994 generales y 106 / 414 normativos por combinación**, plataforma, audit y E2E
+aprobados. Pint (140 archivos) y Larastan se verifican con las herramientas conservadas
+en locked. Las resoluciones alternativas usan el PHP real de cada job y mantienen los
+controles de seguridad. El lockfile principal no cambió.
+
+MySQL 8.4.13 y PostgreSQL 18.7 pasaron tanto READ COMMITTED como REPEATABLE READ:
+**228 / 1070** por perfil MySQL y **228 / 1068** por perfil PostgreSQL. Los hijos verifican
+el aislamiento real al reconectar. Tres casos nuevos prueban reintentos, rollback y
+callbacks sólo después de commit; otro caso SQL evita reintentar restricciones únicas
+ajenas a la identidad. Se conservan las catorce carreras reales.
+El primer run falló en tres trabajos; la repetición completa tras corregirlos pasó sin
+advertencias del runner. CI conserva trece artifacts de lockfiles, versiones y JUnit por
+siete días. Ver [informe y límites](COMPATIBILITY.md) y
+[resumen estructurado](../conformance/compatibility-results.json).
+
+Siguen fuera del cierre otras versiones/aislamientos, navegadores comerciales/móviles
 físicos y carga distribuida/multijornada. Los navegadores Linux y el harness OIDF conservan
 su evidencia local; esta CI no los ejecutó. No hay certificación oficial.

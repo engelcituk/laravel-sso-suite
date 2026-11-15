@@ -1,21 +1,29 @@
 # Roadmap y evidencia
 
-Actualizado 2026-11-14. Primera vertical integrada **experimental**, sin publicación de versiones,
+Actualizado 2026-11-15 UTC. Primera vertical integrada **experimental**, sin publicación de versiones,
 certificación ni recomendación de producción. Una vertical no cierra toda su fase.
 
 | Fase | Estado real | Evidencia / cierre pendiente |
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
-| 1 fundamento | base local y CI remota verificadas | tres paquetes, providers, Composer, Pint y Larastan; checkout integrado en main, seis trabajos remotos aprobados en 7553a96, cero advertencias del runner |
+| 1 fundamento | base local y CI remota verificadas | checkout integrado en main; matriz ampliada 14/14 en rama codex: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
-| 4 identidad local | concurrencia local verificada | índice sensible a mayúsculas, recuperación de conflicto y commit; carreras en MySQL/PostgreSQL, ACL independiente |
+| 4 identidad local | concurrencia local y remota verificadas | unicidad/commit, snapshots y reintentos corregidos; MySQL/PostgreSQL en READ COMMITTED y REPEATABLE READ, ACL independiente |
 | 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
 | 6 instalación | despliegues y operación local verificados | Nginx/FPM/MySQL y Apache/PHP/PostgreSQL optimizados, 60 controles de navegador y campaña de 30 min; otros entornos/piloto externo fuera de alcance |
 | 7 publicación | pendiente | calidad local y matriz remota aprobadas; faltan auditoría/certificación externa y autorización para publicar versiones |
 
 ## Resultados ejecutados
 
+- Compatibilidad ampliada: **14/14 trabajos aprobados** en `4c925d3`, run `43679063708`,
+  rama `codex/expanded-compatibility`, UTC 2026-11-15 04:58:53–05:00:48.
+  Nueve combinaciones PHP/dependencias: **212 / 994** generales y **106 / 414** normativos
+  cada una; cuatro perfiles SQL: **228 / 1070** MySQL y **228 / 1068** PostgreSQL.
+  Ambos motores pasaron READ COMMITTED y REPEATABLE READ. Cero fallos/advertencias del runner;
+  primer run fallido y repeticiones locales conservados. Lockfile principal sin cambios,
+  trece artifacts temporales, una migración por paquete. No se integró esta ampliación en
+  main ni se publicaron versiones. [Versiones, correcciones y evidencia](COMPATIBILITY.md).
 - GitHub Actions remoto en **main**: **6/6 trabajos aprobados** en `7553a96`, run `43674756937`,
   2026-11-15 03:59:30–04:02:12 UTC (14 de noviembre en Cancún). PHP 8.3/8.4/8.5:
   209 / 982 generales y 106 / 414 normativos por versión; MySQL 224 / 1055 y PostgreSQL
@@ -24,7 +32,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   las seis advertencias de la ejecución anterior. Rama codex integrada en main con
   autorización mediante fast-forward, sin conflictos ni publicación de versiones.
   [Informe, IDs y límites](CI-REMOTE.md).
-- **209 tests / 982 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
+- Base local previa: **209 tests / 982 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
 - PHPStan/Larastan nivel 5: sin errores y sin baseline. Laravel Pint: aprobado.
@@ -62,9 +70,10 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 - Revisión de las observaciones OIDC: seis advertencias corregidas; ensayo final con
   58 PASSED, 0 WARNING/FAILED, 16 evidencias REVIEW verificadas y 10 SKIPPED justificados.
   Repetición tras auditoría/operaciones: `official-audit-operations-20261114-215322`,
-  mismos conteos y revisión repetida, con huella del OP coincidente con el workspace.
+  mismos conteos y revisión repetida, con huella del OP coincidente con el workspace de esa ejecución.
   OP/worker trasladados al volumen y red Linux; transporte HTTPS 80/80, cuatro simultáneas.
-  La fase posterior de concurrencia ya se ejecutó; no se publicó ni se solicitó certificación.
+  La compatibilidad posterior modificó transacciones sin repetir el harness oficial;
+  sus resultados históricos se conservan. No se solicitó certificación.
 - Siete manifiestos Composer: validate --strict aprobado. Composer audit --locked:
   sin avisos conocidos en la consulta realizada; no equivale a auditar el código propio.
 - Resolución independiente del cliente: 77 paquetes, sin Passport ni laravel-sso/server.
@@ -81,8 +90,9 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 No ejecutado: navegadores comerciales/Safari en sistemas físicos,
 carga distribuida o multijornada ni revisión independiente/certificación externa. Los dos
 despliegues, navegadores Linux cross-site y carga local de 30 min sí se ejecutaron. MySQL, PostgreSQL y el harness
-OpenID Foundation sí se ejecutaron localmente. La matriz PHP comparte un lockfile resuelto con
-plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependencias.
+OpenID Foundation sí se ejecutaron localmente. La matriz ampliada prueba resoluciones
+locked/lowest/latest por PHP y dos aislamientos por motor SQL; no prueba todas las
+combinaciones de dependencias/PHP/SQL. El harness oficial no se repitió en esta última fase.
 
 ## Matriz requisito → componente → prueba
 
@@ -104,7 +114,7 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 | Dispositivos propios | DeviceController + middleware central | listado, nombres, cierre individual/otros/todos, aislamiento, contraseña reciente, CSRF y E2E |
 | Auditoría | AuditEvent + Audit por componente | AuditTest: rollback, replay, secretos excluidos, duplicados y logs opt-in; ProtocolTest: códigos/tokens reales |
 | Instalación y diagnóstico | install-server/install-client/doctor-server/doctor | OperationsTest: conservación, migración real, claves y fallos múltiples; doctores OP/RP reales en E2E |
-| Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18, catorce carreras y campaña HTTP de 30 min en ambos motores |
+| Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18 en READ COMMITTED y REPEATABLE READ, catorce carreras por perfil; campaña previa de 30 min |
 | Despliegue / cross-site | Nginx/FPM y Apache; Playwright | seis apps optimizadas HTTPS, tres motores de navegador, 60 controles y doce de proxy |
 | Perfil Code normativo local | tests/Conformance | **106 tests / 414 aserciones**; no equivale al harness oficial |
 | Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
@@ -113,11 +123,13 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 
 Los bloques de concurrencia/retención, Recordarme/dispositivos y auditoría/instalación/
 diagnóstico, despliegues y carga de 30 min quedan atendidos en el alcance local documentado. Se conserva la reproducción
-de los cinco planes OIDC y sus evidencias. El destino y retención de auditoría se configuran
+de los cinco planes OIDC y sus evidencias históricas. La compatibilidad ampliada queda
+atendida en su matriz documentada, todavía en rama codex. El destino y retención de auditoría se configuran
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
-1. La integración en main, su matriz y checkout quedan verificados; ampliar versiones/dependencias/aislamientos según
-   los destinos concretos, sin convertir esa ampliación abierta en una garantía general.
+1. Revisar e integrar la rama de compatibilidad cuando se solicite; repetir la CI en main.
+   La ampliación solicitada ya pasó. Nuevos motores/versiones se eligen según el destino,
+   sin convertir esa ampliación abierta en una garantía general.
 2. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
    móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.
 3. Revisión independiente, evaluación/certificación externa, canal privado de reportes,

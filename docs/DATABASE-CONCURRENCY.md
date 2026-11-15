@@ -1,5 +1,12 @@
 # Concurrencia y limpieza de estado
 
+Informe histórico de la matriz inicial. La [fase de compatibilidad ampliada](COMPATIBILITY.md)
+añadió MySQL READ COMMITTED y PostgreSQL REPEATABLE READ: cuatro perfiles remotos aprobados,
+228 pruebas por perfil, 1070 aserciones MySQL y 1068 PostgreSQL. Se corrigieron conflictos
+de snapshot y se exige reintentar la transacción exterior completa cuando la posee el llamador.
+El JSON enlazado abajo conserva los resultados originales; el nuevo es
+[compatibility-results.json](../conformance/compatibility-results.json).
+
 Evaluación local del 2026-11-14. Los dos motores se ejecutaron en Docker Linux, en una
 red interna sin puertos de base de datos publicados. No se usaron las bases de Laragon.
 Las imágenes y sus digests, versiones, aislamiento, huella de código y conteos están en
@@ -132,7 +139,8 @@ retirar los contenedores, mientras los informes del host permanecen. El exportad
 dos suites completas sin fallos/saltos, los diez casos y huellas de código coincidentes.
 No exporta JWT, HTML, contraseñas ni secretos de clientes.
 
-GitHub Actions tiene una matriz adicional para estos motores; **no se ejecutó remotamente**.
+En la evaluación original, la matriz GitHub Actions todavía no se había ejecutado.
+La fase posterior sí aprobó los cuatro perfiles SQL remotos; ver [compatibilidad](COMPATIBILITY.md).
 Los tests fuerzan carreras concretas a los aislamientos indicados; no acreditan otros
 aislamientos/versiones, clústeres ni pérdida de red real. Una evaluación posterior
 añadió [30 min de carga HTTP y navegadores cross-site](DEPLOYMENT-VALIDATION.md) en

@@ -1,5 +1,10 @@
 # Resultados OIDC y revisión de observaciones
 
+Este informe conserva la ejecución oficial indicada abajo. La fase posterior de
+[compatibilidad ampliada](COMPATIBILITY.md) modificó transacciones y pasó las pruebas
+normativas propias en nueve combinaciones, sin repetir el harness oficial. No se atribuyen
+los resultados oficiales históricos al nuevo commit.
+
 2026-11-14. Se repitieron los cinco planes tras ampliar auditoría y operaciones, después
 del cierre de Recordarme central y dispositivos.
 Se mantienen resueltas las 6 advertencias anteriores; se auditaron de nuevo las 16 revisiones

@@ -1,5 +1,9 @@
 # Matriz CI remota: resultados reales
 
+Este informe conserva la integración inicial en main. La fase posterior ejecutó
+**14 trabajos** con dependencias locked/lowest/latest y cuatro perfiles SQL, y corrigió
+conflictos bajo PostgreSQL REPEATABLE READ. Ver [compatibilidad ampliada](COMPATIBILITY.md).
+
 Verificación del 2026-11-14 en Cancún, **2026-11-15 03:59:30–04:02:12 UTC**.
 El [run 43674756937, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937)
 de **main** terminó con **seis trabajos aprobados y cero advertencias del runner**.

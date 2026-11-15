@@ -70,6 +70,17 @@
   discovery y origen HTTPS; CA privada con series únicas, sin ignorar TLS ni confiarla en Windows.
   El harness invalida stat cache de indicadores externos y sólo aprueba con ambas outbox vacías.
 
+- ADR-030: matriz PHP locked/lowest/latest con plataforma real en resoluciones alternativas;
+  lockfile principal conservado, auditoría activa y artifacts temporales sin secretos.
+  Calidad estática/formato con herramientas locked; compatibilidad funcional en los nueve jobs.
+- ADR-031: MySQL/PostgreSQL se evalúan en READ COMMITTED y REPEATABLE READ. Las conexiones
+  hijas verifican el nivel efectivo. Las filas de dispositivo/sesión actúan como anclas de
+  versión para evitar revocaciones con snapshots antiguos; no se añaden columnas.
+- ADR-032: conservar SQLSTATE 40001 numérico entre savepoints y reintentar únicamente
+  transacciones completas, con presupuesto limitado. Si el llamador posee la transacción,
+  debe reintentarla completa. No se reintentan errores de integridad arbitrarios ni se
+  publican callbacks propios de intentos revertidos. Ver [resultados](COMPATIBILITY.md).
+
 ## Fuentes oficiales consultadas (2026-11-13)
 
 - https://laravel.com/docs/13.x/releases

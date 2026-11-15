@@ -73,4 +73,8 @@ Los tests propios no equivalen a certificación OIDC. Faltan revisión independi
 certificación externa de OpenID Foundation y evaluación operativa en el destino real.
 Una campaña local de 30 min, tres motores de navegador y dos despliegues ya se
 verificaron; [métricas, fallos y límites](DEPLOYMENT-VALIDATION.md). No acredita carga
-distribuida/multijornada. Los aislamientos ensayados están en DATABASE-CONCURRENCY.md.
+distribuida/multijornada. La fase posterior de [compatibilidad ampliada](COMPATIBILITY.md)
+pasó nueve resoluciones PHP y cuatro perfiles SQL: READ COMMITTED y REPEATABLE READ
+en ambos motores. Se corrigieron snapshots antiguos y reintentos de serialización,
+conservando rollback y callbacks después de commit. Los llamadores que abren transacciones
+deben reintentar la transacción exterior completa; no se garantiza éxito sin límite de intentos.

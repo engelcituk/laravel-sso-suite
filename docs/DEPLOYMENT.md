@@ -35,6 +35,10 @@ Antes de un piloto controlado:
   cookie host-only. Aplicar revocación explícita al suspender cuentas o responder a incidentes.
 - Ejecutar migraciones revisadas y pruebas en tu motor/versión real. El mismo default DB
   debe contener Passport y SSO para conservar atomicidad. Redis sigue siendo opcional.
+  MySQL y PostgreSQL se probaron con READ COMMITTED y REPEATABLE READ. Si el anfitrión
+  abre una transacción que contiene operaciones SSO, debe reintentar la transacción
+  completa ante serialización; un savepoint no refresca el snapshot. Ver
+  [contrato de reintentos y matriz real](COMPATIBILITY.md).
 
 Laravel Auth debe acompañarse de sso.session en cada grupo protegido. Las comprobaciones
 ACL son locales y permanecen obligatorias después de autenticar. Publicar una nueva versión
