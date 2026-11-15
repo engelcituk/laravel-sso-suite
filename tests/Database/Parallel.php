@@ -45,6 +45,12 @@ final class Parallel
                 }
                 if ($pid === 0) {
                     try {
+                        $actualIsolation = DB::getDriverName() === 'mysql'
+                            ? DB::selectOne('select @@transaction_isolation as isolation')->isolation
+                            : DB::selectOne('show transaction_isolation')->transaction_isolation;
+                        if (strtolower(str_replace('-', ' ', $actualIsolation)) !== strtolower(DB::connection()->getConfig('isolation_level'))) {
+                            throw new \RuntimeException('Concurrent worker did not retain the requested isolation level.');
+                        }
                         self::barrier($directory, 'ready', $index, $count);
                         $result = ['ok' => true, 'result' => $work($index, $directory)];
                     } catch (\Throwable $error) {

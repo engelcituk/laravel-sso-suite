@@ -16,7 +16,8 @@ final class EnvironmentTest extends TestCase
         $version = DB::selectOne('select version() as version')->version;
         $isolation = $driver === 'mysql' ? DB::selectOne('select @@transaction_isolation as isolation')->isolation
             : DB::selectOne('show transaction_isolation')->transaction_isolation;
-        $this->assertSame($driver === 'mysql' ? 'REPEATABLE-READ' : 'read committed', $isolation);
+        $expectedIsolation = getenv('SSO_TEST_ISOLATION') ?: ($driver === 'mysql' ? 'REPEATABLE READ' : 'READ COMMITTED');
+        $this->assertSame(strtolower($expectedIsolation), strtolower(str_replace('-', ' ', $isolation)));
         $this->assertSame('sso_lab_test', DB::connection()->getDatabaseName());
         $collations = null;
         if ($driver === 'mysql') {

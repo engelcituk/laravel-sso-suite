@@ -27,13 +27,17 @@ abstract class TestCase extends Orchestra
             if (getenv('SSO_DATABASE_LAB') !== '1' || ! in_array($driver, ['mysql', 'pgsql'], true)) {
                 throw new \RuntimeException('Real-engine tests require the isolated database laboratory.');
             }
+            $isolation = getenv('SSO_TEST_ISOLATION') ?: ($driver === 'mysql' ? 'REPEATABLE READ' : 'READ COMMITTED');
+            if (! in_array($isolation, ['READ COMMITTED', 'REPEATABLE READ'], true)) {
+                throw new \RuntimeException('Unsupported laboratory transaction isolation level.');
+            }
             $app['config']->set('database.connections.testing', [
                 'driver' => $driver, 'host' => getenv('SSO_TEST_HOST') ?: ($driver === 'mysql' ? 'mysql' : 'postgres'),
                 'port' => getenv('SSO_TEST_PORT') ?: ($driver === 'mysql' ? 3306 : 5432),
                 'database' => 'sso_lab_test', 'username' => 'sso_lab', 'password' => getenv('SSO_TEST_PASSWORD'),
                 'charset' => $driver === 'mysql' ? 'utf8mb4' : 'utf8',
                 'collation' => $driver === 'mysql' ? 'utf8mb4_unicode_ci' : null,
-                'prefix' => '', 'strict' => true,
+                'prefix' => '', 'strict' => true, 'isolation_level' => $isolation,
             ]);
         }
         $app['config']->set('session.driver', 'array');

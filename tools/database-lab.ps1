@@ -3,6 +3,8 @@ param(
     [string]$Action = 'Test',
     [ValidateSet('mysql', 'pgsql', 'both')]
     [string]$Engine = 'both',
+    [ValidateSet('default', 'READ COMMITTED', 'REPEATABLE READ')]
+    [string]$Isolation = 'default',
     [ValidatePattern('^[a-z0-9-]+$')]
     [string]$Label = 'evaluation',
     [string]$Filter = ''
@@ -53,6 +55,7 @@ $failed = $false
 foreach ($databaseEngine in $engines) {
     $logPath = Join-Path $resultsDirectory ($run + '-' + $databaseEngine + '.log')
     $testArguments = @('run', '--rm', '-T', '-e', "SSO_TEST_DRIVER=$databaseEngine", '-e', "SSO_LAB_RUN=$run-$databaseEngine", 'tests', 'php', 'vendor/phpunit/phpunit/phpunit', '--configuration', 'phpunit.database.xml', '--colors=never', '--log-junit', "/results/$run-$databaseEngine.junit.xml")
+    if ($Isolation -ne 'default') { $testArguments = $testArguments[0..2] + @('-e', "SSO_TEST_ISOLATION=$Isolation") + $testArguments[3..($testArguments.Length - 1)] }
     if ($Filter) { $testArguments += @('--filter', $Filter) }
     & $dockerPath @composeArguments @testArguments 2>&1 | Tee-Object -FilePath $logPath
     if ($LASTEXITCODE -ne 0) { $failed = $true }
