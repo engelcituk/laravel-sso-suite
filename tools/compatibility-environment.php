@@ -24,6 +24,7 @@ copy($root.'/composer.lock', $directory.'/composer.lock');
 $report = [
     'checked_at_utc' => gmdate(DATE_ATOM), 'profile' => $profile,
     'php' => PHP_VERSION, 'os' => PHP_OS_FAMILY, 'commit' => getenv('GITHUB_SHA') ?: null,
+    'platform_php' => json_decode(file_get_contents($root.'/composer.json'), true, flags: JSON_THROW_ON_ERROR)['config']['platform']['php'],
     'lock_sha256' => hash_file('sha256', $root.'/composer.lock'),
     'installed_sha256' => hash_file('sha256', $directory.'/installed.json'),
     'versions' => array_intersect_key($inventory, array_flip([

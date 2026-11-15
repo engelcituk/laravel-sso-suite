@@ -21,14 +21,16 @@ jobs:
           tools: composer:v2
           coverage: none
       - run: composer validate --strict
+      - if: matrix.dependencies != 'locked'
+        run: composer config platform.php "$(php -r 'echo PHP_VERSION;')"
       - if: matrix.dependencies == 'locked'
         run: composer install --no-interaction --prefer-dist
       - if: matrix.dependencies == 'lowest'
         run: composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist
       - if: matrix.dependencies == 'latest'
         run: composer update --prefer-stable --no-interaction --prefer-dist
-      - run: composer check-platform-reqs
       - run: php tools/compatibility-environment.php
+      - run: composer check-platform-reqs
       - run: composer test -- --log-junit .runtime/compatibility/junit.xml
       - run: composer test:conformance
       - if: matrix.dependencies == 'locked'

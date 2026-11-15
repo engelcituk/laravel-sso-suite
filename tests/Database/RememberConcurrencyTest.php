@@ -97,7 +97,7 @@ final class RememberConcurrencyTest extends TestCase
                 Parallel::wait($directory.'/rotation-committed');
 
                 return app(DeviceSessions::class)->revoke($device->id);
-            }, 5);
+            }, 10);
         });
         $this->assertSame([true, true], $results);
         $sid = DB::table('sso_sessions')->where('device_id', $device->id)->value('sid');

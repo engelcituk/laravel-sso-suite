@@ -80,7 +80,7 @@ final class ConcurrencyTest extends TestCase
                     ['name' => 'Concurrent identity', 'email' => 'same@example.test', 'is_admin' => true]));
 
                 return (string) $user->getAuthIdentifier();
-            }, 5);
+            }, 10);
         });
         $this->assertCount(1, array_unique($results));
         $this->assertSame(2, LocalUser::count());
@@ -148,7 +148,7 @@ final class ConcurrencyTest extends TestCase
                 app(GlobalSessions::class)->revoke($sid);
 
                 return 0;
-            });
+            }, 10);
         });
         $this->assertSame([200, 0], $results);
         $this->assertTrue((bool) DB::table('oauth_access_tokens')->value('revoked'));

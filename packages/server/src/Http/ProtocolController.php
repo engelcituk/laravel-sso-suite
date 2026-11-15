@@ -15,6 +15,7 @@ use LaravelSso\Server\OidcServer;
 use LaravelSso\Server\Protocol\ClaimsRequest;
 use LaravelSso\Server\Protocol\Parameters;
 use LaravelSso\Server\SigningKeys;
+use LaravelSso\Server\Transactions;
 use LaravelSso\Server\UserClaims;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -92,14 +93,20 @@ final class ProtocolController
         $psr = $psr->withParsedBody($body);
         $request->attributes->set('sso.authenticated_client', $body['client_id']);
         try {
-            $response = DB::transaction(fn () => $server->make()->respondToAccessTokenRequest($psr, new PsrResponse));
+            $response = Transactions::run(function () use ($request, $server, $psr) {
+                $request->attributes->remove('sso.token_context');
+
+                return $server->make()->respondToAccessTokenRequest($psr, new PsrResponse);
+            });
         } catch (OAuthServerException $e) {
             // The failed exchange has rolled back. Persist revocation separately,
             // so replay cannot leave the originally issued token usable (RFC6749 4.1.2).
             if (is_string($codeId = $request->attributes->get('sso.replayed_code'))) {
-                Passport::token()->newQuery()->whereIn('id', DB::table('sso_token_sessions')->where('code_id', $codeId)->select('token_id'))
-                    ->update(['revoked' => true]);
-                app(Audit::class)->record('token.replayed', ['client' => $body['client_id']]);
+                Transactions::run(function () use ($codeId, $body): void {
+                    Passport::token()->newQuery()->whereIn('id', DB::table('sso_token_sessions')->where('code_id', $codeId)->select('token_id'))
+                        ->where('revoked', false)->update(['revoked' => true]);
+                    app(Audit::class)->record('token.replayed', ['client' => $body['client_id']]);
+                });
             }
             app(Audit::class)->record('token.rejected');
             $response = $e->generateHttpResponse(new PsrResponse);

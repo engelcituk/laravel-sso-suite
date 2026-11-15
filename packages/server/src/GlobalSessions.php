@@ -41,6 +41,9 @@ final class GlobalSessions
             || ! $this->activeUser($session->subject)) {
             return null;
         }
+        if ($lock) {
+            DB::table('sso_sessions')->where('sid', $sid)->update(['last_seen' => $session->last_seen]);
+        }
         if ($touch) {
             DB::table('sso_sessions')->where('sid', $sid)->where('revoked', false)->update(['last_seen' => time()]);
             if (is_string($deviceId)) {
@@ -64,7 +67,7 @@ final class GlobalSessions
         if (! is_string($deviceId)) {
             $deviceId = app(DeviceSessions::class)->register($request, $user)->id;
         }
-        DB::transaction(function () use ($deviceId, $sid, $user, $request, $now): void {
+        Transactions::run(function () use ($deviceId, $sid, $user, $request, $now): void {
             $device = app(DeviceSessions::class)->active($deviceId, true);
             abort_unless($device && $device->subject === (string) $user->getAuthIdentifier(), 403, 'The device is no longer active.');
             DB::table('sso_sessions')->insert([
@@ -73,7 +76,7 @@ final class GlobalSessions
                 'last_seen' => $now, 'expires_at' => min((int) $device->expires_at, $now + config('sso-server.session_max')), 'revoked' => false,
             ]);
             app(Audit::class)->record('session.created', ['sid' => $sid, 'subject' => (string) $user->getAuthIdentifier(), 'device' => $deviceId]);
-        }, 5);
+        });
         $request->session()->put('sso.sid', $sid);
 
         return DB::table('sso_sessions')->where('sid', $sid)->first();
@@ -91,7 +94,7 @@ final class GlobalSessions
     /** @internal DeviceSessions owns device-wide revocation and lock ordering. */
     public function revokeSession(string $sid): void
     {
-        DB::transaction(function () use ($sid): void {
+        Transactions::run(function () use ($sid): void {
             $session = DB::table('sso_sessions')->where('sid', $sid)->lockForUpdate()->first();
             if (! $session) {
                 return;
@@ -113,7 +116,7 @@ final class GlobalSessions
             }
             $ids = $bindings->pluck('token_id');
             DB::table('oauth_access_tokens')->whereIn('id', $ids)->update(['revoked' => true]);
-        }, 5);
+        });
     }
 
     public function revokeAll(string $subject): void

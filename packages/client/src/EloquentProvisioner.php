@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelSso\Client;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\DeadlockException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\UniqueConstraintViolationException;
 use LaravelSso\Client\Contracts\ProvisionsUsers;
@@ -33,7 +34,14 @@ final class EloquentProvisioner implements ProvisionsUsers
             } catch (UniqueConstraintViolationException $error) {
                 // MySQL REPEATABLE READ may hide the winner from createOrFirst's
                 // fallback SELECT inside an existing transaction. Read current state.
-                $user = $model::query()->where($key)->lockForUpdate()->first() ?? throw $error;
+                $user = $model::query()->where($key)->lockForUpdate()->first();
+                if (! $user) {
+                    $connection = (new $model)->getConnection();
+                    if ($connection->getDriverName() === 'pgsql' && $connection->transactionLevel() > 0) {
+                        throw new DeadlockException('Concurrent identity requires a fresh transaction snapshot.', 40001, $error);
+                    }
+                    throw $error;
+                }
             }
         }
         $allowed = config('sso-client.allowed');

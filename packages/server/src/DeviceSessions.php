@@ -52,8 +52,17 @@ final class DeviceSessions
         $device = $query->first();
         $user = $device ? app(GlobalSessions::class)->activeUser($device->subject) : null;
 
-        return $device && $device->revoked_at === null && $device->expires_at > time() && $user
-            && hash_equals($device->credential_hash, $this->credentialHash($user)) ? $device : null;
+        if (! $device || $device->revoked_at !== null || $device->expires_at <= time() || ! $user
+            || ! hash_equals($device->credential_hash, $this->credentialHash($user))) {
+            return null;
+        }
+        if ($lock) {
+            // A row lock alone does not invalidate another PostgreSQL snapshot.
+            // Version the shared anchor before adding sessions or token bindings.
+            DB::table('sso_devices')->where('id', $id)->update(['last_seen' => $device->last_seen]);
+        }
+
+        return $device;
     }
 
     /** Called only after the application's native SessionGuard has authenticated the user. */
@@ -68,7 +77,7 @@ final class DeviceSessions
         $expires = $now + max(1, (int) config($remember ? 'sso-server.remember_ttl' : 'sso-server.session_max'));
         $id = bin2hex(random_bytes(32));
         $agent = mb_substr($request->userAgent() ?? '', 0, 512);
-        $token = DB::transaction(function () use ($id, $subject, $agent, $request, $user, $now, $expires, $remember): ?array {
+        $token = Transactions::run(function () use ($id, $subject, $agent, $request, $user, $now, $expires, $remember): ?array {
             DB::table('sso_devices')->insert([
                 'id' => $id, 'subject' => $subject, 'label' => $this->defaultLabel($agent), 'user_agent' => $agent,
                 'ip_address' => config('sso-server.device_record_ip') ? mb_substr($request->ip() ?? '', 0, 45) : null,
@@ -78,7 +87,7 @@ final class DeviceSessions
             app(Audit::class)->record('device.registered', ['subject' => $subject, 'device' => $id], ['remembered' => (bool) $remember]);
 
             return $remember ? $this->newToken($id, $expires) : null;
-        }, 5);
+        });
         $request->session()->put('sso.device_id', $id);
         $request->session()->forget('sso.remembered');
         if ($token !== null) {
@@ -114,7 +123,7 @@ final class DeviceSessions
 
             return false;
         }
-        $result = DB::transaction(function () use ($parts, $request): ?array {
+        $result = Transactions::run(function () use ($parts, $request): ?array {
             $token = DB::table('sso_remember_tokens')->where('id', $parts[1])->first();
             if (! $token) {
                 return null;
@@ -155,7 +164,7 @@ final class DeviceSessions
             ]);
 
             return ['device' => $device, 'token' => $next, 'sid' => $sid];
-        }, 5);
+        });
         if ($result === null) {
             $this->forgetCookie();
 
@@ -191,7 +200,7 @@ final class DeviceSessions
 
     public function revoke(string $id, ?string $subject = null): bool
     {
-        return DB::transaction(function () use ($id, $subject): bool {
+        return Transactions::run(function () use ($id, $subject): bool {
             $device = DB::table('sso_devices')->where('id', $id)->lockForUpdate()->first();
             if (! $device || ($subject !== null && $device->subject !== $subject)) {
                 return false;
@@ -205,7 +214,7 @@ final class DeviceSessions
             }
 
             return true;
-        }, 5);
+        });
     }
 
     public function revokeAll(string $subject, ?string $except = null): void
