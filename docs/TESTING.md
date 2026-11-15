@@ -71,7 +71,16 @@ Pint pasó 136 archivos (`.runtime/audit-pint.log`) y Larastan nivel 5 sin basel
 discovery/JWKS reales: `.runtime/audit-e2e.log` y `.runtime/operations-e2e-diagnostics.json`.
 Instaladores, catálogo y garantías: [auditoría y operaciones](AUDIT-OPERATIONS.md).
 
+La fase posterior repitió 209 / 982 en PHP 8.3/8.4/8.5, 106 / 414 normativos, Larastan,
+Pint (145 archivos) y E2E, todo aprobado. Informes actuales `.runtime/deployment-*`.
+Además verificó dos despliegues optimizados HTTPS, 60 controles Chromium/Firefox/WebKit,
+doce de proxy y **1805,85 s / 15 850 solicitudes / 8 usuarios / cero errores inesperados**.
+Outbox vacías después de una pausa de 120 s; se conservó el intento fallido anterior y
+se repitió la campaña completa. Ver [reproducción, métricas y alcance](DEPLOYMENT-VALIDATION.md)
+y [JSON sin secretos](../conformance/deployment-results.json).
+
 GitHub Actions define PHP 8.3/8.4/8.5 y las mismas verificaciones. Configurar una matriz no
-demuestra que se ejecutó: los entornos verificados figuran en ROADMAP. Quedan campañas de
-carga prolongada, otros aislamientos/versiones y navegadores reales con políticas cross-site.
-MySQL/PostgreSQL y la suite OpenID Foundation sí se ejecutaron localmente. No hay certificación oficial.
+demuestra ejecución remota: siguen fuera del cierre CI remota, otros aislamientos/versiones,
+navegadores comerciales/móviles físicos y carga distribuida/multijornada.
+MySQL/PostgreSQL, navegadores Linux y el harness OIDF sí se ejecutaron localmente.
+No hay certificación oficial.

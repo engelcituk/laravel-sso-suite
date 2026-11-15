@@ -97,17 +97,19 @@ if (PHP_OS_FAMILY !== 'Windows') {
     }
 }
 
-if (! is_file($runtime.'/tls/ca.pem')) {
+$sameSerial = is_file($runtime.'/tls/ca.pem') && is_file($runtime.'/tls/server.pem')
+    && openssl_x509_parse(file_get_contents($runtime.'/tls/ca.pem'))['serialNumberHex'] === openssl_x509_parse(file_get_contents($runtime.'/tls/server.pem'))['serialNumberHex'];
+if (! is_file($runtime.'/tls/ca.pem') || $sameSerial) {
     $config = $runtime.'/tls/openssl.cnf';
     file_put_contents($config, "[req]\ndistinguished_name=dn\n[dn]\n[v3_ca]\nbasicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\n[server]\nbasicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature,keyEncipherment\nextendedKeyUsage=serverAuth\nsubjectAltName=DNS:identity.sso.test,DNS:localhost.emobix.co.uk,IP:127.0.0.1\n");
     $options = ['config' => $config, 'private_key_bits' => 3072, 'digest_alg' => 'sha256'];
     $caKey = openssl_pkey_new($options);
     $caCsr = openssl_csr_new(['commonName' => 'Laravel SSO private OIDF laboratory'], $caKey, $options);
-    $ca = openssl_csr_sign($caCsr, null, $caKey, 30, $options + ['x509_extensions' => 'v3_ca']);
+    $ca = openssl_csr_sign($caCsr, null, $caKey, 30, $options + ['x509_extensions' => 'v3_ca'], random_int(1, 1073741823));
     openssl_x509_export_to_file($ca, $runtime.'/tls/ca.pem');
     $key = openssl_pkey_new($options);
     $csr = openssl_csr_new(['commonName' => 'identity.sso.test'], $key, $options);
-    $cert = openssl_csr_sign($csr, $ca, $caKey, 30, $options + ['x509_extensions' => 'server']);
+    $cert = openssl_csr_sign($csr, $ca, $caKey, 30, $options + ['x509_extensions' => 'server'], random_int(1073741824, PHP_INT_MAX));
     openssl_x509_export_to_file($cert, $runtime.'/tls/server.pem');
     openssl_pkey_export_to_file($key, $runtime.'/tls/server.key', null, $options);
 }

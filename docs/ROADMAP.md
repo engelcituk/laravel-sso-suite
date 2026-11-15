@@ -11,7 +11,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
 | 4 identidad local | concurrencia local verificada | índice sensible a mayúsculas, recuperación de conflicto y commit; carreras en MySQL/PostgreSQL, ACL independiente |
 | 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
-| 6 instalación | comandos y auditoría verificados localmente | instaladores repetibles, diagnósticos OP/RP en JSON, eventos sin secretos, tres apps y matrices SQL; faltan otros despliegues |
+| 6 instalación | despliegues y operación local verificados | Nginx/FPM/MySQL y Apache/PHP/PostgreSQL optimizados, 60 controles de navegador y campaña de 30 min; otros entornos/piloto externo fuera de alcance |
 | 7 publicación | pendiente | calidad local aprobada; faltan auditoría externa, conformidad, matrices remotas y autorización |
 
 ## Resultados ejecutados
@@ -20,6 +20,16 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
 - PHPStan/Larastan nivel 5: sin errores y sin baseline. Laravel Pint: aprobado.
+- Dos despliegues Linux con HTTPS, APP_ENV=production, OPcache y optimize: Nginx 1.28.3 /
+  PHP-FPM 8.3.36 / MySQL 8.4.13 con sesiones en archivos; Apache 2.4.68 / PHP 8.4.27 /
+  PostgreSQL 18.7 con sesiones en DB. Seis apps y doce comprobaciones de proxy aprobadas.
+- Chromium 159.0.8154.6, Firefox 159.0 y WebKit 27.2: **60 controles** en tres sitios
+  registrables por despliegue, con TLS estricto. SSO, cookies Lax, iframe sin autenticación,
+  CSRF, Recordarme, dispositivos y logout comprobados.
+- Campaña corregida completa: **1805,85 s, 8 usuarios, 15 850 solicitudes, cero errores
+  inesperados**. Caída OP de 60 s y pausa de worker de 120 s; pendientes 28/24 durante
+  la pausa y 0/0 al cierre. Se conservaron intentos fallidos y se repitió tras corregir
+  stat cache del harness. [Resultados, latencias y límites](DEPLOYMENT-VALIDATION.md).
 - Esquema del servidor consolidado en una migración inicial; prueba de creación,
   reversión y recreación aprobada. Los ajustes se mantienen en una migración por paquete.
 - Matriz completa en Linux PHP 8.3.36: MySQL **8.4.13 / REPEATABLE READ**, **224 pruebas /
@@ -60,8 +70,9 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   de sesión central, revocación de otro dispositivo, POST externo de authorize/logout y rechazo
   CSRF en la confirmación. Los procesos temporales quedaron detenidos.
 
-No ejecutado: GitHub Actions remoto, navegadores reales cross-site, campañas prolongadas
-de carga ni revisión independiente/certificación externa. MySQL, PostgreSQL y el harness
+No ejecutado: GitHub Actions remoto, navegadores comerciales/Safari en sistemas físicos,
+carga distribuida o multijornada ni revisión independiente/certificación externa. Los dos
+despliegues, navegadores Linux cross-site y carga local de 30 min sí se ejecutaron. MySQL, PostgreSQL y el harness
 OpenID Foundation sí se ejecutaron localmente. La matriz PHP comparte un lockfile resuelto con
 plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependencias.
 
@@ -85,20 +96,21 @@ plataforma mínima 8.3; no prueba todas las combinaciones posibles de dependenci
 | Dispositivos propios | DeviceController + middleware central | listado, nombres, cierre individual/otros/todos, aislamiento, contraseña reciente, CSRF y E2E |
 | Auditoría | AuditEvent + Audit por componente | AuditTest: rollback, replay, secretos excluidos, duplicados y logs opt-in; ProtocolTest: códigos/tokens reales |
 | Instalación y diagnóstico | install-server/install-client/doctor-server/doctor | OperationsTest: conservación, migración real, claves y fallos múltiples; doctores OP/RP reales en E2E |
-| Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18, catorce carreras con procesos independientes; carga prolongada pendiente |
+| Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18, catorce carreras y campaña HTTP de 30 min en ambos motores |
+| Despliegue / cross-site | Nginx/FPM y Apache; Playwright | seis apps optimizadas HTTPS, tres motores de navegador, 60 controles y doce de proxy |
 | Perfil Code normativo local | tests/Conformance | **106 tests / 414 aserciones**; no equivale al harness oficial |
 | Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
 
 ## Próxima fase
 
 Los bloques de concurrencia/retención, Recordarme/dispositivos y auditoría/instalación/
-diagnóstico quedan atendidos en el alcance local documentado. Se conserva la reproducción
+diagnóstico, despliegues y carga de 30 min quedan atendidos en el alcance local documentado. Se conserva la reproducción
 de los cinco planes OIDC y sus evidencias. El destino y retención de auditoría se configuran
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
-1. Validar otros despliegues, navegadores cross-site y campañas prolongadas de carga/fallos
-   de infraestructura.
-2. Ejecutar la matriz CI remota y ampliar versiones/aislamientos, sin atribuirle resultados locales.
+1. Ejecutar la matriz CI remota y ampliar versiones/aislamientos, sin atribuirle resultados locales.
+2. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
+   móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.
 3. Revisión independiente, evaluación/certificación externa, canal privado de reportes,
    nombre público y split de paquetes;
    autorización explícita antes de publicar versiones.

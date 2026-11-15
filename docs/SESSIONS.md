@@ -84,5 +84,7 @@ su vencimiento absoluto. Replay verificado revoca el dispositivo; una contraseñ
 y CSRF protegen la administración. Los RP siguen sin credenciales Recordarme propias.
 Ver [política, integración, limpieza y resultados reales](REMEMBER-DEVICES.md).
 
-Quedan certificación externa, campañas prolongadas de carga y fallos de red/infraestructura.
-Las carreras concretas de revocación, entrega y recuperación en MySQL/PostgreSQL ya se ejecutaron.
+Las carreras de revocación, entrega y recuperación en MySQL/PostgreSQL y una
+[campaña local de 30 min](DEPLOYMENT-VALIDATION.md) ya se ejecutaron: caída HTTP del OP,
+pausa de entrega, rechazo de acceso y drenaje comprobados. Siguen fuera del cierre
+certificación externa, pérdida TCP silenciosa y evaluación distribuida/multijornada.

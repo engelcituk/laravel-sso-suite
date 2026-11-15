@@ -1,8 +1,10 @@
 # Despliegue (criterios previos, proyecto experimental)
 
-No se recomienda producción todavía: faltan conformidad externa, auditoría y validación
-operativa/carga prolongada. La matriz local de MySQL 8.4/PostgreSQL 18 está documentada en
-[concurrencia](DATABASE-CONCURRENCY.md). Los ejemplos PHP built-in son sólo locales.
+No se recomienda producción todavía: faltan conformidad externa, auditoría independiente
+y un piloto en el entorno de destino. Se verificaron localmente Nginx/FPM/MySQL y
+Apache/PHP/PostgreSQL optimizados, tres motores de navegador cross-site y una campaña
+de 30 min con ocho usuarios y recuperación de fallos. Ver [resultados y límites](DEPLOYMENT-VALIDATION.md)
+y [concurrencia SQL](DATABASE-CONCURRENCY.md). Los ejemplos PHP built-in son sólo locales.
 
 Antes de un piloto controlado:
 

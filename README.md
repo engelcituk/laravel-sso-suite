@@ -100,6 +100,7 @@ composer audit --locked
 [concurrencia MySQL/PostgreSQL y retención](docs/DATABASE-CONCURRENCY.md),
 [Recordarme y dispositivos](docs/REMEMBER-DEVICES.md),
 [auditoría, instalación y diagnóstico](docs/AUDIT-OPERATIONS.md),
+[despliegues, navegadores cross-site y carga de 30 min](docs/DEPLOYMENT-VALIDATION.md),
 [modelo de seguridad](docs/SECURITY-MODEL.md), [arquitectura](docs/ARCHITECTURE.md),
 [decisiones y fuentes](docs/DECISIONS.md), [Auth](docs/LARAVEL-AUTH.md),
 [ACL local](docs/LOCAL-ACL.md), [sesiones y logout](docs/SESSIONS.md),

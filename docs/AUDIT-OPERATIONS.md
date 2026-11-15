@@ -87,6 +87,9 @@ configuración. Si omites el canal, usa el predeterminado de Laravel. El sink es
 por defecto; los eventos se despachan igualmente. Elige sink o listener para evitar dos
 copias en el mismo destino. El evento anterior `IdentityProvisioned` se conserva para
 extensiones del aprovisionamiento; contiene el modelo y no debe volcarse a logs.
+El sink escribe con nivel `info`: configura un canal que lo acepte. El canal de los
+ejemplos usa `warning` inicialmente; habilitar sólo la variable de auditoría no cambia
+ese filtro. El laboratorio de despliegue usó explícitamente nivel `info`.
 
 La entrega de auditoría es síncrona después del commit. Una excepción de un listener o
 del canal puede propagarse, pero no deshace datos ya confirmados. Para persistencia,
@@ -196,5 +199,6 @@ Artefactos privados, ignorados por Git:
 
 Se conservaron las evidencias anteriores. Los contenedores y servidores temporales se
 detuvieron al terminar. No se publicó código, paquetes, imágenes ni resultados, ni se
-ejecutó CI remota. Siguen fuera de este cierre otros despliegues, navegadores cross-site,
-carga prolongada y evaluación externa; ver [roadmap](ROADMAP.md).
+ejecutó CI remota. Este informe conserva el cierre de auditoría/operaciones. La fase
+posterior completó [dos despliegues, navegadores cross-site y carga local de 30 min](DEPLOYMENT-VALIDATION.md).
+CI remota y evaluación externa siguen fuera del cierre; ver [roadmap](ROADMAP.md).

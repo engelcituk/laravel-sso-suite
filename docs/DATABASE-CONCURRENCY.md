@@ -134,10 +134,12 @@ No exporta JWT, HTML, contraseñas ni secretos de clientes.
 
 GitHub Actions tiene una matriz adicional para estos motores; **no se ejecutó remotamente**.
 Los tests fuerzan carreras concretas a los aislamientos indicados; no acreditan otros
-aislamientos/versiones, clústeres, pérdida de red real ni campañas de carga prolongada.
+aislamientos/versiones, clústeres ni pérdida de red real. Una evaluación posterior
+añadió [30 min de carga HTTP y navegadores cross-site](DEPLOYMENT-VALIDATION.md) en
+MySQL/PostgreSQL con Nginx/FPM y Apache, separada de estas carreras.
 La entrega back-channel sigue siendo al menos una vez y el RP debe reconocer duplicados.
-Recordarme central y dispositivos ya están implementados y evaluados. La siguiente fase
-del roadmap amplía auditoría/diagnóstico y validación operativa.
+Recordarme, dispositivos y auditoría/diagnóstico ya están implementados y evaluados.
+El roadmap distingue esa validación local del piloto y revisión externos.
 
 Las decisiones de bloqueo se contrastaron con la documentación primaria de
 [MySQL 8.4](https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html),

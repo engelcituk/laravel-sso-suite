@@ -120,8 +120,9 @@ Passport 13.10.0, League OAuth2 Server 9.4.1 y firebase/php-jwt 7.2.1.
 Suite: Java Temurin 21.0.13+9, MongoDB 6.0.13 y nginx 1.27.3.
 Host: Windows, Docker Desktop 4.99.0, Engine 29.9.3, Compose v5.7.0 y WSL 3.0.5.
 Las pruebas PHP de Windows usan Herd y SQLite 3.53.4 en PHP 8.3. La matriz MySQL/PostgreSQL
-se ejecutó por separado en Linux; ver DATABASE-CONCURRENCY.md. No se afirma una campaña
-de carga prolongada ni una auditoría externa de seguridad.
+se ejecutó por separado en Linux; ver DATABASE-CONCURRENCY.md. La fase posterior
+añadió [despliegues, navegadores y 30 min de carga local](DEPLOYMENT-VALIDATION.md),
+sin repetir ni modificar estos estados oficiales. No se afirma auditoría externa de seguridad.
 
 ## Evidencias y reproducción
 

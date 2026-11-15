@@ -1,0 +1,1200 @@
+{
+    "version": 1,
+    "checked_at_utc": "2026-11-14T23:45:44+00:00",
+    "source_sha256": "d1966a6540ad76667940206760415d6a28914500a54be2c50e5671b169aea5fe",
+    "official_conformance_claimed": false,
+    "images": {
+        "checked_at_utc": "2026-11-14T23:14:58.2127943Z",
+        "images": {
+            "laravel-sso-deployment-fpm:local": {
+                "id": "sha256:66a5400bea70b1890e9c5063eb9e35ded49cb1ec6394552a373276f84a2d0971",
+                "repo_digests": [
+                    "laravel-sso-deployment-fpm@sha256:66a5400bea70b1890e9c5063eb9e35ded49cb1ec6394552a373276f84a2d0971"
+                ],
+                "os": "linux",
+                "architecture": "amd64"
+            },
+            "laravel-sso-deployment-apache:local": {
+                "id": "sha256:7e7a195b78387f230c73b474080ec8b271519f5e657ecdd6d49a78eb9dae6d34",
+                "repo_digests": [
+                    "laravel-sso-deployment-apache@sha256:7e7a195b78387f230c73b474080ec8b271519f5e657ecdd6d49a78eb9dae6d34"
+                ],
+                "os": "linux",
+                "architecture": "amd64"
+            },
+            "laravel-sso-deployment-browsers:local": {
+                "id": "sha256:db6bc2ff72532514ba9853ed0a6554410030cd80884883a8286d6f03ec5a2de6",
+                "repo_digests": [
+                    "laravel-sso-deployment-browsers@sha256:db6bc2ff72532514ba9853ed0a6554410030cd80884883a8286d6f03ec5a2de6"
+                ],
+                "os": "linux",
+                "architecture": "amd64"
+            },
+            "nginx:1.28": {
+                "id": "sha256:146adea4768b83c607d0bdfa4188464e3da6e0a3ad4475db1d1d8f64f27c29cc",
+                "repo_digests": [
+                    "nginx@sha256:146adea4768b83c607d0bdfa4188464e3da6e0a3ad4475db1d1d8f64f27c29cc"
+                ],
+                "os": "linux",
+                "architecture": "amd64"
+            },
+            "mysql:8.4": {
+                "id": "sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902",
+                "repo_digests": [
+                    "mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902"
+                ],
+                "os": "linux",
+                "architecture": "amd64"
+            },
+            "postgres:18": {
+                "id": "sha256:b9f6b8ff03b62f3cfd9d9ba3fe56226a9991c79d3fb46fd46536263bf02be553",
+                "repo_digests": [
+                    "postgres@sha256:b9f6b8ff03b62f3cfd9d9ba3fe56226a9991c79d3fb46fd46536263bf02be553"
+                ],
+                "os": "linux",
+                "architecture": "amd64"
+            }
+        },
+        "engine": "29.9.3",
+        "compose": "5.7.0",
+        "nginx": "nginx version: nginx/1.28.3",
+        "apache": "Server version: Apache/2.4.68 (Debian)\r\nServer built:   2026-06-12T05:08:45"
+    },
+    "deployments": {
+        "fpm": {
+            "op": {
+                "health": {
+                    "php": "8.3.36",
+                    "sapi": "fpm-fcgi",
+                    "secure": true,
+                    "host": "identity.idp.test",
+                    "configuration_cached": true,
+                    "routes_cached": true,
+                    "session_driver": "file",
+                    "opcache": true,
+                    "driver": "mysql",
+                    "database_version": "8.4.13"
+                },
+                "doctor": {
+                    "version": 1,
+                    "passed": true,
+                    "checks": [
+                        {
+                            "code": "enabled",
+                            "status": "pass",
+                            "message": "Enable sso-server after configuring the dedicated issuer."
+                        },
+                        {
+                            "code": "issuer",
+                            "status": "pass",
+                            "message": "Issuer must be a dedicated HTTPS origin; HTTP is development only."
+                        },
+                        {
+                            "code": "guard",
+                            "status": "pass",
+                            "message": "Central guard must use SessionGuard with an Eloquent provider and password/active columns."
+                        },
+                        {
+                            "code": "session",
+                            "status": "pass",
+                            "message": "Use server-side sessions and secure host-only cookies in production."
+                        },
+                        {
+                            "code": "schema",
+                            "status": "pass",
+                            "message": "Apply Passport migrations and the single server migration."
+                        },
+                        {
+                            "code": "signing_keys",
+                            "status": "pass",
+                            "message": "Readable RSA keys (2048+ bits), published signing kid and matching private/public pair required."
+                        },
+                        {
+                            "code": "retention",
+                            "status": "pass",
+                            "message": "Positive session, remember and retention bounds required."
+                        },
+                        {
+                            "code": "passport",
+                            "status": "pass",
+                            "message": "Passport must share the default DB connection and have a matching readable OAuth RSA key pair."
+                        },
+                        {
+                            "code": "outbox",
+                            "status": "pass",
+                            "message": "Logout outbox must be readable and have no overdue retry; run sso:deliver-logouts on schedule."
+                        },
+                        {
+                            "code": "backchannel",
+                            "status": "pass",
+                            "message": "Every registered logout destination must match the trusted HTTPS allowlist."
+                        }
+                    ]
+                },
+                "configuration_cached": true,
+                "routes_cached": true,
+                "state": {
+                    "pending_deliveries": 0,
+                    "delivered": 197,
+                    "max_attempts": 1,
+                    "sessions": 122,
+                    "devices": 47,
+                    "remembered_rotations": 75
+                }
+            },
+            "one": {
+                "health": {
+                    "php": "8.3.36",
+                    "sapi": "fpm-fcgi",
+                    "secure": true,
+                    "host": "one.rp-one.test",
+                    "configuration_cached": true,
+                    "routes_cached": true,
+                    "session_driver": "file",
+                    "opcache": true,
+                    "driver": "mysql",
+                    "database_version": "8.4.13"
+                },
+                "doctor": {
+                    "version": 1,
+                    "passed": true,
+                    "checks": [
+                        {
+                            "code": "enabled",
+                            "status": "pass",
+                            "message": "Enable sso-client after configuration."
+                        },
+                        {
+                            "code": "identity",
+                            "status": "pass",
+                            "message": "Configure a SessionGuard for the local Eloquent identity model with a unique (issuer, subject) index and no credentials."
+                        },
+                        {
+                            "code": "schema",
+                            "status": "pass",
+                            "message": "Apply the single client migration for local sessions and logout receipts."
+                        },
+                        {
+                            "code": "session",
+                            "status": "pass",
+                            "message": "Use server-side sessions and secure host-only cookies in production."
+                        },
+                        {
+                            "code": "configuration",
+                            "status": "pass",
+                            "message": "Set client ID, HTTPS callback, provisioning policy, openid scope and positive TTLs."
+                        },
+                        {
+                            "code": "trusted_urls",
+                            "status": "pass",
+                            "message": "Trust discovery and session status URLs explicitly; HTTPS required outside development."
+                        },
+                        {
+                            "code": "discovery_jwks",
+                            "status": "pass",
+                            "message": "Verify issuer, trusted endpoints, S256, RS256 and usable JWKS over HTTP."
+                        }
+                    ]
+                },
+                "configuration_cached": true,
+                "routes_cached": true,
+                "state": {
+                    "local_sessions": 126,
+                    "receipts": 118,
+                    "identity_rows": 7
+                }
+            },
+            "two": {
+                "health": {
+                    "php": "8.3.36",
+                    "sapi": "fpm-fcgi",
+                    "secure": true,
+                    "host": "two.rp-two.test",
+                    "configuration_cached": true,
+                    "routes_cached": true,
+                    "session_driver": "file",
+                    "opcache": true,
+                    "driver": "mysql",
+                    "database_version": "8.4.13"
+                },
+                "doctor": {
+                    "version": 1,
+                    "passed": true,
+                    "checks": [
+                        {
+                            "code": "enabled",
+                            "status": "pass",
+                            "message": "Enable sso-client after configuration."
+                        },
+                        {
+                            "code": "identity",
+                            "status": "pass",
+                            "message": "Configure a SessionGuard for the local Eloquent identity model with a unique (issuer, subject) index and no credentials."
+                        },
+                        {
+                            "code": "schema",
+                            "status": "pass",
+                            "message": "Apply the single client migration for local sessions and logout receipts."
+                        },
+                        {
+                            "code": "session",
+                            "status": "pass",
+                            "message": "Use server-side sessions and secure host-only cookies in production."
+                        },
+                        {
+                            "code": "configuration",
+                            "status": "pass",
+                            "message": "Set client ID, HTTPS callback, provisioning policy, openid scope and positive TTLs."
+                        },
+                        {
+                            "code": "trusted_urls",
+                            "status": "pass",
+                            "message": "Trust discovery and session status URLs explicitly; HTTPS required outside development."
+                        },
+                        {
+                            "code": "discovery_jwks",
+                            "status": "pass",
+                            "message": "Verify issuer, trusted endpoints, S256, RS256 and usable JWKS over HTTP."
+                        }
+                    ]
+                },
+                "configuration_cached": true,
+                "routes_cached": true,
+                "state": {
+                    "local_sessions": 83,
+                    "receipts": 79,
+                    "identity_rows": 7
+                }
+            }
+        },
+        "apache": {
+            "op": {
+                "health": {
+                    "php": "8.4.27",
+                    "sapi": "apache2handler",
+                    "secure": true,
+                    "host": "identity.idp-alt.test",
+                    "configuration_cached": true,
+                    "routes_cached": true,
+                    "session_driver": "database",
+                    "opcache": true,
+                    "driver": "pgsql",
+                    "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit"
+                },
+                "doctor": {
+                    "version": 1,
+                    "passed": true,
+                    "checks": [
+                        {
+                            "code": "enabled",
+                            "status": "pass",
+                            "message": "Enable sso-server after configuring the dedicated issuer."
+                        },
+                        {
+                            "code": "issuer",
+                            "status": "pass",
+                            "message": "Issuer must be a dedicated HTTPS origin; HTTP is development only."
+                        },
+                        {
+                            "code": "guard",
+                            "status": "pass",
+                            "message": "Central guard must use SessionGuard with an Eloquent provider and password/active columns."
+                        },
+                        {
+                            "code": "session",
+                            "status": "pass",
+                            "message": "Use server-side sessions and secure host-only cookies in production."
+                        },
+                        {
+                            "code": "schema",
+                            "status": "pass",
+                            "message": "Apply Passport migrations and the single server migration."
+                        },
+                        {
+                            "code": "signing_keys",
+                            "status": "pass",
+                            "message": "Readable RSA keys (2048+ bits), published signing kid and matching private/public pair required."
+                        },
+                        {
+                            "code": "retention",
+                            "status": "pass",
+                            "message": "Positive session, remember and retention bounds required."
+                        },
+                        {
+                            "code": "passport",
+                            "status": "pass",
+                            "message": "Passport must share the default DB connection and have a matching readable OAuth RSA key pair."
+                        },
+                        {
+                            "code": "outbox",
+                            "status": "pass",
+                            "message": "Logout outbox must be readable and have no overdue retry; run sso:deliver-logouts on schedule."
+                        },
+                        {
+                            "code": "backchannel",
+                            "status": "pass",
+                            "message": "Every registered logout destination must match the trusted HTTPS allowlist."
+                        }
+                    ]
+                },
+                "configuration_cached": true,
+                "routes_cached": true,
+                "state": {
+                    "pending_deliveries": 0,
+                    "delivered": 193,
+                    "max_attempts": 1,
+                    "sessions": 122,
+                    "devices": 47,
+                    "remembered_rotations": 75
+                }
+            },
+            "one": {
+                "health": {
+                    "php": "8.4.27",
+                    "sapi": "apache2handler",
+                    "secure": true,
+                    "host": "one.rp-one-alt.test",
+                    "configuration_cached": true,
+                    "routes_cached": true,
+                    "session_driver": "database",
+                    "opcache": true,
+                    "driver": "pgsql",
+                    "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit"
+                },
+                "doctor": {
+                    "version": 1,
+                    "passed": true,
+                    "checks": [
+                        {
+                            "code": "enabled",
+                            "status": "pass",
+                            "message": "Enable sso-client after configuration."
+                        },
+                        {
+                            "code": "identity",
+                            "status": "pass",
+                            "message": "Configure a SessionGuard for the local Eloquent identity model with a unique (issuer, subject) index and no credentials."
+                        },
+                        {
+                            "code": "schema",
+                            "status": "pass",
+                            "message": "Apply the single client migration for local sessions and logout receipts."
+                        },
+                        {
+                            "code": "session",
+                            "status": "pass",
+                            "message": "Use server-side sessions and secure host-only cookies in production."
+                        },
+                        {
+                            "code": "configuration",
+                            "status": "pass",
+                            "message": "Set client ID, HTTPS callback, provisioning policy, openid scope and positive TTLs."
+                        },
+                        {
+                            "code": "trusted_urls",
+                            "status": "pass",
+                            "message": "Trust discovery and session status URLs explicitly; HTTPS required outside development."
+                        },
+                        {
+                            "code": "discovery_jwks",
+                            "status": "pass",
+                            "message": "Verify issuer, trusted endpoints, S256, RS256 and usable JWKS over HTTP."
+                        }
+                    ]
+                },
+                "configuration_cached": true,
+                "routes_cached": true,
+                "state": {
+                    "local_sessions": 122,
+                    "receipts": 118,
+                    "identity_rows": 7
+                }
+            },
+            "two": {
+                "health": {
+                    "php": "8.4.27",
+                    "sapi": "apache2handler",
+                    "secure": true,
+                    "host": "two.rp-two-alt.test",
+                    "configuration_cached": true,
+                    "routes_cached": true,
+                    "session_driver": "database",
+                    "opcache": true,
+                    "driver": "pgsql",
+                    "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit"
+                },
+                "doctor": {
+                    "version": 1,
+                    "passed": true,
+                    "checks": [
+                        {
+                            "code": "enabled",
+                            "status": "pass",
+                            "message": "Enable sso-client after configuration."
+                        },
+                        {
+                            "code": "identity",
+                            "status": "pass",
+                            "message": "Configure a SessionGuard for the local Eloquent identity model with a unique (issuer, subject) index and no credentials."
+                        },
+                        {
+                            "code": "schema",
+                            "status": "pass",
+                            "message": "Apply the single client migration for local sessions and logout receipts."
+                        },
+                        {
+                            "code": "session",
+                            "status": "pass",
+                            "message": "Use server-side sessions and secure host-only cookies in production."
+                        },
+                        {
+                            "code": "configuration",
+                            "status": "pass",
+                            "message": "Set client ID, HTTPS callback, provisioning policy, openid scope and positive TTLs."
+                        },
+                        {
+                            "code": "trusted_urls",
+                            "status": "pass",
+                            "message": "Trust discovery and session status URLs explicitly; HTTPS required outside development."
+                        },
+                        {
+                            "code": "discovery_jwks",
+                            "status": "pass",
+                            "message": "Verify issuer, trusted endpoints, S256, RS256 and usable JWKS over HTTP."
+                        }
+                    ]
+                },
+                "configuration_cached": true,
+                "routes_cached": true,
+                "state": {
+                    "local_sessions": 79,
+                    "receipts": 75,
+                    "identity_rows": 7
+                }
+            }
+        }
+    },
+    "browsers": {
+        "started_at_utc": "2026-11-14T23:14:29.605Z",
+        "playwright": "1.65.1",
+        "browser_script_sha256": "fc7b9b8f6e2f0ab77d13913844fd058fcf54bee3906b4ee3c53db209f9f78b10",
+        "https_errors_ignored": false,
+        "tests": [
+            {
+                "engine": "chromium",
+                "profile": "fpm",
+                "checks": [
+                    "real_cross_site_top_level_sso",
+                    "one_credential_submission_two_rps",
+                    "independent_acl_denied",
+                    "secure_host_only_lax_cookies",
+                    "iframe_get_does_not_authenticate",
+                    "top_level_op_still_authenticated",
+                    "cross_site_csrf_rejected_session_not_revoked",
+                    "remember_restore_without_new_credentials",
+                    "recent_password_device_management",
+                    "global_logout_other_rp_denied"
+                ],
+                "passed": true,
+                "version": "159.0.8154.6",
+                "registrable_sites": [
+                    "idp.test",
+                    "rp-one.test",
+                    "rp-two.test"
+                ],
+                "cookie_attributes": [
+                    {
+                        "name": "__Host-sso_remember",
+                        "domain": "identity.idp.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "fpm_one_session",
+                        "domain": "one.rp-one.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "fpm_op_session",
+                        "domain": "identity.idp.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "fpm_two_session",
+                        "domain": "two.rp-two.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    }
+                ],
+                "iframe_fetch_site": "cross-site",
+                "credentials_submissions": 1
+            },
+            {
+                "engine": "chromium",
+                "profile": "apache",
+                "checks": [
+                    "real_cross_site_top_level_sso",
+                    "one_credential_submission_two_rps",
+                    "independent_acl_denied",
+                    "secure_host_only_lax_cookies",
+                    "iframe_get_does_not_authenticate",
+                    "top_level_op_still_authenticated",
+                    "cross_site_csrf_rejected_session_not_revoked",
+                    "remember_restore_without_new_credentials",
+                    "recent_password_device_management",
+                    "global_logout_other_rp_denied"
+                ],
+                "passed": true,
+                "version": "159.0.8154.6",
+                "registrable_sites": [
+                    "idp-alt.test",
+                    "rp-one-alt.test",
+                    "rp-two-alt.test"
+                ],
+                "cookie_attributes": [
+                    {
+                        "name": "__Host-sso_remember",
+                        "domain": "identity.idp-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_one_session",
+                        "domain": "one.rp-one-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_op_session",
+                        "domain": "identity.idp-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_two_session",
+                        "domain": "two.rp-two-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    }
+                ],
+                "iframe_fetch_site": "cross-site",
+                "credentials_submissions": 1
+            },
+            {
+                "engine": "firefox",
+                "profile": "fpm",
+                "checks": [
+                    "real_cross_site_top_level_sso",
+                    "one_credential_submission_two_rps",
+                    "independent_acl_denied",
+                    "secure_host_only_lax_cookies",
+                    "iframe_get_does_not_authenticate",
+                    "top_level_op_still_authenticated",
+                    "cross_site_csrf_rejected_session_not_revoked",
+                    "remember_restore_without_new_credentials",
+                    "recent_password_device_management",
+                    "global_logout_other_rp_denied"
+                ],
+                "passed": true,
+                "version": "159.0",
+                "registrable_sites": [
+                    "idp.test",
+                    "rp-one.test",
+                    "rp-two.test"
+                ],
+                "cookie_attributes": [
+                    {
+                        "name": "fpm_one_session",
+                        "domain": "one.rp-one.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "__Host-sso_remember",
+                        "domain": "identity.idp.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "fpm_op_session",
+                        "domain": "identity.idp.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "fpm_two_session",
+                        "domain": "two.rp-two.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    }
+                ],
+                "iframe_fetch_site": "cross-site",
+                "credentials_submissions": 1
+            },
+            {
+                "engine": "firefox",
+                "profile": "apache",
+                "checks": [
+                    "real_cross_site_top_level_sso",
+                    "one_credential_submission_two_rps",
+                    "independent_acl_denied",
+                    "secure_host_only_lax_cookies",
+                    "iframe_get_does_not_authenticate",
+                    "top_level_op_still_authenticated",
+                    "cross_site_csrf_rejected_session_not_revoked",
+                    "remember_restore_without_new_credentials",
+                    "recent_password_device_management",
+                    "global_logout_other_rp_denied"
+                ],
+                "passed": true,
+                "version": "159.0",
+                "registrable_sites": [
+                    "idp-alt.test",
+                    "rp-one-alt.test",
+                    "rp-two-alt.test"
+                ],
+                "cookie_attributes": [
+                    {
+                        "name": "__Host-sso_remember",
+                        "domain": "identity.idp-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_op_session",
+                        "domain": "identity.idp-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_two_session",
+                        "domain": "two.rp-two-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_one_session",
+                        "domain": "one.rp-one-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    }
+                ],
+                "iframe_fetch_site": "cross-site",
+                "credentials_submissions": 1
+            },
+            {
+                "engine": "webkit",
+                "profile": "fpm",
+                "checks": [
+                    "real_cross_site_top_level_sso",
+                    "one_credential_submission_two_rps",
+                    "independent_acl_denied",
+                    "secure_host_only_lax_cookies",
+                    "iframe_get_does_not_authenticate",
+                    "top_level_op_still_authenticated",
+                    "cross_site_csrf_rejected_session_not_revoked",
+                    "remember_restore_without_new_credentials",
+                    "recent_password_device_management",
+                    "global_logout_other_rp_denied"
+                ],
+                "passed": true,
+                "version": "27.2",
+                "registrable_sites": [
+                    "idp.test",
+                    "rp-one.test",
+                    "rp-two.test"
+                ],
+                "cookie_attributes": [
+                    {
+                        "name": "fpm_one_session",
+                        "domain": "one.rp-one.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "fpm_op_session",
+                        "domain": "identity.idp.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "__Host-sso_remember",
+                        "domain": "identity.idp.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "fpm_two_session",
+                        "domain": "two.rp-two.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    }
+                ],
+                "iframe_fetch_site": "cross-site",
+                "credentials_submissions": 1
+            },
+            {
+                "engine": "webkit",
+                "profile": "apache",
+                "checks": [
+                    "real_cross_site_top_level_sso",
+                    "one_credential_submission_two_rps",
+                    "independent_acl_denied",
+                    "secure_host_only_lax_cookies",
+                    "iframe_get_does_not_authenticate",
+                    "top_level_op_still_authenticated",
+                    "cross_site_csrf_rejected_session_not_revoked",
+                    "remember_restore_without_new_credentials",
+                    "recent_password_device_management",
+                    "global_logout_other_rp_denied"
+                ],
+                "passed": true,
+                "version": "27.2",
+                "registrable_sites": [
+                    "idp-alt.test",
+                    "rp-one-alt.test",
+                    "rp-two-alt.test"
+                ],
+                "cookie_attributes": [
+                    {
+                        "name": "apache_op_session",
+                        "domain": "identity.idp-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "__Host-sso_remember",
+                        "domain": "identity.idp-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_one_session",
+                        "domain": "one.rp-one-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    },
+                    {
+                        "name": "apache_two_session",
+                        "domain": "two.rp-two-alt.test",
+                        "secure": true,
+                        "httpOnly": true,
+                        "sameSite": "Lax"
+                    }
+                ],
+                "iframe_fetch_site": "cross-site",
+                "credentials_submissions": 1
+            }
+        ],
+        "failed": 0,
+        "finished_at_utc": "2026-11-14T23:14:57.842Z"
+    },
+    "soak": {
+        "started_at_utc": "2026-11-14T23:15:01+00:00",
+        "requested_seconds": 1800,
+        "virtual_users": 8,
+        "events": [
+            {
+                "event": "outage_begin",
+                "elapsed_seconds": 300.018
+            },
+            {
+                "event": "outage_end",
+                "elapsed_seconds": 360.089
+            },
+            {
+                "event": "worker_pause",
+                "elapsed_seconds": 900.232
+            },
+            {
+                "event": "worker_resume",
+                "elapsed_seconds": 1020.088
+            }
+        ],
+        "elapsed_seconds": 1805.85,
+        "pause_observations": {
+            "fpm": {
+                "pending_deliveries": 28,
+                "delivered": 89,
+                "max_attempts": 1,
+                "sessions": 74,
+                "devices": 31,
+                "remembered_rotations": 43
+            },
+            "apache": {
+                "pending_deliveries": 24,
+                "delivered": 89,
+                "max_attempts": 1,
+                "sessions": 74,
+                "devices": 31,
+                "remembered_rotations": 43
+            }
+        },
+        "final_outbox": {
+            "fpm": {
+                "pending_deliveries": 0,
+                "delivered": 197,
+                "max_attempts": 1,
+                "sessions": 122,
+                "devices": 47,
+                "remembered_rotations": 75
+            },
+            "apache": {
+                "pending_deliveries": 0,
+                "delivered": 193,
+                "max_attempts": 1,
+                "sessions": 122,
+                "devices": 47,
+                "remembered_rotations": 75
+            }
+        },
+        "finished_at_utc": "2026-11-14T23:45:07+00:00",
+        "failed_workers": 0,
+        "passed": true,
+        "profiles": {
+            "fpm": {
+                "http": {
+                    "protected_one": {
+                        "count": 3404,
+                        "statuses": {
+                            "401": 168,
+                            "200": 3236
+                        },
+                        "maximum_worker_p95_ms": 106.64781,
+                        "maximum_worker_p99_ms": 119.684247,
+                        "max_ms": 181.920865,
+                        "mean_ms": 63.20954794594594
+                    },
+                    "login": {
+                        "count": 756,
+                        "statuses": {
+                            "302": 556,
+                            "200": 200
+                        },
+                        "maximum_worker_p95_ms": 419.227873,
+                        "maximum_worker_p99_ms": 453.31088,
+                        "max_ms": 476.885727,
+                        "mean_ms": 123.87292014153441
+                    },
+                    "credentials": {
+                        "count": 176,
+                        "statuses": {
+                            "302": 132,
+                            "200": 44
+                        },
+                        "maximum_worker_p95_ms": 431.818856,
+                        "maximum_worker_p99_ms": 438.876018,
+                        "max_ms": 810.239174,
+                        "mean_ms": 193.7278162556818
+                    },
+                    "protected_two": {
+                        "count": 3476,
+                        "statuses": {
+                            "401": 240,
+                            "200": 3236
+                        },
+                        "maximum_worker_p95_ms": 51.408722,
+                        "maximum_worker_p99_ms": 68.371318,
+                        "max_ms": 209.518215,
+                        "mean_ms": 37.48375278078249
+                    },
+                    "logout_form": {
+                        "count": 40,
+                        "statuses": {
+                            "200": 40
+                        },
+                        "maximum_worker_p95_ms": 9.788046,
+                        "maximum_worker_p99_ms": 9.788046,
+                        "max_ms": 10.442958,
+                        "mean_ms": 7.94082475
+                    },
+                    "logout": {
+                        "count": 80,
+                        "statuses": {
+                            "302": 40,
+                            "200": 40
+                        },
+                        "maximum_worker_p95_ms": 32.377436,
+                        "maximum_worker_p99_ms": 32.377436,
+                        "max_ms": 33.869018,
+                        "mean_ms": 23.1065797875
+                    },
+                    "logout_confirm": {
+                        "count": 40,
+                        "statuses": {
+                            "200": 40
+                        },
+                        "maximum_worker_p95_ms": 67.922978,
+                        "maximum_worker_p99_ms": 67.922978,
+                        "max_ms": 78.321653,
+                        "mean_ms": 54.576657275
+                    }
+                }
+            },
+            "apache": {
+                "http": {
+                    "protected_one": {
+                        "count": 3373,
+                        "statuses": {
+                            "401": 44,
+                            "200": 3329
+                        },
+                        "maximum_worker_p95_ms": 110.674274,
+                        "maximum_worker_p99_ms": 124.714236,
+                        "max_ms": 196.180469,
+                        "mean_ms": 75.26687880670029
+                    },
+                    "login": {
+                        "count": 724,
+                        "statuses": {
+                            "302": 532,
+                            "200": 192
+                        },
+                        "maximum_worker_p95_ms": 362.974325,
+                        "maximum_worker_p99_ms": 411.528249,
+                        "max_ms": 427.802388,
+                        "mean_ms": 100.77374609254144
+                    },
+                    "credentials": {
+                        "count": 176,
+                        "statuses": {
+                            "302": 132,
+                            "200": 44
+                        },
+                        "maximum_worker_p95_ms": 352.459712,
+                        "maximum_worker_p99_ms": 383.412395,
+                        "max_ms": 661.665795,
+                        "mean_ms": 160.38739782954548
+                    },
+                    "protected_two": {
+                        "count": 3445,
+                        "statuses": {
+                            "401": 116,
+                            "200": 3329
+                        },
+                        "maximum_worker_p95_ms": 65.084889,
+                        "maximum_worker_p99_ms": 75.993625,
+                        "max_ms": 786.849944,
+                        "mean_ms": 51.274840270827276
+                    },
+                    "logout_form": {
+                        "count": 40,
+                        "statuses": {
+                            "200": 40
+                        },
+                        "maximum_worker_p95_ms": 21.580405,
+                        "maximum_worker_p99_ms": 21.580405,
+                        "max_ms": 24.61624,
+                        "mean_ms": 17.312927575
+                    },
+                    "logout": {
+                        "count": 80,
+                        "statuses": {
+                            "302": 40,
+                            "200": 40
+                        },
+                        "maximum_worker_p95_ms": 41.169236,
+                        "maximum_worker_p99_ms": 41.169236,
+                        "max_ms": 45.175108,
+                        "mean_ms": 30.8537334375
+                    },
+                    "logout_confirm": {
+                        "count": 40,
+                        "statuses": {
+                            "200": 40
+                        },
+                        "maximum_worker_p95_ms": 71.321851,
+                        "maximum_worker_p99_ms": 71.321851,
+                        "max_ms": 90.828736,
+                        "mean_ms": 62.72492905
+                    }
+                }
+            }
+        },
+        "totals": {
+            "requests": 15850,
+            "cycles": 6685,
+            "unexpected": 0,
+            "outage_denials": 240,
+            "logout_denials": 80,
+            "recoveries": 248,
+            "remember_recoveries": 144,
+            "transition_503": 0,
+            "transition_callback_400": 0,
+            "credential_submissions": 88,
+            "requests_per_second": 8.777030207381566
+        }
+    },
+    "proxy_checks": {
+        "checked_at_utc": "2026-11-14T23:14:59+00:00",
+        "checker_sha256": "e469eb786fc0cf1f723168f4ac3280124e4c63a1187fae3dcf6a508467cc52f4",
+        "https_errors_ignored": false,
+        "checks": [
+            {
+                "profile": "fpm",
+                "role": "op",
+                "check": "spoofed_forwarded_origin_replaced",
+                "passed": true
+            },
+            {
+                "profile": "fpm",
+                "role": "one",
+                "check": "spoofed_forwarded_origin_replaced",
+                "passed": true
+            },
+            {
+                "profile": "fpm",
+                "role": "one",
+                "check": "configured_https_oidc_redirect_preserved",
+                "passed": true
+            },
+            {
+                "profile": "fpm",
+                "role": "two",
+                "check": "spoofed_forwarded_origin_replaced",
+                "passed": true
+            },
+            {
+                "profile": "fpm",
+                "role": "two",
+                "check": "configured_https_oidc_redirect_preserved",
+                "passed": true
+            },
+            {
+                "profile": "fpm",
+                "role": "ingress",
+                "check": "unknown_host_rejected",
+                "passed": true
+            },
+            {
+                "profile": "apache",
+                "role": "op",
+                "check": "spoofed_forwarded_origin_replaced",
+                "passed": true
+            },
+            {
+                "profile": "apache",
+                "role": "one",
+                "check": "spoofed_forwarded_origin_replaced",
+                "passed": true
+            },
+            {
+                "profile": "apache",
+                "role": "one",
+                "check": "configured_https_oidc_redirect_preserved",
+                "passed": true
+            },
+            {
+                "profile": "apache",
+                "role": "two",
+                "check": "spoofed_forwarded_origin_replaced",
+                "passed": true
+            },
+            {
+                "profile": "apache",
+                "role": "two",
+                "check": "configured_https_oidc_redirect_preserved",
+                "passed": true
+            },
+            {
+                "profile": "apache",
+                "role": "ingress",
+                "check": "unknown_host_rejected",
+                "passed": true
+            }
+        ],
+        "passed": true
+    },
+    "resources": {
+        "laravel-sso-deployment-fpm-1": {
+            "samples": 57,
+            "first_at_utc": "2026-11-14T23:15:02.8841664Z",
+            "initial_mib": 65.08,
+            "peak_mib": 65.08,
+            "peak_cpu_percent": 322.09,
+            "peak_pids": 15,
+            "last_at_utc": "2026-11-14T23:45:01.0322192Z",
+            "final_mib": 60.98
+        },
+        "laravel-sso-deployment-apache-1": {
+            "samples": 57,
+            "first_at_utc": "2026-11-14T23:15:02.9106142Z",
+            "initial_mib": 71.68,
+            "peak_mib": 76.18,
+            "peak_cpu_percent": 311.26,
+            "peak_pids": 18,
+            "last_at_utc": "2026-11-14T23:45:01.0361329Z",
+            "final_mib": 71.83
+        },
+        "laravel-sso-deployment-gateway-1": {
+            "samples": 57,
+            "first_at_utc": "2026-11-14T23:15:02.9134696Z",
+            "initial_mib": 6.613,
+            "peak_mib": 7.488,
+            "peak_cpu_percent": 37.89,
+            "peak_pids": 2,
+            "last_at_utc": "2026-11-14T23:45:01.0389642Z",
+            "final_mib": 5.703
+        },
+        "laravel-sso-deployment-mysql-1": {
+            "samples": 57,
+            "first_at_utc": "2026-11-14T23:15:02.9155606Z",
+            "initial_mib": 671.8,
+            "peak_mib": 692,
+            "peak_cpu_percent": 21.98,
+            "peak_pids": 46,
+            "last_at_utc": "2026-11-14T23:45:01.0406110Z",
+            "final_mib": 688
+        },
+        "laravel-sso-deployment-postgres-1": {
+            "samples": 57,
+            "first_at_utc": "2026-11-14T23:15:02.9176287Z",
+            "initial_mib": 128.9,
+            "peak_mib": 141.4,
+            "peak_cpu_percent": 44.69,
+            "peak_pids": 17,
+            "last_at_utc": "2026-11-14T23:45:01.0422020Z",
+            "final_mib": 130.9
+        }
+    },
+    "artifacts_sha256": {
+        "soak-30m-verified-soak.json": "61e7b324814c42c4f30befa640696631e0ee4e8b0226eae136e36da1c9a5742f",
+        "soak-30m-verified-stats.jsonl": "f1baf302f600b84172acdcb63fe4f0923ddea90f29aa926a85c41767aff9bfba",
+        "final-browsers.json": "e556b96f3e7562838c77a6a01a2a365eb565c22dc1fe9bee1ac50a1332c7dcf0",
+        "deployment-inspection.json": "a837e28204db92d2d2aa3abcc17a8e407b1bf3713a45c5bafbfb35af226f3898",
+        "images.json": "0e061d5e2931c6d9cf0734f338ce0861afaa6adce15bea66acd5f7b3768c5593",
+        "proxy-check.json": "579217051546194aabe6a23a1a40caaf32219f441c5136753ca55d3418cb9911"
+    },
+    "tls": {
+        "ca_sha256": "70e0a6520f61e064e33f58d0aef71cb646c7ac09d0bff302f287ce9a4ddf4427",
+        "server_sha256": "467e260e6e7a7168af253a0d232ced070355772aa4158dd8b0b633bd2f85d10b",
+        "ca_serial_hex": "1D81D109",
+        "server_serial_hex": "260BA13F513CD1B0",
+        "host_trust_store_changed": false
+    }
+}

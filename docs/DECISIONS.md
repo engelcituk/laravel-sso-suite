@@ -65,6 +65,10 @@
 - ADR-028: instaladores por rol conservan archivos y timestamp de una única migración.
   Migrar/generar claves requiere opción explícita; doctores locales/online separados,
   informe JSON sin secretos y código de salida útil para comprobaciones automatizadas.
+- ADR-029: validación operativa local con dos SAPI web optimizados, tres sitios por perfil,
+  navegadores Chromium/Firefox/WebKit y 30 min de carga mixta. Ingress conserva Authorization,
+  discovery y origen HTTPS; CA privada con series únicas, sin ignorar TLS ni confiarla en Windows.
+  El harness invalida stat cache de indicadores externos y sólo aprueba con ambas outbox vacías.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

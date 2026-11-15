@@ -70,5 +70,7 @@ no exponen valores de configuración ni excepciones. Ver [garantías y operació
 ## Validación externa pendiente
 
 Los tests propios no equivalen a certificación OIDC. Faltan revisión independiente,
-certificación externa de OpenID Foundation y evaluación operativa/carga prolongada.
-Los motores, aislamientos y límites ya ensayados están en DATABASE-CONCURRENCY.md.
+certificación externa de OpenID Foundation y evaluación operativa en el destino real.
+Una campaña local de 30 min, tres motores de navegador y dos despliegues ya se
+verificaron; [métricas, fallos y límites](DEPLOYMENT-VALIDATION.md). No acredita carga
+distribuida/multijornada. Los aislamientos ensayados están en DATABASE-CONCURRENCY.md.
