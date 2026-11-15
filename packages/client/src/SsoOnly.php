@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelSso\Client;
 
-/** Opt-in trait for the RP model. Also remove password and remember_token columns. */
+/** Optional credential-free model behavior for SSO-only apps. Never alters database columns. */
 trait SsoOnly
 {
     public function getAuthPassword(): string

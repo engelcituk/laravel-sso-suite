@@ -6,6 +6,7 @@ use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use LaravelSso\Client\EloquentProvisioner;
@@ -111,10 +112,12 @@ final class ClientTest extends TestCase
         $other = $provisioner->provision(new Identity('https://identity.test', 'two', 'sid', time(), ['email' => 'same@example.test']));
         $this->assertSame($first->getAuthIdentifier(), $again->getAuthIdentifier());
         $this->assertNotSame($first->getAuthIdentifier(), $other->getAuthIdentifier());
-        $this->assertSame('Updated', $again->name);
+        $this->assertSame('Ada', $again->name);
         $this->assertNull($again->role);
-        $this->assertFalse(Schema::hasColumn('users', 'password'));
-        $this->assertSame('', $again->getAuthPassword());
+        $this->assertTrue(Schema::hasColumn('users', 'password'));
+        $this->assertTrue(Hash::check('fixture-local-password', $again->getAuthPassword()));
+        $this->assertFalse(Schema::hasColumn('users', 'sso_issuer'));
+        $this->assertFalse(Schema::hasColumn('users', 'sso_subject'));
         $this->assertSame(2, LocalUser::count());
     }
 
@@ -154,7 +157,7 @@ final class ClientTest extends TestCase
 
     public function test_local_access_policy_can_deny_existing_user(): void
     {
-        LocalUser::create(['sso_issuer' => 'https://identity.test', 'sso_subject' => 'known']);
+        $this->linkedUser('https://identity.test', 'known');
         config(['sso-client.allowed' => fn () => false]);
         $this->expectException(ProtocolException::class);
         app(EloquentProvisioner::class)->provision(new Identity('https://identity.test', 'known', 'sid', time()));
@@ -205,7 +208,7 @@ final class ClientTest extends TestCase
         $issuedAt = time();
         $this->get('/sso/callback?'.http_build_query(['state' => $query['state'], 'code' => 'authorization-code', 'iss' => 'https://identity.test']))->assertRedirect('/');
         $this->assertTrue(Auth::guard('local')->check());
-        $this->assertSame('central-7', Auth::guard('local')->user()->sso_subject);
+        $this->assertSame('central-7', session('sso.identity.sub'));
         $this->assertSame('From UserInfo', Auth::guard('local')->user()->name);
         $this->assertNotSame($before, session()->getId());
         $this->assertNull(session('sso.transaction'));
@@ -219,10 +222,11 @@ final class ClientTest extends TestCase
 
     public function test_strict_session_policy_fails_closed_when_provider_is_unavailable(): void
     {
-        $user = LocalUser::create(['sso_issuer' => 'https://identity.test', 'sso_subject' => 'central-7']);
+        $user = $this->linkedUser('https://identity.test', 'central-7');
         Http::fake(['https://identity.test/oidc/session' => Http::response([], 503)]);
         $this->withSession([]);
         DB::table('sso_local_sessions')->insert(['session_hash' => hash('sha256', session()->getId()),
+            'user_id' => (string) $user->id, 'user_type' => $user->getMorphClass(),
             'issuer' => 'https://identity.test', 'subject' => 'central-7', 'sid' => 'sid', 'revoked' => false]);
         $this->withCredentials()->withCookie(config('session.cookie'), session()->getId());
         $this->actingAs($user, 'local')->withSession(['sso.identity' => [

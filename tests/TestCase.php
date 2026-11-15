@@ -6,7 +6,9 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
+use LaravelSso\Client\IdentityLinks;
 use LaravelSso\Client\SsoClientServiceProvider;
+use LaravelSso\Contracts\Identity;
 use LaravelSso\Server\SsoServerServiceProvider;
 use LaravelSso\Tests\Fixtures\CentralUser;
 use LaravelSso\Tests\Fixtures\LocalUser;
@@ -51,6 +53,9 @@ abstract class TestCase extends Orchestra
         $app['config']->set('sso-client.client_id', '00000000-0000-4000-8000-000000000001');
         $app['config']->set('sso-client.guard', 'local');
         $app['config']->set('sso-client.user_model', LocalUser::class);
+        $app['config']->set('sso-client.create_user', static fn (Identity $identity) => LocalUser::create(
+            array_filter(array_intersect_key($identity->attributes, array_flip(['name', 'email'])), is_string(...))
+            + ['password' => bcrypt('fixture-local-password')]));
         $app['config']->set('sso-client.redirect_uri', 'https://one.test/sso/callback');
         $app['config']->set('sso-client.session_status_url', 'https://identity.test/oidc/session');
         $app['config']->set('sso-client.allowed_urls', [
@@ -78,7 +83,7 @@ abstract class TestCase extends Orchestra
     {
         $router->get('/login', fn () => 'Central login')->name('login');
         $router->middleware(['web', 'sso.session:strict'])->get('/protected', fn () => [
-            'id' => auth('local')->id(), 'sub' => auth('local')->user()->sso_subject,
+            'id' => auth('local')->id(), 'sub' => session('sso.identity.sub'),
         ]);
     }
 
@@ -105,12 +110,19 @@ abstract class TestCase extends Orchestra
                 $table->collation('utf8mb4_bin');
             }
             $table->id();
-            $table->string('sso_issuer', 191);
-            $table->string('sso_subject', 191);
-            $table->unique(['sso_issuer', 'sso_subject']);
             $table->string('name')->nullable();
             $table->string('email')->nullable();
+            $table->string('password')->nullable();
+            $table->rememberToken();
             $table->timestamps();
         });
+    }
+
+    protected function linkedUser(string $issuer, string $subject, array $attributes = []): LocalUser
+    {
+        $user = LocalUser::create($attributes);
+        app(IdentityLinks::class)->link($user, $issuer, $subject);
+
+        return $user;
     }
 }

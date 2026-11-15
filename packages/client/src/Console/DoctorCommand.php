@@ -7,7 +7,10 @@ namespace LaravelSso\Client\Console;
 use Firebase\JWT\JWK;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use LaravelSso\Client\Provider;
 use LaravelSso\Client\TrustedHttp;
@@ -22,49 +25,60 @@ final class DoctorCommand extends Command
     public function handle(Provider $provider, TrustedHttp $http): int
     {
         $report = new DiagnosticReport;
-        $report->check('enabled', 'Enable sso-client after configuration.', fn () => config('sso-client.enabled'));
-        $report->check('identity', 'Configure a SessionGuard for the local Eloquent identity model with a unique (issuer, subject) index and no credentials.', function (): bool {
+        if (! config('sso-client.enabled')) {
+            $report->check('mode', 'Local Laravel authentication is selected; no SSO checks or network requests.', fn () => true);
+
+            return $this->outputReport($report);
+        }
+        $report->check('enabled', 'Central authentication is selected.', fn () => true);
+        $report->check('identity', 'Configure a SessionGuard with the host Eloquent user model on the client connection.', function (): bool {
             $model = config('sso-client.user_model');
             $user = new $model;
-            $schema = $user->getConnection()->getSchemaBuilder();
             $guard = config('sso-client.guard');
             $provider = config('auth.guards.'.$guard.'.provider');
-            if (! Auth::guard($guard) instanceof SessionGuard || config('auth.providers.'.$provider.'.model') !== $model
-                || ! $schema->hasColumns($user->getTable(), ['sso_issuer', 'sso_subject'])
-                || $schema->hasColumn($user->getTable(), $user->getAuthPasswordName()) || $schema->hasColumn($user->getTable(), 'remember_token')) {
+
+            return $user instanceof Model
+                && $user instanceof Authenticatable
+                && Auth::guard($guard) instanceof SessionGuard
+                && config('auth.providers.'.$provider.'.model') === $model
+                && $user->getConnection()->getName() === DB::connection()->getName()
+                && $user->getConnection()->getSchemaBuilder()->hasColumn($user->getTable(), $user->getKeyName());
+        });
+        $report->check('schema', 'Apply the single client migration for owned identities, sessions and receipts.', function (): bool {
+            if (! Schema::hasColumns('sso_identities', ['issuer', 'subject', 'user_id', 'user_type'])
+                || ! Schema::hasIndex('sso_identities', ['issuer', 'subject'], 'unique')
+                || ! Schema::hasColumns('sso_local_sessions', ['session_hash', 'issuer', 'subject', 'sid', 'user_id', 'user_type', 'expires_at', 'revoked'])
+                || ! Schema::hasColumns('sso_logout_receipts', ['token_hash', 'received_at'])
+                || count(glob(database_path('migrations/*_create_sso_local_sessions.php')) ?: []) > 1) {
                 return false;
             }
-            foreach ($schema->getIndexes($user->getTable()) as $index) {
-                if ($index['unique'] && $index['columns'] === ['sso_issuer', 'sso_subject']) {
-                    if ($user->getConnection()->getDriverName() === 'mysql') {
-                        foreach ($schema->getColumns($user->getTable()) as $column) {
-                            if (in_array($column['name'], ['sso_issuer', 'sso_subject'], true)
-                                && ! preg_match('/_(bin|cs)$/D', $column['collation'] ?? '')) {
-                                return false;
-                            }
-                        }
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                foreach (Schema::getColumns('sso_identities') as $column) {
+                    if (in_array($column['name'], ['issuer', 'subject'], true)
+                        && ! preg_match('/_(bin|cs)$/D', $column['collation'] ?? '')) {
+                        return false;
                     }
-
-                    return true;
                 }
             }
 
-            return false;
+            return true;
         });
-        $report->check('schema', 'Apply the single client migration for local sessions and logout receipts.', fn () => Schema::hasColumns('sso_local_sessions', ['session_hash', 'issuer', 'subject', 'sid', 'expires_at', 'revoked'])
-            && Schema::hasColumns('sso_logout_receipts', ['token_hash', 'received_at'])
-            && count(glob(database_path('migrations/*_create_sso_local_sessions.php')) ?: []) <= 1);
         $report->check('session', 'Use server-side sessions and secure host-only cookies in production.', fn () => ! in_array(config('session.driver'), ['cookie', 'null'], true)
             && (! app()->environment('production') || (config('session.driver') !== 'array' && config('session.secure')
                 && ! config('session.domain') && config('session.http_only') && config('session.path') === '/')));
         $report->check('configuration', 'Set client ID, HTTPS callback, provisioning policy, openid scope and positive TTLs.', function (): bool {
             $uri = config('sso-client.redirect_uri');
             $parts = is_string($uri) ? parse_url($uri) : false;
+            $factory = config('sso-client.create_user');
+            if (is_string($factory) && class_exists($factory)) {
+                $factory = app($factory);
+            }
 
             return is_string(config('sso-client.client_id')) && config('sso-client.client_id') !== ''
                 && $parts && filter_var($uri, FILTER_VALIDATE_URL) && ! isset($parts['user']) && ! isset($parts['pass']) && ! isset($parts['fragment'])
                 && (($parts['scheme'] ?? '') === 'https' || (config('sso-client.allow_http') && ! app()->environment('production') && ($parts['scheme'] ?? '') === 'http'))
                 && in_array(config('sso-client.provision'), ['restricted', 'automatic'], true)
+                && (config('sso-client.provision') !== 'automatic' || is_callable($factory))
                 && in_array('openid', config('sso-client.scopes'), true)
                 && min(array_map(static fn ($key) => (int) config('sso-client.'.$key), ['transaction_ttl', 'local_session_ttl', 'max_token_age', 'receipt_retention', 'timeout'])) > 0;
         });
@@ -89,6 +103,12 @@ final class DoctorCommand extends Command
                 return $rsa !== [] && JWK::parseKeySet(['keys' => array_values($rsa)], 'RS256') !== [];
             });
         }
+
+        return $this->outputReport($report);
+    }
+
+    private function outputReport(DiagnosticReport $report): int
+    {
         if ($this->option('json')) {
             $this->line(json_encode($report, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         } else {

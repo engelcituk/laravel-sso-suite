@@ -121,7 +121,11 @@ try {
     foreach (['app-one', 'app-two'] as $name) {
         $db = new PDO('sqlite:'.$root.'/examples/'.$name.'/database/database.sqlite');
         $columns = $db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_COLUMN, 1);
-        check(! in_array('password', $columns, true) && ! in_array('remember_token', $columns, true), 'RP stores local credentials.');
+        check(in_array('password', $columns, true) && in_array('remember_token', $columns, true), 'RP host authentication schema was not preserved.');
+        check(! in_array('sso_issuer', $columns, true) && ! in_array('sso_subject', $columns, true), 'RP user schema is coupled to SSO.');
+        $stored = $db->prepare('SELECT password FROM users WHERE id IN (SELECT user_id FROM sso_identities WHERE issuer=? AND subject=?)');
+        $stored->execute(['http://127.0.0.1:9100', $subject]);
+        check(! password_verify($password, (string) $stored->fetchColumn()), 'Central password was copied to a client.');
     }
     $remembered = $jar->getCookieByName('sso_remember');
     check($remembered !== null && $remembered->getHttpOnly() && $remembered->getDomain() === '127.0.0.1', 'Host-only remembered cookie missing.');
@@ -190,12 +194,13 @@ try {
     // Remove only the unique identity and dependent example rows created by this run.
     foreach (['app-one', 'app-two'] as $name) {
         $db = new PDO('sqlite:'.$root.'/examples/'.$name.'/database/database.sqlite');
-        $stmt = $db->prepare('SELECT id FROM users WHERE sso_subject=? AND sso_issuer=?');
+        $stmt = $db->prepare('SELECT user_id FROM sso_identities WHERE subject=? AND issuer=?');
         $stmt->execute([$subject, 'http://127.0.0.1:9100']);
         $id = $stmt->fetchColumn();
         if ($id !== false) {
             $db->prepare('DELETE FROM report_permissions WHERE user_id=?')->execute([$id]);
             $db->prepare('DELETE FROM sso_local_sessions WHERE subject=?')->execute([$subject]);
+            $db->prepare('DELETE FROM sso_identities WHERE subject=? AND issuer=?')->execute([$subject, 'http://127.0.0.1:9100']);
             $db->prepare('DELETE FROM users WHERE id=?')->execute([$id]);
         }
     }

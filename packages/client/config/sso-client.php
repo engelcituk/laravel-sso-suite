@@ -11,6 +11,10 @@ return [
     'guard' => 'web',
     'user_model' => env('SSO_USER_MODEL', 'App\\Models\\User'),
     'provision' => 'restricted', // automatic: create identities without privileges
+    // Prefer a cacheable invokable class name: __invoke(Identity): Authenticatable.
+    // Host-owned factory; never receives tokens/passwords. A callable is also supported.
+    'create_user' => null,
+    'local_login_url' => '/login',
     'allowed' => null, // optional callable(Authenticatable, Identity): bool
     'scopes' => ['openid', 'profile', 'email'],
     'transaction_ttl' => 300,

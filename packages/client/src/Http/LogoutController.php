@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelSso\Client\Http;
 
-use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,9 +23,9 @@ final class LogoutController
     {
         $hint = $request->session()->get('sso.id_token');
         DB::table('sso_local_sessions')->where('session_hash', hash('sha256', $request->session()->getId()))->update(['revoked' => true]);
-        /** @var StatefulGuard $guard */
+        /** @var SessionGuard $guard */
         $guard = Auth::guard(config('sso-client.guard'));
-        $guard->logout();
+        $guard->logoutCurrentDevice();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         app(Audit::class)->record('logout.local');

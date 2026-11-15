@@ -11,7 +11,7 @@ return static function (string $base): Application {
     $app = Application::configure(basePath: $base)
         ->withRouting(web: $base.'/routes/web.php', commands: $base.'/routes/console.php')
         ->withMiddleware(function (Middleware $middleware): void {
-            $middleware->redirectGuestsTo('/sso/login');
+            $middleware->redirectGuestsTo(fn () => config('sso-client.enabled') ? '/sso/login' : '/login');
         })
         ->withExceptions(function (Exceptions $exceptions): void {})
         ->create();

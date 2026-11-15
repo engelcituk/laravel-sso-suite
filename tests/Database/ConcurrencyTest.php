@@ -64,14 +64,14 @@ final class ConcurrencyTest extends TestCase
     public function test_parallel_provisioning_in_transactions_resolves_one_issuer_subject_without_email_linking(): void
     {
         config(['sso-client.provision' => 'automatic']);
-        LocalUser::create(['sso_issuer' => 'https://other.test', 'sso_subject' => 'other', 'email' => 'same@example.test']);
+        $this->linkedUser('https://other.test', 'other', ['email' => 'same@example.test']);
         $results = Parallel::run(8, function (int $index, string $directory): string {
             return DB::transaction(function () use ($index, $directory): string {
                 // Establish an old snapshot on MySQL REPEATABLE READ before another insert commits.
                 DB::table('users')->count();
                 $paused = false;
                 DB::listen(function (QueryExecuted $query) use (&$paused, $index, $directory): void {
-                    if (! $paused && str_starts_with($query->sql, 'select') && str_contains($query->sql, 'sso_issuer')) {
+                    if (! $paused && str_starts_with($query->sql, 'select') && str_contains($query->sql, 'sso_identities')) {
                         $paused = true;
                         Parallel::barrier($directory, 'identity-read', $index, 8);
                     }
@@ -84,7 +84,7 @@ final class ConcurrencyTest extends TestCase
         });
         $this->assertCount(1, array_unique($results));
         $this->assertSame(2, LocalUser::count());
-        $this->assertSame(1, LocalUser::where('sso_issuer', 'https://identity.test')->where('sso_subject', 'shared')->count());
+        $this->assertSame(1, DB::table('sso_identities')->where('issuer', 'https://identity.test')->where('subject', 'shared')->count());
         $this->assertArrayNotHasKey('is_admin', LocalUser::find($results[0])->getAttributes());
     }
 

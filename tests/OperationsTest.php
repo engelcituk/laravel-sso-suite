@@ -131,8 +131,8 @@ final class OperationsTest extends TestCase
 
     public function test_client_doctor_detects_missing_unique_identity_index(): void
     {
-        Schema::table('users', fn ($table) => $table->dropUnique(['sso_issuer', 'sso_subject']));
-        $this->assertSame('fail', $this->report('sso:doctor', ['--offline' => true], 1)['identity']);
+        Schema::table('sso_identities', fn ($table) => $table->dropUnique(['issuer', 'subject']));
+        $this->assertSame('fail', $this->report('sso:doctor', ['--offline' => true], 1)['schema']);
     }
 
     public function test_server_doctor_detects_overdue_outbox_without_delivering_it(): void
@@ -177,7 +177,8 @@ final class OperationsTest extends TestCase
         $oldDatabase = database_path();
         $this->app->useConfigPath($this->directory.'/config');
         $this->app->useDatabasePath($this->directory.'/database');
-        // These two client tables have no host data in this isolated test database.
+        // These client tables have no host data in this isolated test database.
+        Schema::drop('sso_identities');
         Schema::drop('sso_local_sessions');
         Schema::drop('sso_logout_receipts');
         DB::table('migrations')->where('migration', 'like', '%create_sso_local_sessions')->delete();

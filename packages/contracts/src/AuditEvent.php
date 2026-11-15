@@ -12,7 +12,7 @@ final readonly class AuditEvent implements \JsonSerializable
             'password.confirmed', 'password.rejected', 'password.required', 'remember.restored', 'remember.replayed', 'remember.expired',
             'session.created', 'session.revoked', 'code.issued', 'authorization.rejected', 'consent.approved', 'consent.denied',
             'token.issued', 'token.rejected', 'token.replayed', 'logout.delivered', 'logout.retry', 'client.registered', 'keys.created'],
-        'client' => ['identity.provisioned', 'identity.rejected', 'login.completed', 'login.rejected', 'logout.local',
+        'client' => ['identity.linked', 'identity.provisioned', 'identity.rejected', 'login.completed', 'login.rejected', 'logout.local',
             'logout.received', 'logout.duplicate', 'logout.rejected', 'session.denied'],
     ];
 

@@ -20,7 +20,7 @@ final class EnvironmentTest extends TestCase
         Schema::table('users', function (Blueprint $table): void {
             $table->unique('email');
         });
-        LocalUser::create(['sso_issuer' => 'https://other.test', 'sso_subject' => 'existing', 'email' => 'same@example.test']);
+        $this->linkedUser('https://other.test', 'existing', ['email' => 'same@example.test']);
         config(['sso-client.provision' => 'automatic']);
         $attempts = 0;
         try {
@@ -34,7 +34,7 @@ final class EnvironmentTest extends TestCase
             $this->assertSame(1, $attempts);
         }
         $this->assertSame(1, LocalUser::count());
-        $this->assertSame(0, LocalUser::where('sso_issuer', 'https://identity.test')->count());
+        $this->assertSame(0, DB::table('sso_identities')->where('issuer', 'https://identity.test')->count());
     }
 
     public function test_real_engine_and_isolation_are_recorded_without_credentials(): void

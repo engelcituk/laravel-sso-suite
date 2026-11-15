@@ -11,7 +11,6 @@ use LaravelSso\Server\Http\ProtocolController;
 use LaravelSso\Server\LogoutDeliveries;
 use LaravelSso\Server\SigningKeys;
 use LaravelSso\Tests\Fixtures\CentralUser;
-use LaravelSso\Tests\Fixtures\LocalUser;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 final class LogoutTest extends TestCase
@@ -106,9 +105,10 @@ final class LogoutTest extends TestCase
     #[DataProvider('inactiveIndexes')]
     public function test_inactive_local_index_denies_access_even_with_fresh_central_cache(bool $revoked, ?int $expires): void
     {
-        $user = LocalUser::create(['sso_issuer' => 'https://identity.test', 'sso_subject' => 'subject-one']);
+        $user = $this->linkedUser('https://identity.test', 'subject-one');
         $this->withSession([]);
         DB::table('sso_local_sessions')->insert(['session_hash' => hash('sha256', session()->getId()),
+            'user_id' => (string) $user->id, 'user_type' => $user->getMorphClass(),
             'issuer' => 'https://identity.test', 'subject' => 'subject-one', 'sid' => 'global-one', 'revoked' => $revoked, 'expires_at' => $expires]);
         $this->withCredentials()->withCookie(config('session.cookie'), session()->getId());
         Http::fake();
