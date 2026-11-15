@@ -95,8 +95,9 @@ el SHA fijado y **cero advertencias del runner**, sin fallos ni pruebas saltadas
 Ver [evidencia remota y reproducción](CI-REMOTE.md)
 y [JSON sin secretos](../conformance/ci-results.json).
 
-La fase de compatibilidad posterior pasó **14/14 trabajos**, run `43679063708`, commit
-`4c925d3`, rama `codex/expanded-compatibility`. PHP 8.3/8.4/8.5 × locked/lowest/latest:
+La fase de compatibilidad posterior se integró en **main** por fast-forward y pasó
+**14/14 trabajos**, run `43680036096`, commit `3f55235`, UTC 2026-11-15
+05:12:00–05:14:44. PHP 8.3/8.4/8.5 × locked/lowest/latest:
 **212 / 994 generales y 106 / 414 normativos por combinación**, plataforma, audit y E2E
 aprobados. Pint (140 archivos) y Larastan se verifican con las herramientas conservadas
 en locked. Las resoluciones alternativas usan el PHP real de cada job y mantienen los

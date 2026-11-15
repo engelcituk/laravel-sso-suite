@@ -6,7 +6,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | Fase | Estado real | Evidencia / cierre pendiente |
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
-| 1 fundamento | base local y CI remota verificadas | checkout integrado en main; matriz ampliada 14/14 en rama codex: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
+| 1 fundamento | base local y CI remota verificadas | compatibilidad ampliada integrada en main, 14/14: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
 | 4 identidad local | concurrencia local y remota verificadas | unicidad/commit, snapshots y reintentos corregidos; MySQL/PostgreSQL en READ COMMITTED y REPEATABLE READ, ACL independiente |
@@ -16,14 +16,15 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 
 ## Resultados ejecutados
 
-- Compatibilidad ampliada: **14/14 trabajos aprobados** en `4c925d3`, run `43679063708`,
-  rama `codex/expanded-compatibility`, UTC 2026-11-15 04:58:53–05:00:48.
+- Compatibilidad ampliada en **main**: **14/14 trabajos aprobados** en `3f55235`, run `43680036096`,
+  UTC 2026-11-15 05:12:00–05:14:44 (00:12:00–00:14:44 en Cancún).
   Nueve combinaciones PHP/dependencias: **212 / 994** generales y **106 / 414** normativos
   cada una; cuatro perfiles SQL: **228 / 1070** MySQL y **228 / 1068** PostgreSQL.
   Ambos motores pasaron READ COMMITTED y REPEATABLE READ. Cero fallos/advertencias del runner;
   primer run fallido y repeticiones locales conservados. Lockfile principal sin cambios,
-  trece artifacts temporales, una migración por paquete. No se integró esta ampliación en
-  main ni se publicaron versiones. [Versiones, correcciones y evidencia](COMPATIBILITY.md).
+  trece artifacts temporales, una migración por paquete. Integración autorizada mediante
+  fast-forward, sin conflictos ni publicación de versiones. Se conservan las validaciones
+  previas de rama. [Versiones, correcciones y evidencia](COMPATIBILITY.md).
 - GitHub Actions remoto en **main**: **6/6 trabajos aprobados** en `7553a96`, run `43674756937`,
   2026-11-15 03:59:30–04:02:12 UTC (14 de noviembre en Cancún). PHP 8.3/8.4/8.5:
   209 / 982 generales y 106 / 414 normativos por versión; MySQL 224 / 1055 y PostgreSQL
@@ -124,15 +125,13 @@ combinaciones de dependencias/PHP/SQL. El harness oficial no se repitió en esta
 Los bloques de concurrencia/retención, Recordarme/dispositivos y auditoría/instalación/
 diagnóstico, despliegues y carga de 30 min quedan atendidos en el alcance local documentado. Se conserva la reproducción
 de los cinco planes OIDC y sus evidencias históricas. La compatibilidad ampliada queda
-atendida en su matriz documentada, todavía en rama codex. El destino y retención de auditoría se configuran
+atendida e integrada en main, con su matriz remota aprobada. El destino y retención de auditoría se configuran
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
-1. Revisar e integrar la rama de compatibilidad cuando se solicite; repetir la CI en main.
-   La ampliación solicitada ya pasó. Nuevos motores/versiones se eligen según el destino,
-   sin convertir esa ampliación abierta en una garantía general.
-2. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
+1. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
    móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.
-3. Revisión independiente, evaluación/certificación externa, canal privado de reportes,
+   Nuevos motores/versiones se eligen según el destino; no hay una garantía general de compatibilidad.
+2. Revisión independiente, evaluación/certificación externa, canal privado de reportes,
    nombre público y split de paquetes;
    autorización explícita antes de publicar versiones.
 

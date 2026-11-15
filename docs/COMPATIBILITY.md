@@ -1,11 +1,20 @@
 # Compatibilidad ampliada: dependencias y aislamiento
 
-El [run 43679063708, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708)
+El [run 43680036096, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096)
 pasó **14/14 trabajos, sin advertencias del runner ni fallos**, el 2026-11-15
-**04:58:53–05:00:48 UTC**.
-Commit probado: `4c925d377d0fd8833438726b1378c79dfb70410c`, rama
-`codex/expanded-compatibility`. La actualización de este informe es posterior al commit probado.
-No se integró esta rama en main ni se publicaron versiones.
+**05:12:00–05:14:44 UTC** (00:12:00–00:14:44 en Cancún), en **main**.
+Commit probado: `3f552358b4e7d1e36e3d8955b686222735b378b8`.
+Con autorización del usuario, `codex/expanded-compatibility` se integró por fast-forward:
+main avanzó de `08f1ad4` a `3f55235`, sin conflictos ni reescribir commits.
+La actualización de este informe es posterior al commit probado. No se publicaron versiones.
+
+Antes de integrar pasaron los runs de rama
+[43679063708](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708)
+(`4c925d3`, corrección) y
+[43679589202](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679589202)
+(`3f55235`, documentación), ambos 14/14. La integración activó otra ejecución en main;
+sus catorce logs se revisaron por separado. Se conserva la rama de origen y no se creó
+PR, tag ni release. La integración no necesitó nuevas correcciones de código.
 
 ## Matriz ejecutada
 
@@ -58,7 +67,7 @@ Cada perfil incluye las catorce carreras, hasta ocho procesos por carrera y la r
 completa. El padre y los hijos consultan el aislamiento real de sus conexiones; cambiar
 la etiqueta del job no basta. Los dos controles adicionales de MySQL son de collations.
 El trabajo de manifiestos también pasó. Los runners fueron Ubuntu 26.04.1 LTS,
-agente 2.338.2 e imagen `20261111.196.1`, salvo PHP 8.3 locked/latest y PHP 8.4 lowest,
+agente 2.338.2 e imagen `20261111.196.1`, salvo el trabajo de manifiestos,
 con imagen `20261111.82.6`.
 
 ## Fallos encontrados y corregidos
@@ -120,7 +129,8 @@ días; los del run documentado vencen el 2026-11-22. Sus digests son los de las 
 remotas; no se afirma haber descargado sus ZIP. No incluyen claves, .env, cookies ni
 los resultados crudos de procesos concurrentes.
 
-Logs privados finales en `.runtime/ci-remote/run-43679063708/`, repetición intermedia
+Logs privados finales de main en `.runtime/ci-remote/run-43680036096/`, validación previa
+de rama en `run-43679063708/`, repetición intermedia
 en `run-43678159445/`, fallos anteriores en
 `run-43677559713/` y resultados locales `compatibility-*` bajo
 `.runtime/database-lab/results/`. Las huellas de logs corresponden a los archivos
@@ -140,7 +150,8 @@ para reproducir esta matriz.
 
 ## Límites y estado
 
-La fase solicitada queda verificada. La matriz SQL usa PHP 8.3 y locked; no es el producto
+La integración y su matriz en main quedan verificadas, sin validaciones pendientes de
+esta integración. La matriz SQL usa PHP 8.3 y locked; no es el producto
 completo de nueve resoluciones PHP por cuatro perfiles SQL. No se repitieron el harness
 oficial OIDF, los navegadores ni la carga de 30 minutos: sus informes previos conservan
 su alcance y código originales. No hay certificación ni auditoría externa nueva.

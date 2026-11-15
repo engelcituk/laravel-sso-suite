@@ -1,15 +1,15 @@
 {
-    "version": 1,
+    "version": 2,
     "run": {
-        "id": 43679063708,
-        "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708",
-        "number": 15,
+        "id": 43680036096,
+        "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096",
+        "number": 17,
         "attempt": 1,
-        "branch": "codex/expanded-compatibility",
-        "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
+        "branch": "main",
+        "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
         "conclusion": "success",
-        "started_at_utc": "2026-11-15T04:58:53Z",
-        "completed_at_utc": "2026-11-15T05:00:48Z"
+        "started_at_utc": "2026-11-15T05:12:00Z",
+        "completed_at_utc": "2026-11-15T05:14:44Z"
     },
     "matrix": {
         "php": [
@@ -37,454 +37,9 @@
     },
     "jobs": [
         {
-            "id": 132705516704,
-            "name": "package-manifests",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516704",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [],
-            "runner_warning_count": 0,
-            "environment": null,
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": false,
-            "e2e_passed": false,
-            "decoded_local_log_sha256": "807461cf524db370020956afdfc620fb118ab4844f31910fce3ae5f1c40d22e5"
-        },
-        {
-            "id": 132705516840,
-            "name": "test (8.3, locked)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516840",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer config platform.php \"$(php -r 'echo PHP_VERSION;')\"",
-                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
-                "Run composer update --prefer-stable --no-interaction --prefer-dist"
-            ],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.82.6",
-            "phpunit_results": [
-                {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T04:59:08+00:00",
-                "profile": "locked",
-                "php": "8.3.36",
-                "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.3.0",
-                "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
-                "installed_sha256": "7b6b26a751d1548b9a11f430811194d24fdbe279a7f05f77bbb1fdfee97c3186",
-                "versions": {
-                    "firebase/php-jwt": "v7.2.1",
-                    "larastan/larastan": "v3.15.0",
-                    "laravel/framework": "v13.42.0",
-                    "laravel/passport": "v13.10.0",
-                    "laravel/pint": "v1.32.3",
-                    "league/oauth2-server": "9.4.1",
-                    "orchestra/testbench": "v11.3.0",
-                    "phpstan/phpstan": "2.3.5",
-                    "phpunit/phpunit": "12.5.44"
-                }
-            },
-            "pint_files": 140,
-            "analysis_passed": true,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "d5176623e1173b1391d7fa62c438ef377f80f203d6e9daf97895d08711bc40a8"
-        },
-        {
-            "id": 132705516845,
-            "name": "test (8.5, lowest)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516845",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer install --no-interaction --prefer-dist",
-                "Run composer update --prefer-stable --no-interaction --prefer-dist",
-                "Run composer lint",
-                "Run composer analyse"
-            ],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [
-                {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T04:59:08+00:00",
-                "profile": "lowest",
-                "php": "8.5.12",
-                "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.5.12",
-                "lock_sha256": "6e47b1de78cb3007ed2eee779d7b481820295933a4d61adf38c1ff687fd87397",
-                "installed_sha256": "f9ce3eb692d3e8c3867d7aca01eae6189299cf9ac563b4c3e86eda017a48c1aa",
-                "versions": {
-                    "firebase/php-jwt": "v7.0.0",
-                    "larastan/larastan": "v3.9.3",
-                    "laravel/framework": "v13.40.0",
-                    "laravel/passport": "v13.7.1",
-                    "laravel/pint": "v1.0.0",
-                    "league/oauth2-server": "9.3.0",
-                    "orchestra/testbench": "v11.0.0",
-                    "phpstan/phpstan": "2.1.32",
-                    "phpunit/phpunit": "12.5.8"
-                }
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "f0820b99176523d2a07f50a58a5f5c8172c51cdfbb50bde3580343cf6b64971a"
-        },
-        {
-            "id": 132705516846,
-            "name": "database-concurrency (pgsql, REPEATABLE READ)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516846",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [
-                {
-                    "tests": 228,
-                    "assertions": 1068
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T05:00:04+00:00",
-                "php": "8.3.36",
-                "os": "Linux",
-                "driver": "pgsql",
-                "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
-                "isolation": "repeatable read",
-                "pcntl": true,
-                "pdo_client": "18.6",
-                "source_sha256": "f56aa310b9e4e253970068a3b1e84fbfb389c3103942466b99eff796a3c26131",
-                "collations": null,
-                "laravel": "v13.42.0",
-                "passport": "v13.10.0",
-                "oauth2_server": "9.4.1",
-                "phpunit": "12.5.44"
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": false,
-            "e2e_passed": false,
-            "decoded_local_log_sha256": "c146c10896209beb65133c5efe9732198ed61a4ec775072dc8913e6132226d8c"
-        },
-        {
-            "id": 132705516849,
-            "name": "test (8.3, lowest)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516849",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer install --no-interaction --prefer-dist",
-                "Run composer update --prefer-stable --no-interaction --prefer-dist",
-                "Run composer lint",
-                "Run composer analyse"
-            ],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [
-                {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T04:59:08+00:00",
-                "profile": "lowest",
-                "php": "8.3.36",
-                "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.3.36",
-                "lock_sha256": "543acb7dc76c4e728a480bb1b8a8ceb220cd7a966b9683d5c9f15f2b0f6add52",
-                "installed_sha256": "5d2e5785d07dc96c33a77e43d2bfb47f75ba47c49d2e50227161cd93438dc925",
-                "versions": {
-                    "firebase/php-jwt": "v7.0.0",
-                    "larastan/larastan": "v3.9.3",
-                    "laravel/framework": "v13.40.0",
-                    "laravel/passport": "v13.7.1",
-                    "laravel/pint": "v1.0.0",
-                    "league/oauth2-server": "9.2.0",
-                    "orchestra/testbench": "v11.0.0",
-                    "phpstan/phpstan": "2.1.32",
-                    "phpunit/phpunit": "12.5.8"
-                }
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "c7515d88b785f66b93f37cdf3f6c1575c88d716ca2de5cc1d30e021bc836206e"
-        },
-        {
-            "id": 132705516875,
-            "name": "test (8.4, latest)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516875",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer install --no-interaction --prefer-dist",
-                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
-                "Run composer lint",
-                "Run composer analyse"
-            ],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [
-                {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T04:59:08+00:00",
-                "profile": "latest",
-                "php": "8.4.27",
-                "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.4.27",
-                "lock_sha256": "1bd3d1a65c66ba2a4c6d7dd77e77eae342fbb0d6721347f93684b2b945702f07",
-                "installed_sha256": "8c7c1fc652e76d57c66b37559f771387ca79cab20a1018ce627d0e377616b4cb",
-                "versions": {
-                    "firebase/php-jwt": "v7.2.1",
-                    "larastan/larastan": "v3.15.0",
-                    "laravel/framework": "v13.42.0",
-                    "laravel/passport": "v13.10.0",
-                    "laravel/pint": "v1.32.3",
-                    "league/oauth2-server": "9.4.1",
-                    "orchestra/testbench": "v11.3.0",
-                    "phpstan/phpstan": "2.3.5",
-                    "phpunit/phpunit": "12.5.44"
-                }
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "6c0409d437091f63736e7b570f7f110ddd7f25475d8863deae51114306f04f0e"
-        },
-        {
-            "id": 132705516883,
-            "name": "database-concurrency (mysql, READ COMMITTED)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516883",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [
-                {
-                    "tests": 228,
-                    "assertions": 1070
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T05:00:24+00:00",
-                "php": "8.3.36",
-                "os": "Linux",
-                "driver": "mysql",
-                "database_version": "8.4.13",
-                "isolation": "READ-COMMITTED",
-                "pcntl": true,
-                "pdo_client": "mysqlnd 8.3.36",
-                "source_sha256": "f56aa310b9e4e253970068a3b1e84fbfb389c3103942466b99eff796a3c26131",
-                "collations": {
-                    "connection": "utf8mb4_unicode_ci",
-                    "local_index": "utf8mb4_bin"
-                },
-                "laravel": "v13.42.0",
-                "passport": "v13.10.0",
-                "oauth2_server": "9.4.1",
-                "phpunit": "12.5.44"
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": false,
-            "e2e_passed": false,
-            "decoded_local_log_sha256": "eb030e2de918871dd8527fdb6fd69ddb7ba6d5fc07ac484c6e8d798adfd40a5b"
-        },
-        {
-            "id": 132705516887,
-            "name": "test (8.4, lowest)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516887",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer install --no-interaction --prefer-dist",
-                "Run composer update --prefer-stable --no-interaction --prefer-dist",
-                "Run composer lint",
-                "Run composer analyse"
-            ],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.82.6",
-            "phpunit_results": [
-                {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T04:59:36+00:00",
-                "profile": "lowest",
-                "php": "8.4.27",
-                "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.4.27",
-                "lock_sha256": "62b0f3a75f3fc99ca2e807442ada80e1c0fbca04dd6df5676a86a165f376e746",
-                "installed_sha256": "03a759739611d24256108ecf814429783b18fba0db4472d7c449c82682fa95d8",
-                "versions": {
-                    "firebase/php-jwt": "v7.0.0",
-                    "larastan/larastan": "v3.9.3",
-                    "laravel/framework": "v13.40.0",
-                    "laravel/passport": "v13.7.1",
-                    "laravel/pint": "v1.0.0",
-                    "league/oauth2-server": "9.2.0",
-                    "orchestra/testbench": "v11.0.0",
-                    "phpstan/phpstan": "2.1.32",
-                    "phpunit/phpunit": "12.5.8"
-                }
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "3d3c0f5fd10f2b27752cd9b45c8a9c6e6a55099e5e7b39a874e4b96d4199fb2c"
-        },
-        {
-            "id": 132705516917,
-            "name": "test (8.5, locked)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516917",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer config platform.php \"$(php -r 'echo PHP_VERSION;')\"",
-                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
-                "Run composer update --prefer-stable --no-interaction --prefer-dist"
-            ],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [
-                {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T04:59:07+00:00",
-                "profile": "locked",
-                "php": "8.5.12",
-                "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.3.0",
-                "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
-                "installed_sha256": "7b6b26a751d1548b9a11f430811194d24fdbe279a7f05f77bbb1fdfee97c3186",
-                "versions": {
-                    "firebase/php-jwt": "v7.2.1",
-                    "larastan/larastan": "v3.15.0",
-                    "laravel/framework": "v13.42.0",
-                    "laravel/passport": "v13.10.0",
-                    "laravel/pint": "v1.32.3",
-                    "league/oauth2-server": "9.4.1",
-                    "orchestra/testbench": "v11.3.0",
-                    "phpstan/phpstan": "2.3.5",
-                    "phpunit/phpunit": "12.5.44"
-                }
-            },
-            "pint_files": 140,
-            "analysis_passed": true,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "ed1477d142fcfc22e33e64dee8a936c2e29220681ce34d1400a7ba348cdc5fbc"
-        },
-        {
-            "id": 132705516948,
-            "name": "database-concurrency (pgsql, READ COMMITTED)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516948",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.196.1",
-            "phpunit_results": [
-                {
-                    "tests": 228,
-                    "assertions": 1068
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T05:00:06+00:00",
-                "php": "8.3.36",
-                "os": "Linux",
-                "driver": "pgsql",
-                "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
-                "isolation": "read committed",
-                "pcntl": true,
-                "pdo_client": "18.6",
-                "source_sha256": "f56aa310b9e4e253970068a3b1e84fbfb389c3103942466b99eff796a3c26131",
-                "collations": null,
-                "laravel": "v13.42.0",
-                "passport": "v13.10.0",
-                "oauth2_server": "9.4.1",
-                "phpunit": "12.5.44"
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": false,
-            "e2e_passed": false,
-            "decoded_local_log_sha256": "6fdd1820ddd941169077911ba23bb084c7c65225a16be6ffa8bff3493ea1a94e"
-        },
-        {
-            "id": 132705516952,
+            "id": 132708457958,
             "name": "database-concurrency (mysql, REPEATABLE READ)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516952",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708457958",
             "conclusion": "success",
             "all_required_steps_success": true,
             "conditionally_skipped_steps": [],
@@ -498,7 +53,7 @@
             ],
             "runner_warning_count": 0,
             "environment": {
-                "checked_at_utc": "2026-11-15T05:00:18+00:00",
+                "checked_at_utc": "2026-11-15T05:14:07+00:00",
                 "php": "8.3.36",
                 "os": "Linux",
                 "driver": "mysql",
@@ -520,116 +75,50 @@
             "analysis_passed": false,
             "audit_passed": false,
             "e2e_passed": false,
-            "decoded_local_log_sha256": "2188f1421435f10beb8030a600a69577f46dce24d16685d1403eaba0043c8517"
+            "decoded_local_log_sha256": "51cc53b5cbd3804e84e2de065331be9361fb13052b45e332f3753cc0e5d18aee"
         },
         {
-            "id": 132705516973,
-            "name": "test (8.3, latest)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516973",
+            "id": 132708458218,
+            "name": "database-concurrency (pgsql, READ COMMITTED)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458218",
             "conclusion": "success",
             "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer install --no-interaction --prefer-dist",
-                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
-                "Run composer lint",
-                "Run composer analyse"
-            ],
-            "runner": "2.338.2",
-            "runner_image_version": "20261111.82.6",
-            "phpunit_results": [
-                {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
-                }
-            ],
-            "runner_warning_count": 0,
-            "environment": {
-                "checked_at_utc": "2026-11-15T04:59:13+00:00",
-                "profile": "latest",
-                "php": "8.3.36",
-                "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.3.36",
-                "lock_sha256": "546055afcbcbf24a1ab711c8e0dff00bf73829a7eebcfd240c8139af6a246f31",
-                "installed_sha256": "a9d05c222cb2e6ee7211a37f68e0fb43758bf6f6b01fd75b2445640c500eb65d",
-                "versions": {
-                    "firebase/php-jwt": "v7.2.1",
-                    "larastan/larastan": "v3.15.0",
-                    "laravel/framework": "v13.42.0",
-                    "laravel/passport": "v13.10.0",
-                    "laravel/pint": "v1.32.3",
-                    "league/oauth2-server": "9.4.1",
-                    "orchestra/testbench": "v11.3.0",
-                    "phpstan/phpstan": "2.3.5",
-                    "phpunit/phpunit": "12.5.44"
-                }
-            },
-            "pint_files": null,
-            "analysis_passed": false,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "63af75d147c1c092df06c54233b8f18eeeb2e1f938654b8871628530f803be30"
-        },
-        {
-            "id": 132705516978,
-            "name": "test (8.5, latest)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705516978",
-            "conclusion": "success",
-            "all_required_steps_success": true,
-            "conditionally_skipped_steps": [
-                "Run composer install --no-interaction --prefer-dist",
-                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
-                "Run composer lint",
-                "Run composer analyse"
-            ],
+            "conditionally_skipped_steps": [],
             "runner": "2.338.2",
             "runner_image_version": "20261111.196.1",
             "phpunit_results": [
                 {
-                    "tests": 212,
-                    "assertions": 994
-                },
-                {
-                    "tests": 106,
-                    "assertions": 414
+                    "tests": 228,
+                    "assertions": 1068
                 }
             ],
             "runner_warning_count": 0,
             "environment": {
-                "checked_at_utc": "2026-11-15T04:59:08+00:00",
-                "profile": "latest",
-                "php": "8.5.12",
+                "checked_at_utc": "2026-11-15T05:13:02+00:00",
+                "php": "8.3.36",
                 "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
-                "platform_php": "8.5.12",
-                "lock_sha256": "30d1dd2fbb4e724d62a1bbba31387057b2347de437f12db2c0294d65c2f222f9",
-                "installed_sha256": "8c7c1fc652e76d57c66b37559f771387ca79cab20a1018ce627d0e377616b4cb",
-                "versions": {
-                    "firebase/php-jwt": "v7.2.1",
-                    "larastan/larastan": "v3.15.0",
-                    "laravel/framework": "v13.42.0",
-                    "laravel/passport": "v13.10.0",
-                    "laravel/pint": "v1.32.3",
-                    "league/oauth2-server": "9.4.1",
-                    "orchestra/testbench": "v11.3.0",
-                    "phpstan/phpstan": "2.3.5",
-                    "phpunit/phpunit": "12.5.44"
-                }
+                "driver": "pgsql",
+                "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+                "isolation": "read committed",
+                "pcntl": true,
+                "pdo_client": "18.6",
+                "source_sha256": "f56aa310b9e4e253970068a3b1e84fbfb389c3103942466b99eff796a3c26131",
+                "collations": null,
+                "laravel": "v13.42.0",
+                "passport": "v13.10.0",
+                "oauth2_server": "9.4.1",
+                "phpunit": "12.5.44"
             },
             "pint_files": null,
             "analysis_passed": false,
-            "audit_passed": true,
-            "e2e_passed": true,
-            "decoded_local_log_sha256": "9763529c5cdb7bb9fc0c3e36b6df3fa90561e0b8b22d80f8ee8df664571baf8d"
+            "audit_passed": false,
+            "e2e_passed": false,
+            "decoded_local_log_sha256": "8d67085cfcb7403ac287ad0c0ed3f373adb535af483e88b7914ae78810faf639"
         },
         {
-            "id": 132705517064,
+            "id": 132708458277,
             "name": "test (8.4, locked)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/job/132705517064",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458277",
             "conclusion": "success",
             "all_required_steps_success": true,
             "conditionally_skipped_steps": [
@@ -651,14 +140,14 @@
             ],
             "runner_warning_count": 0,
             "environment": {
-                "checked_at_utc": "2026-11-15T04:59:05+00:00",
+                "checked_at_utc": "2026-11-15T05:12:13+00:00",
                 "profile": "locked",
                 "php": "8.4.27",
                 "os": "Linux",
-                "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
                 "platform_php": "8.3.0",
                 "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
-                "installed_sha256": "7b6b26a751d1548b9a11f430811194d24fdbe279a7f05f77bbb1fdfee97c3186",
+                "installed_sha256": "828abb61aaf1c796f25542648741790007e84a8d61e2f03c3b2c1abecf86190d",
                 "versions": {
                     "firebase/php-jwt": "v7.2.1",
                     "larastan/larastan": "v3.15.0",
@@ -675,113 +164,624 @@
             "analysis_passed": true,
             "audit_passed": true,
             "e2e_passed": true,
-            "decoded_local_log_sha256": "f7932b7cb24c9403f963c9c63cd4a3b6c2765911a26172e07e768068961b8269"
+            "decoded_local_log_sha256": "273b3efdba983d23eb8a6b1f4b97350d06b8acd08779c9860834855e517fd4d7"
+        },
+        {
+            "id": 132708458278,
+            "name": "test (8.5, latest)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458278",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer install --no-interaction --prefer-dist",
+                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
+                "Run composer lint",
+                "Run composer analyse"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:18+00:00",
+                "profile": "latest",
+                "php": "8.5.12",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.5.12",
+                "lock_sha256": "30d1dd2fbb4e724d62a1bbba31387057b2347de437f12db2c0294d65c2f222f9",
+                "installed_sha256": "746a8a6770d7c591e88216125bf1c686bb260ae3c26b9a86146c5015c893de06",
+                "versions": {
+                    "firebase/php-jwt": "v7.2.1",
+                    "larastan/larastan": "v3.15.0",
+                    "laravel/framework": "v13.42.0",
+                    "laravel/passport": "v13.10.0",
+                    "laravel/pint": "v1.32.3",
+                    "league/oauth2-server": "9.4.1",
+                    "orchestra/testbench": "v11.3.0",
+                    "phpstan/phpstan": "2.3.5",
+                    "phpunit/phpunit": "12.5.44"
+                }
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "9e3846652ba8b0e257f5a39da341a593659174f48ae0ad1914e5b7a7315d8b10"
+        },
+        {
+            "id": 132708458287,
+            "name": "database-concurrency (pgsql, REPEATABLE READ)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458287",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 228,
+                    "assertions": 1068
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:13:04+00:00",
+                "php": "8.3.36",
+                "os": "Linux",
+                "driver": "pgsql",
+                "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+                "isolation": "repeatable read",
+                "pcntl": true,
+                "pdo_client": "18.6",
+                "source_sha256": "f56aa310b9e4e253970068a3b1e84fbfb389c3103942466b99eff796a3c26131",
+                "collations": null,
+                "laravel": "v13.42.0",
+                "passport": "v13.10.0",
+                "oauth2_server": "9.4.1",
+                "phpunit": "12.5.44"
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": false,
+            "e2e_passed": false,
+            "decoded_local_log_sha256": "cc887ba5f8c6eedc2219dc86314d838470dc6da0fcc422da1b87825749f03fee"
+        },
+        {
+            "id": 132708458296,
+            "name": "database-concurrency (mysql, READ COMMITTED)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458296",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 228,
+                    "assertions": 1070
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:13:51+00:00",
+                "php": "8.3.36",
+                "os": "Linux",
+                "driver": "mysql",
+                "database_version": "8.4.13",
+                "isolation": "READ-COMMITTED",
+                "pcntl": true,
+                "pdo_client": "mysqlnd 8.3.36",
+                "source_sha256": "f56aa310b9e4e253970068a3b1e84fbfb389c3103942466b99eff796a3c26131",
+                "collations": {
+                    "connection": "utf8mb4_unicode_ci",
+                    "local_index": "utf8mb4_bin"
+                },
+                "laravel": "v13.42.0",
+                "passport": "v13.10.0",
+                "oauth2_server": "9.4.1",
+                "phpunit": "12.5.44"
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": false,
+            "e2e_passed": false,
+            "decoded_local_log_sha256": "bf8da4cec32f0b42cf2c202a11302847592a9131229ebd985196e76c7c23f976"
+        },
+        {
+            "id": 132708458297,
+            "name": "test (8.4, latest)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458297",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer install --no-interaction --prefer-dist",
+                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
+                "Run composer lint",
+                "Run composer analyse"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:16+00:00",
+                "profile": "latest",
+                "php": "8.4.27",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.4.27",
+                "lock_sha256": "1bd3d1a65c66ba2a4c6d7dd77e77eae342fbb0d6721347f93684b2b945702f07",
+                "installed_sha256": "746a8a6770d7c591e88216125bf1c686bb260ae3c26b9a86146c5015c893de06",
+                "versions": {
+                    "firebase/php-jwt": "v7.2.1",
+                    "larastan/larastan": "v3.15.0",
+                    "laravel/framework": "v13.42.0",
+                    "laravel/passport": "v13.10.0",
+                    "laravel/pint": "v1.32.3",
+                    "league/oauth2-server": "9.4.1",
+                    "orchestra/testbench": "v11.3.0",
+                    "phpstan/phpstan": "2.3.5",
+                    "phpunit/phpunit": "12.5.44"
+                }
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "e6b13e12e5672608437ac72ad4ed4667ae943c04f5db79ed5944849c377d7071"
+        },
+        {
+            "id": 132708458316,
+            "name": "test (8.3, latest)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458316",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer install --no-interaction --prefer-dist",
+                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
+                "Run composer lint",
+                "Run composer analyse"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:14+00:00",
+                "profile": "latest",
+                "php": "8.3.36",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.3.36",
+                "lock_sha256": "546055afcbcbf24a1ab711c8e0dff00bf73829a7eebcfd240c8139af6a246f31",
+                "installed_sha256": "055d78ab77e855c650a823bbfb3a44749db57d74fb8f90c499f6fcc70c99a93c",
+                "versions": {
+                    "firebase/php-jwt": "v7.2.1",
+                    "larastan/larastan": "v3.15.0",
+                    "laravel/framework": "v13.42.0",
+                    "laravel/passport": "v13.10.0",
+                    "laravel/pint": "v1.32.3",
+                    "league/oauth2-server": "9.4.1",
+                    "orchestra/testbench": "v11.3.0",
+                    "phpstan/phpstan": "2.3.5",
+                    "phpunit/phpunit": "12.5.44"
+                }
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "72d30da864fb225939bae05fd609991a5769344dc3a30a64a369ba2374b51ffa"
+        },
+        {
+            "id": 132708458337,
+            "name": "test (8.3, lowest)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458337",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer install --no-interaction --prefer-dist",
+                "Run composer update --prefer-stable --no-interaction --prefer-dist",
+                "Run composer lint",
+                "Run composer analyse"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:16+00:00",
+                "profile": "lowest",
+                "php": "8.3.36",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.3.36",
+                "lock_sha256": "543acb7dc76c4e728a480bb1b8a8ceb220cd7a966b9683d5c9f15f2b0f6add52",
+                "installed_sha256": "4d9a40a45c88451c2da8cbfb5a554f81c25af4ad76a0cbfa00246d1117bbe949",
+                "versions": {
+                    "firebase/php-jwt": "v7.0.0",
+                    "larastan/larastan": "v3.9.3",
+                    "laravel/framework": "v13.40.0",
+                    "laravel/passport": "v13.7.1",
+                    "laravel/pint": "v1.0.0",
+                    "league/oauth2-server": "9.2.0",
+                    "orchestra/testbench": "v11.0.0",
+                    "phpstan/phpstan": "2.1.32",
+                    "phpunit/phpunit": "12.5.8"
+                }
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "7f61f18fbac28be74b89ada2e1be4d9e76ce23a11c4b16e045b92e296546c65d"
+        },
+        {
+            "id": 132708458348,
+            "name": "test (8.5, lowest)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458348",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer install --no-interaction --prefer-dist",
+                "Run composer update --prefer-stable --no-interaction --prefer-dist",
+                "Run composer lint",
+                "Run composer analyse"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:16+00:00",
+                "profile": "lowest",
+                "php": "8.5.12",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.5.12",
+                "lock_sha256": "6e47b1de78cb3007ed2eee779d7b481820295933a4d61adf38c1ff687fd87397",
+                "installed_sha256": "f742f86be306fe66259c51b178ec93d0b839bbd9fa310e266328d5f1e00b00a8",
+                "versions": {
+                    "firebase/php-jwt": "v7.0.0",
+                    "larastan/larastan": "v3.9.3",
+                    "laravel/framework": "v13.40.0",
+                    "laravel/passport": "v13.7.1",
+                    "laravel/pint": "v1.0.0",
+                    "league/oauth2-server": "9.3.0",
+                    "orchestra/testbench": "v11.0.0",
+                    "phpstan/phpstan": "2.1.32",
+                    "phpunit/phpunit": "12.5.8"
+                }
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "f2092f6bca8b71b1a2181b700a234849c0224a94a353474b0293c952b849bca9"
+        },
+        {
+            "id": 132708458352,
+            "name": "test (8.5, locked)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458352",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer config platform.php \"$(php -r 'echo PHP_VERSION;')\"",
+                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
+                "Run composer update --prefer-stable --no-interaction --prefer-dist"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:13+00:00",
+                "profile": "locked",
+                "php": "8.5.12",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.3.0",
+                "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
+                "installed_sha256": "828abb61aaf1c796f25542648741790007e84a8d61e2f03c3b2c1abecf86190d",
+                "versions": {
+                    "firebase/php-jwt": "v7.2.1",
+                    "larastan/larastan": "v3.15.0",
+                    "laravel/framework": "v13.42.0",
+                    "laravel/passport": "v13.10.0",
+                    "laravel/pint": "v1.32.3",
+                    "league/oauth2-server": "9.4.1",
+                    "orchestra/testbench": "v11.3.0",
+                    "phpstan/phpstan": "2.3.5",
+                    "phpunit/phpunit": "12.5.44"
+                }
+            },
+            "pint_files": 140,
+            "analysis_passed": true,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "5e5eceb771cabd7acaa97e29f699f919d63f7ef2b1c364cd1ada065079851987"
+        },
+        {
+            "id": 132708458357,
+            "name": "test (8.3, locked)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458357",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer config platform.php \"$(php -r 'echo PHP_VERSION;')\"",
+                "Run composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist",
+                "Run composer update --prefer-stable --no-interaction --prefer-dist"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:14+00:00",
+                "profile": "locked",
+                "php": "8.3.36",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.3.0",
+                "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
+                "installed_sha256": "828abb61aaf1c796f25542648741790007e84a8d61e2f03c3b2c1abecf86190d",
+                "versions": {
+                    "firebase/php-jwt": "v7.2.1",
+                    "larastan/larastan": "v3.15.0",
+                    "laravel/framework": "v13.42.0",
+                    "laravel/passport": "v13.10.0",
+                    "laravel/pint": "v1.32.3",
+                    "league/oauth2-server": "9.4.1",
+                    "orchestra/testbench": "v11.3.0",
+                    "phpstan/phpstan": "2.3.5",
+                    "phpunit/phpunit": "12.5.44"
+                }
+            },
+            "pint_files": 140,
+            "analysis_passed": true,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "2314e6c5d605f45cb48781bd7c58a4127a14382d4258ff80ec3fe492a2bd3351"
+        },
+        {
+            "id": 132708458363,
+            "name": "test (8.4, lowest)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458363",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [
+                "Run composer install --no-interaction --prefer-dist",
+                "Run composer update --prefer-stable --no-interaction --prefer-dist",
+                "Run composer lint",
+                "Run composer analyse"
+            ],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.196.1",
+            "phpunit_results": [
+                {
+                    "tests": 212,
+                    "assertions": 994
+                },
+                {
+                    "tests": 106,
+                    "assertions": 414
+                }
+            ],
+            "runner_warning_count": 0,
+            "environment": {
+                "checked_at_utc": "2026-11-15T05:12:14+00:00",
+                "profile": "lowest",
+                "php": "8.4.27",
+                "os": "Linux",
+                "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+                "platform_php": "8.4.27",
+                "lock_sha256": "62b0f3a75f3fc99ca2e807442ada80e1c0fbca04dd6df5676a86a165f376e746",
+                "installed_sha256": "bea8ef3e4a7fffad0e98348fb771c8c9031c38043b9b5a11aadc8c0c032c667f",
+                "versions": {
+                    "firebase/php-jwt": "v7.0.0",
+                    "larastan/larastan": "v3.9.3",
+                    "laravel/framework": "v13.40.0",
+                    "laravel/passport": "v13.7.1",
+                    "laravel/pint": "v1.0.0",
+                    "league/oauth2-server": "9.2.0",
+                    "orchestra/testbench": "v11.0.0",
+                    "phpstan/phpstan": "2.1.32",
+                    "phpunit/phpunit": "12.5.8"
+                }
+            },
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": true,
+            "e2e_passed": true,
+            "decoded_local_log_sha256": "22a5c8545e5e422dfd148ac343e0ebecfd1c79953a09a421411753a7b6c0637d"
+        },
+        {
+            "id": 132708458406,
+            "name": "package-manifests",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/job/132708458406",
+            "conclusion": "success",
+            "all_required_steps_success": true,
+            "conditionally_skipped_steps": [],
+            "runner": "2.338.2",
+            "runner_image_version": "20261111.82.6",
+            "phpunit_results": [],
+            "runner_warning_count": 0,
+            "environment": null,
+            "pint_files": null,
+            "analysis_passed": false,
+            "audit_passed": false,
+            "e2e_passed": false,
+            "decoded_local_log_sha256": "4f242a9f25138a36ce1cd9c3c058d461b0b474a375832a2c43198580420c726e"
         }
     ],
     "artifacts": [
         {
-            "id": 14147945933,
-            "name": "compatibility-php-8.4-lowest",
-            "digest": "sha256:5c587ff8d95fa529a3ae415a0c7d08e17c0df2583df2e8dfd0f6902c47d97568",
-            "expires_at_utc": "2026-11-22T04:59:54Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147945933"
-        },
-        {
-            "id": 14147827078,
-            "name": "sql-pgsql-2",
-            "digest": "sha256:c8173e1c18c0a7bd5c5745783f7a7901671fc66ae28f71eaa3268c7de7292526",
-            "expires_at_utc": "2026-11-22T05:00:18Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147827078"
-        },
-        {
-            "id": 14147731652,
-            "name": "compatibility-php-8.5-locked",
-            "digest": "sha256:0a98f55c567310fbfd2348cb0a508430506327350aefb6bcef97133d655ccfa5",
-            "expires_at_utc": "2026-11-22T04:59:35Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147731652"
-        },
-        {
-            "id": 14147637842,
-            "name": "compatibility-php-8.3-latest",
-            "digest": "sha256:e8565fdad6c9e10e0438c3e352468365e1951a5435f9f712bbfa26db0c136f00",
-            "expires_at_utc": "2026-11-22T04:59:37Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147637842"
-        },
-        {
-            "id": 14147518291,
-            "name": "compatibility-php-8.5-latest",
-            "digest": "sha256:4385988b2280f2646b7cb5466e4d9511c23a0a00fff1328face3cb581c98b553",
-            "expires_at_utc": "2026-11-22T04:59:28Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147518291"
-        },
-        {
-            "id": 14147488190,
-            "name": "compatibility-php-8.4-locked",
-            "digest": "sha256:94e86d44cca4e8759b6154cd0e22e726a152960877e0c82204eb27ada4b340cb",
-            "expires_at_utc": "2026-11-22T04:59:36Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147488190"
-        },
-        {
-            "id": 14147442174,
-            "name": "compatibility-php-8.4-latest",
-            "digest": "sha256:87df3eaa254935933533acee4d45572f1435f2868bfbd8ea2ce82ced644e0fae",
-            "expires_at_utc": "2026-11-22T04:59:27Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147442174"
-        },
-        {
-            "id": 14147298772,
-            "name": "sql-mysql-1",
-            "digest": "sha256:ea4af6c59272d81347d13aa858b6538ac1afdfdd7741a14b02937e510cef7876",
-            "expires_at_utc": "2026-11-22T05:00:42Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147298772"
-        },
-        {
-            "id": 14147243763,
+            "id": 14148530079,
             "name": "compatibility-php-8.3-lowest",
-            "digest": "sha256:a8cc72cca07c2b60297c11dab9759d14369a229ec6c681eb3b599f76dd899038",
-            "expires_at_utc": "2026-11-22T04:59:42Z",
+            "digest": "sha256:8938e62f42ea7f390b0103f984331b673638f84d12591a36044e9cfe3cf57156",
+            "expires_at_utc": "2026-11-22T05:12:49Z",
             "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147243763"
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148530079"
         },
         {
-            "id": 14147188989,
-            "name": "compatibility-php-8.3-locked",
-            "digest": "sha256:6356cd21ab0b57696bdfb17a4e616cbd7374a07ddecef2f73403c39e9ac8b59a",
-            "expires_at_utc": "2026-11-22T04:59:37Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147188989"
-        },
-        {
-            "id": 14147104147,
-            "name": "sql-pgsql-3",
-            "digest": "sha256:2cc3803f9b8fc528c47ef2fca2fdd2c90a60762b7c710eac56e003b39ad3ae43",
-            "expires_at_utc": "2026-11-22T05:00:14Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14147104147"
-        },
-        {
-            "id": 14146974527,
-            "name": "sql-mysql-0",
-            "digest": "sha256:22723320236a915f269cc4c029913fde4a6ec1b378698d50a0b79ad8dc655481",
-            "expires_at_utc": "2026-11-22T05:00:46Z",
-            "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14146974527"
-        },
-        {
-            "id": 14146849900,
+            "id": 14148290887,
             "name": "compatibility-php-8.5-lowest",
-            "digest": "sha256:e782441bd21ccd1b7b9194f058b55e0083ada3bd328a53a59275463a3393a0f7",
-            "expires_at_utc": "2026-11-22T04:59:28Z",
+            "digest": "sha256:04bd1ef7424ac7053e547179daba46239629c248c95114531ebe6f9d27e50631",
+            "expires_at_utc": "2026-11-22T05:12:36Z",
             "expired": false,
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708/artifacts/14146849900"
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148290887"
+        },
+        {
+            "id": 14148151289,
+            "name": "compatibility-php-8.4-latest",
+            "digest": "sha256:fe7ce7c0f0a8e08852a84c42663aee13554c9f11ee0fe3c18eaf5df1267817aa",
+            "expires_at_utc": "2026-11-22T05:12:36Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148151289"
+        },
+        {
+            "id": 14148111451,
+            "name": "compatibility-php-8.5-latest",
+            "digest": "sha256:7d24725e2f742000fc92ef2bb6d62b4258d25140290fb0245c83330656554699",
+            "expires_at_utc": "2026-11-22T05:12:42Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148111451"
+        },
+        {
+            "id": 14148106389,
+            "name": "compatibility-php-8.3-latest",
+            "digest": "sha256:f2899dd245f7c24880d928ec396ae014965419c01026d80dbccc4bb3c5163b89",
+            "expires_at_utc": "2026-11-22T05:12:45Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148106389"
+        },
+        {
+            "id": 14148086629,
+            "name": "sql-pgsql-3",
+            "digest": "sha256:db4bbd57a7cbc7ea9e8c8bb62e7c65e3a2f931e6e0c39f78517995c40716a8ca",
+            "expires_at_utc": "2026-11-22T05:13:17Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148086629"
+        },
+        {
+            "id": 14148036706,
+            "name": "compatibility-php-8.3-locked",
+            "digest": "sha256:8e676836ddb10e8d4ff865950d665ce98f78b3a6b22f3903d75d44c88b602a34",
+            "expires_at_utc": "2026-11-22T05:12:51Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148036706"
+        },
+        {
+            "id": 14148006281,
+            "name": "compatibility-php-8.5-locked",
+            "digest": "sha256:3a1f6758f557fe39faae4ff8dec2231e6fb8016a62d7c8182143fcc51caca53b",
+            "expires_at_utc": "2026-11-22T05:12:46Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148006281"
+        },
+        {
+            "id": 14148002025,
+            "name": "compatibility-php-8.4-locked",
+            "digest": "sha256:a769cb76841f8c870ad0b3ccabbe0d877f9cbf926fad5d7da38f3952882e4713",
+            "expires_at_utc": "2026-11-22T05:12:39Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14148002025"
+        },
+        {
+            "id": 14147867472,
+            "name": "sql-mysql-0",
+            "digest": "sha256:0ddede447897f41e221fb72f690d4021a4176ba4e9ce8c40132f63bdca46e5e0",
+            "expires_at_utc": "2026-11-22T05:14:21Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14147867472"
+        },
+        {
+            "id": 14147733162,
+            "name": "sql-mysql-1",
+            "digest": "sha256:3ac3f037a6050b37539975360ecaecee0337a07896bc4c70403403b40591135d",
+            "expires_at_utc": "2026-11-22T05:14:40Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14147733162"
+        },
+        {
+            "id": 14147549781,
+            "name": "compatibility-php-8.4-lowest",
+            "digest": "sha256:7520ccdc16964add9ca65b0ec11e540aba1fe999b8796bf34917671819c0ebec",
+            "expires_at_utc": "2026-11-22T05:12:38Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14147549781"
+        },
+        {
+            "id": 14147338750,
+            "name": "sql-pgsql-2",
+            "digest": "sha256:efe308eaeec111f571c955c75a79419dcf55c7f2d7278f8633b78c1c3ac8e204",
+            "expires_at_utc": "2026-11-22T05:13:13Z",
+            "expired": false,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096/artifacts/14147338750"
         }
     ],
     "initial_failed_run": {
@@ -984,8 +984,13 @@
         "incremental_migrations_added": 0
     },
     "delivery": {
-        "branch": "codex/expanded-compatibility",
-        "main_modified": false,
+        "branch": "main",
+        "integrated_branch": "codex/expanded-compatibility",
+        "integration": "fast-forward",
+        "previous_main_commit": "08f1ad4c269857e67b477fe7bc287d3faec6468b",
+        "integrated_commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+        "main_modified": true,
+        "source_branch_retained": true,
         "versions_published": false
     },
     "limits": [
@@ -1095,5 +1100,110 @@
             }
         ],
         "note": "Before adding a SQL regression for non-identity unique constraints; SQL suites had 227 tests."
+    },
+    "branch_validation_before_integration": {
+        "run": {
+            "id": 43679063708,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679063708",
+            "number": 15,
+            "attempt": 1,
+            "branch": "codex/expanded-compatibility",
+            "commit": "4c925d377d0fd8833438726b1378c79dfb70410c",
+            "conclusion": "success",
+            "started_at_utc": "2026-11-15T04:58:53Z",
+            "completed_at_utc": "2026-11-15T05:00:48Z"
+        },
+        "jobs": [
+            {
+                "id": 132705516704,
+                "name": "package-manifests",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "807461cf524db370020956afdfc620fb118ab4844f31910fce3ae5f1c40d22e5"
+            },
+            {
+                "id": 132705516840,
+                "name": "test (8.3, locked)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "d5176623e1173b1391d7fa62c438ef377f80f203d6e9daf97895d08711bc40a8"
+            },
+            {
+                "id": 132705516845,
+                "name": "test (8.5, lowest)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "f0820b99176523d2a07f50a58a5f5c8172c51cdfbb50bde3580343cf6b64971a"
+            },
+            {
+                "id": 132705516846,
+                "name": "database-concurrency (pgsql, REPEATABLE READ)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "c146c10896209beb65133c5efe9732198ed61a4ec775072dc8913e6132226d8c"
+            },
+            {
+                "id": 132705516849,
+                "name": "test (8.3, lowest)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "c7515d88b785f66b93f37cdf3f6c1575c88d716ca2de5cc1d30e021bc836206e"
+            },
+            {
+                "id": 132705516875,
+                "name": "test (8.4, latest)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "6c0409d437091f63736e7b570f7f110ddd7f25475d8863deae51114306f04f0e"
+            },
+            {
+                "id": 132705516883,
+                "name": "database-concurrency (mysql, READ COMMITTED)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "eb030e2de918871dd8527fdb6fd69ddb7ba6d5fc07ac484c6e8d798adfd40a5b"
+            },
+            {
+                "id": 132705516887,
+                "name": "test (8.4, lowest)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "3d3c0f5fd10f2b27752cd9b45c8a9c6e6a55099e5e7b39a874e4b96d4199fb2c"
+            },
+            {
+                "id": 132705516917,
+                "name": "test (8.5, locked)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "ed1477d142fcfc22e33e64dee8a936c2e29220681ce34d1400a7ba348cdc5fbc"
+            },
+            {
+                "id": 132705516948,
+                "name": "database-concurrency (pgsql, READ COMMITTED)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "6fdd1820ddd941169077911ba23bb084c7c65225a16be6ffa8bff3493ea1a94e"
+            },
+            {
+                "id": 132705516952,
+                "name": "database-concurrency (mysql, REPEATABLE READ)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "2188f1421435f10beb8030a600a69577f46dce24d16685d1403eaba0043c8517"
+            },
+            {
+                "id": 132705516973,
+                "name": "test (8.3, latest)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "63af75d147c1c092df06c54233b8f18eeeb2e1f938654b8871628530f803be30"
+            },
+            {
+                "id": 132705516978,
+                "name": "test (8.5, latest)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "9763529c5cdb7bb9fc0c3e36b6df3fa90561e0b8b22d80f8ee8df664571baf8d"
+            },
+            {
+                "id": 132705517064,
+                "name": "test (8.4, locked)",
+                "conclusion": "success",
+                "decoded_local_log_sha256": "f7932b7cb24c9403f963c9c63cd4a3b6c2765911a26172e07e768068961b8269"
+            }
+        ],
+        "documentation_commit_run": {
+            "id": 43679589202,
+            "commit": "3f552358b4e7d1e36e3d8955b686222735b378b8",
+            "conclusion": "success",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43679589202"
+        }
     }
 }
