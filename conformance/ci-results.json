@@ -1,47 +1,42 @@
 {
-    "version": 2,
+    "version": 3,
     "run": {
         "repository": "engelcituk/laravel-sso-suite",
-        "id": 43674055824,
-        "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824",
-        "number": 9,
+        "id": 43674756937,
+        "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937",
+        "number": 11,
         "attempt": 1,
         "event": "push",
-        "branch": "codex/ci-checkout-node24",
-        "commit": "6221d0601e4c116afcc525f51db66e17151796cf",
+        "branch": "main",
+        "commit": "7553a9696ca875e0b4949da51194e3836146e0ef",
         "status": "completed",
         "conclusion": "success",
-        "started_at_utc": "2026-11-15T03:49:20Z",
-        "updated_at_utc": "2026-11-15T03:51:41Z",
+        "started_at_utc": "2026-11-15T03:59:30Z",
+        "updated_at_utc": "2026-11-15T04:02:12Z",
         "initiated_by_this_task": true
     },
     "tested_workflow_git_blob": "ab84c68cfa2a41eda4b63a371dc12597101f3f31",
     "jobs": [
         {
-            "id": 132690193622,
-            "name": "database-concurrency (pgsql)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824/job/132690193622",
+            "id": 132692370656,
+            "name": "package-manifests",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937/job/132692370656",
             "conclusion": "success",
             "all_steps_success": true,
             "runner": "2.338.2",
             "os": "Ubuntu 26.04.1 LTS",
             "runner_image_version": "20261111.196.1",
             "php": "8.3.36",
-            "phpunit_results": [
-                {
-                    "tests": 224,
-                    "assertions": 1053
-                }
-            ],
+            "phpunit_results": [],
             "pint_files": null,
             "runner_warning_count": 0,
             "checkout_download_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
-            "decoded_local_log_sha256": "4b0218834e1f6b65b5259808e7fce56c51a957f01213d7f93fdd4888a29fd5a1"
+            "decoded_local_log_sha256": "5a52231700386e11f1aaeb9dfb6558a31af71a4adaa360e3c8266495fbd29401"
         },
         {
-            "id": 132690193714,
+            "id": 132692370761,
             "name": "test (8.4)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824/job/132690193714",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937/job/132692370761",
             "conclusion": "success",
             "all_steps_success": true,
             "runner": "2.338.2",
@@ -61,34 +56,18 @@
             "pint_files": 137,
             "runner_warning_count": 0,
             "checkout_download_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
-            "decoded_local_log_sha256": "1929e6febc0bf554561c74eb05d007500a13c845350def6b3699cc653cbb10db"
+            "decoded_local_log_sha256": "30644cec417e0ae6413f5067094d495bf6c7104d50def2ba609c5272a4255721"
         },
         {
-            "id": 132690193722,
-            "name": "package-manifests",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824/job/132690193722",
+            "id": 132692370780,
+            "name": "test (8.5)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937/job/132692370780",
             "conclusion": "success",
             "all_steps_success": true,
             "runner": "2.338.2",
             "os": "Ubuntu 26.04.1 LTS",
-            "runner_image_version": "20261111.196.1",
-            "php": "8.3.36",
-            "phpunit_results": [],
-            "pint_files": null,
-            "runner_warning_count": 0,
-            "checkout_download_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
-            "decoded_local_log_sha256": "fd5ddef929e6cb8a523f8be9cb639be01a6ff0a95999caed346b9abe482a9aa2"
-        },
-        {
-            "id": 132690193745,
-            "name": "test (8.3)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824/job/132690193745",
-            "conclusion": "success",
-            "all_steps_success": true,
-            "runner": "2.338.2",
-            "os": "Ubuntu 26.04.1 LTS",
-            "runner_image_version": "20261111.196.1",
-            "php": "8.3.36",
+            "runner_image_version": "20261111.82.6",
+            "php": "8.5.12",
             "phpunit_results": [
                 {
                     "tests": 209,
@@ -102,12 +81,12 @@
             "pint_files": 137,
             "runner_warning_count": 0,
             "checkout_download_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
-            "decoded_local_log_sha256": "ccc61f4ce6ac211eba962f7209ac872eb96eb929fbb246887c283f632c16a6a8"
+            "decoded_local_log_sha256": "351c8d1069c44c0f4ef74cadf8d25f7a001a25d9a106fa62a6eedad59393755e"
         },
         {
-            "id": 132690193850,
+            "id": 132692370787,
             "name": "database-concurrency (mysql)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824/job/132690193850",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937/job/132692370787",
             "conclusion": "success",
             "all_steps_success": true,
             "runner": "2.338.2",
@@ -123,18 +102,18 @@
             "pint_files": null,
             "runner_warning_count": 0,
             "checkout_download_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
-            "decoded_local_log_sha256": "0886e4bda3cfbf37c9925d2bde5fdafb3f026b8f33a3eaef261d7096a61975a1"
+            "decoded_local_log_sha256": "402cfa8c930fbd7b9356ff71efc634a57eae333e8557169e19d6af838ec2323e"
         },
         {
-            "id": 132690193873,
-            "name": "test (8.5)",
-            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824/job/132690193873",
+            "id": 132692370789,
+            "name": "test (8.3)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937/job/132692370789",
             "conclusion": "success",
             "all_steps_success": true,
             "runner": "2.338.2",
             "os": "Ubuntu 26.04.1 LTS",
             "runner_image_version": "20261111.196.1",
-            "php": "8.5.12",
+            "php": "8.3.36",
             "phpunit_results": [
                 {
                     "tests": 209,
@@ -148,7 +127,28 @@
             "pint_files": 137,
             "runner_warning_count": 0,
             "checkout_download_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
-            "decoded_local_log_sha256": "2fdce8095a264feb8bf973b2973ca463971ebc122a44afdeb91eb300750be8d9"
+            "decoded_local_log_sha256": "f5e42983f9459eb39132a08df63020b8bed1824af773b7455f73337d1a118bcb"
+        },
+        {
+            "id": 132692370812,
+            "name": "database-concurrency (pgsql)",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937/job/132692370812",
+            "conclusion": "success",
+            "all_steps_success": true,
+            "runner": "2.338.2",
+            "os": "Ubuntu 26.04.1 LTS",
+            "runner_image_version": "20261111.196.1",
+            "php": "8.3.36",
+            "phpunit_results": [
+                {
+                    "tests": 224,
+                    "assertions": 1053
+                }
+            ],
+            "pint_files": null,
+            "runner_warning_count": 0,
+            "checkout_download_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "decoded_local_log_sha256": "ee1134b7a5ca754d69a9ce97f0f0c699e125b6100acf1fb178c599fef2ee07d4"
         }
     ],
     "databases": {
@@ -241,10 +241,69 @@
         "contracts": 0
     },
     "delivery": {
-        "branch": "codex/ci-checkout-node24",
+        "branch": "main",
+        "integrated_branch": "codex/ci-checkout-node24",
+        "integration": "fast-forward",
+        "previous_main_commit": "7e5640c36a388411ffa0a703a3d735040d79c59b",
+        "integrated_commit": "7553a9696ca875e0b4949da51194e3836146e0ef",
         "changes_pushed": true,
-        "main_modified": false,
+        "main_modified": true,
         "pr_created": false,
         "versions_published": false
+    },
+    "previous_branch_validation": {
+        "run": {
+            "repository": "engelcituk/laravel-sso-suite",
+            "id": 43674055824,
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824",
+            "number": 9,
+            "attempt": 1,
+            "event": "push",
+            "branch": "codex/ci-checkout-node24",
+            "commit": "6221d0601e4c116afcc525f51db66e17151796cf",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at_utc": "2026-11-15T03:49:20Z",
+            "updated_at_utc": "2026-11-15T03:51:41Z",
+            "initiated_by_this_task": true
+        },
+        "jobs": [
+            {
+                "id": 132690193622,
+                "name": "database-concurrency (pgsql)",
+                "decoded_local_log_sha256": "4b0218834e1f6b65b5259808e7fce56c51a957f01213d7f93fdd4888a29fd5a1"
+            },
+            {
+                "id": 132690193714,
+                "name": "test (8.4)",
+                "decoded_local_log_sha256": "1929e6febc0bf554561c74eb05d007500a13c845350def6b3699cc653cbb10db"
+            },
+            {
+                "id": 132690193722,
+                "name": "package-manifests",
+                "decoded_local_log_sha256": "fd5ddef929e6cb8a523f8be9cb639be01a6ff0a95999caed346b9abe482a9aa2"
+            },
+            {
+                "id": 132690193745,
+                "name": "test (8.3)",
+                "decoded_local_log_sha256": "ccc61f4ce6ac211eba962f7209ac872eb96eb929fbb246887c283f632c16a6a8"
+            },
+            {
+                "id": 132690193850,
+                "name": "database-concurrency (mysql)",
+                "decoded_local_log_sha256": "0886e4bda3cfbf37c9925d2bde5fdafb3f026b8f33a3eaef261d7096a61975a1"
+            },
+            {
+                "id": 132690193873,
+                "name": "test (8.5)",
+                "decoded_local_log_sha256": "2fdce8095a264feb8bf973b2973ca463971ebc122a44afdeb91eb300750be8d9"
+            }
+        ],
+        "documentation_commit_run": {
+            "id": 43674490164,
+            "commit": "7553a9696ca875e0b4949da51194e3836146e0ef",
+            "conclusion": "success",
+            "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674490164"
+        }
     }
 }

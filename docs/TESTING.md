@@ -79,8 +79,9 @@ Outbox vacías después de una pausa de 120 s; se conservó el intento fallido a
 se repitió la campaña completa. Ver [reproducción, métricas y alcance](DEPLOYMENT-VALIDATION.md)
 y [JSON sin secretos](../conformance/deployment-results.json).
 
-GitHub Actions ejecutó la matriz del commit `6221d06` en Ubuntu 26.04.1: **seis trabajos
-aprobados**, run `43674055824`, 2026-11-15 03:49:20–03:51:41 UTC (14 de noviembre en
+Tras integrar la rama mediante fast-forward, GitHub Actions ejecutó la matriz en **main**,
+commit `7553a96`, Ubuntu 26.04.1: **seis trabajos aprobados**, run `43674756937`,
+2026-11-15 03:59:30–04:02:12 UTC (14 de noviembre en
 Cancún). Cada PHP 8.3.36/8.4.27/8.5.12 pasó 209 / 982 generales, 106 / 414 normativos,
 Pint (137 archivos), Larastan, validate/install/audit y E2E. La consulta audit de esa
 ejecución no encontró avisos conocidos. MySQL 8.4.13 pasó 224 / 1055 y PostgreSQL 18.7
@@ -88,7 +89,8 @@ ejecución no encontró avisos conocidos. MySQL 8.4.13 pasó 224 / 1055 y Postgr
 
 La ejecución previa pasó con seis advertencias por checkout@v4/Node 20. Tras actualizar
 la acción a v7.0.1 fijada por SHA y aprobar actionlint 1.7.12, se subió la corrección a
-`codex/ci-checkout-node24` con autorización. Los seis logs de la nueva matriz confirman
+`codex/ci-checkout-node24` con autorización y se validó antes de integrar. Los seis logs
+de la nueva matriz de main confirman
 el SHA fijado y **cero advertencias del runner**, sin fallos ni pruebas saltadas.
 Ver [evidencia remota y reproducción](CI-REMOTE.md)
 y [JSON sin secretos](../conformance/ci-results.json).

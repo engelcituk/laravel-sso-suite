@@ -6,7 +6,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | Fase | Estado real | Evidencia / cierre pendiente |
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
-| 1 fundamento | base local y CI remota verificadas | tres paquetes, providers, Composer, Pint y Larastan; seis trabajos remotos aprobados en 6221d06 con checkout actualizado, cero advertencias del runner |
+| 1 fundamento | base local y CI remota verificadas | tres paquetes, providers, Composer, Pint y Larastan; checkout integrado en main, seis trabajos remotos aprobados en 7553a96, cero advertencias del runner |
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
 | 4 identidad local | concurrencia local verificada | índice sensible a mayúsculas, recuperación de conflicto y commit; carreras en MySQL/PostgreSQL, ACL independiente |
@@ -16,13 +16,14 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 
 ## Resultados ejecutados
 
-- GitHub Actions remoto: **6/6 trabajos aprobados** en `6221d06`, run `43674055824`,
-  2026-11-15 03:49:20–03:51:41 UTC (14 de noviembre en Cancún). PHP 8.3/8.4/8.5:
+- GitHub Actions remoto en **main**: **6/6 trabajos aprobados** en `7553a96`, run `43674756937`,
+  2026-11-15 03:59:30–04:02:12 UTC (14 de noviembre en Cancún). PHP 8.3/8.4/8.5:
   209 / 982 generales y 106 / 414 normativos por versión; MySQL 224 / 1055 y PostgreSQL
   224 / 1053. Se revisaron los seis logs: **cero advertencias del runner y cero fallos**.
   Checkout v7.0.1 fijado por SHA, con Node 24, validado localmente y en remoto; resuelve
-  las seis advertencias de la ejecución anterior. Cambios en rama codex autorizada,
-  sin modificar main ni publicar versiones. [Informe, IDs y límites](CI-REMOTE.md).
+  las seis advertencias de la ejecución anterior. Rama codex integrada en main con
+  autorización mediante fast-forward, sin conflictos ni publicación de versiones.
+  [Informe, IDs y límites](CI-REMOTE.md).
 - **209 tests / 982 aserciones**, aprobados en Windows con PHP **8.3.36, 8.4.27 y 8.5.12**,
   Laravel **13.42.0**, Passport **13.10.0**, League OAuth2 Server **9.4.1**,
   firebase/php-jwt **7.2.1** y PHPUnit **12.5.44**. SQLite **3.53.4** en PHP 8.3.
@@ -115,7 +116,7 @@ diagnóstico, despliegues y carga de 30 min quedan atendidos en el alcance local
 de los cinco planes OIDC y sus evidencias. El destino y retención de auditoría se configuran
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
-1. La matriz y la corrección de checkout quedan verificadas; ampliar versiones/dependencias/aislamientos según
+1. La integración en main, su matriz y checkout quedan verificados; ampliar versiones/dependencias/aislamientos según
    los destinos concretos, sin convertir esa ampliación abierta en una garantía general.
 2. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
    móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.

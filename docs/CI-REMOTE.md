@@ -1,13 +1,15 @@
 # Matriz CI remota: resultados reales
 
-Verificación del 2026-11-14 en Cancún, **2026-11-15 03:49:20–03:51:41 UTC**.
-El [run 43674055824, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824)
-terminó con **seis trabajos aprobados y cero advertencias del runner**. Tras la autorización
-del usuario se subió únicamente la corrección de checkout a `codex/ci-checkout-node24`;
-la creación de esa rama activó el workflow de push. Se descargaron y revisaron sus seis logs.
+Verificación del 2026-11-14 en Cancún, **2026-11-15 03:59:30–04:02:12 UTC**.
+El [run 43674756937, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937)
+de **main** terminó con **seis trabajos aprobados y cero advertencias del runner**.
+Con autorización del usuario, `codex/ci-checkout-node24` se integró mediante fast-forward:
+main avanzó de `7e5640c` a `7553a96`, sin conflictos ni reescritura de commits.
+Ese push activó una nueva matriz en main; se descargaron y revisaron sus seis logs.
 
-Commit probado: `6221d0601e4c116afcc525f51db66e17151796cf`, workflow `quality`,
-ejecución número 9. Respecto a `7e5640c`, sólo cambia tres líneas del workflow.
+Commit probado en main: `7553a9696ca875e0b4949da51194e3836146e0ef`, workflow `quality`,
+ejecución número 11. Se integraron la corrección de tres líneas del workflow y su
+documentación previa. No hubo cambios de PHP, dependencias ni esquema.
 Blob Git del workflow probado: `ab84c68cfa2a41eda4b63a371dc12597101f3f31`.
 La documentación de resultados se incorpora después; no se atribuye al commit probado.
 
@@ -15,12 +17,12 @@ La documentación de resultados se incorpora después; no se atribuye al commit 
 
 | Trabajo / ID | Entorno real | Resultado |
 | --- | --- | --- |
-| test (8.3) / 132690193745 | PHP 8.3.36 | 209 tests / 982 aserciones; 106 / 414 normativos |
-| test (8.4) / 132690193714 | PHP 8.4.27 | 209 / 982; 106 / 414 normativos |
-| test (8.5) / 132690193873 | PHP 8.5.12 | 209 / 982; 106 / 414 normativos |
-| package-manifests / 132690193722 | PHP 8.3.36 | seis manifiestos de paquetes/ejemplos válidos |
-| database-concurrency (mysql) / 132690193850 | PHP 8.3.36, MySQL 8.4.13 | 224 / 1055, sin fallos ni saltos |
-| database-concurrency (pgsql) / 132690193622 | PHP 8.3.36, PostgreSQL 18.7 | 224 / 1053, sin fallos ni saltos |
+| test (8.3) / 132692370789 | PHP 8.3.36 | 209 tests / 982 aserciones; 106 / 414 normativos |
+| test (8.4) / 132692370761 | PHP 8.4.27 | 209 / 982; 106 / 414 normativos |
+| test (8.5) / 132692370780 | PHP 8.5.12 | 209 / 982; 106 / 414 normativos |
+| package-manifests / 132692370656 | PHP 8.3.36 | seis manifiestos de paquetes/ejemplos válidos |
+| database-concurrency (mysql) / 132692370787 | PHP 8.3.36, MySQL 8.4.13 | 224 / 1055, sin fallos ni saltos |
+| database-concurrency (pgsql) / 132692370812 | PHP 8.3.36, PostgreSQL 18.7 | 224 / 1053, sin fallos ni saltos |
 
 Todos los pasos terminaron en `success`. Cada trabajo PHP pasó Composer validate/install,
 Pint (**137 archivos en este checkout remoto**), Larastan sin errores, auditoría de
@@ -38,7 +40,7 @@ sus logs de arranque. Los JSON de entorno SQL no se subieron como artifacts y no
 presentan como descargados de GitHub.
 
 Los runners fueron GitHub-hosted `ubuntu-latest`, realmente **Ubuntu 26.04.1 LTS**,
-agente **2.338.2**. Imagen `20261111.196.1` en los seis trabajos.
+agente **2.338.2**. Imagen `20261111.196.1`, salvo PHP 8.5 `20261111.82.6`.
 No se infieren versiones del nombre mutable `ubuntu-latest`.
 
 ## Advertencia y corrección
@@ -67,15 +69,22 @@ inicial cada uno; contracts no tiene migraciones.
 fijado de checkout, todos sus pasos terminaron en success y no registraron `##[warning]`.
 No hizo falta corregir PHP ni repetir trabajos fallidos. El run anterior conserva sus
 advertencias históricas; no se alteraron sus resultados.
-Se subieron la corrección y la documentación a la rama autorizada. `main` no se modificó;
-no se creó PR, tag, release ni publicación en Packagist.
+Antes de integrar, la rama pasó los runs
+[43674055824](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674055824)
+(corrección, `6221d06`) y
+[43674490164](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674490164)
+(documentación, `7553a96`), ambos 6/6 sin advertencias del runner. La ejecución de main
+documentada aquí es otra ejecución, no se reutiliza el resultado de la rama como prueba
+de main. La integración y su documentación se subieron con autorización;
+no se creó PR, tag, release ni publicación en Packagist. Se conserva la rama de origen.
 
 ## Evidencia y reproducción
 
 [Resumen estructurado sin secretos](../conformance/ci-results.json): commit, run, enlaces
 a trabajos, versiones, conteos, huellas SHA-256 de los logs descargados y comparación
 con la ejecución anterior. Los logs completos permanecen ignorados en
-`.runtime/ci-remote/run-43674055824/` y `run-43673080776/`; las huellas corresponden a esos archivos decodificados,
+`.runtime/ci-remote/run-43674756937/`; también se conservan los directorios de las
+ejecuciones anteriores. Las huellas corresponden a esos archivos decodificados,
 no a un ZIP original de GitHub. No se versionan credenciales efímeras ni logs crudos.
 
 Para repetir el commit probado, usa **Re-run all jobs** en ese run de GitHub Actions.
@@ -90,7 +99,7 @@ Sus resultados locales previos se conservan en los informes correspondientes.
 La matriz PHP comparte el lockfile; no evalúa dependencias alternativas. La matriz SQL
 no cubre todos los motores, versiones o aislamientos posibles.
 
-La matriz remota y la corrección de checkout del commit indicado quedan verificadas.
-Esta corrección no tiene validaciones pendientes. Continúan fuera de lo
+La integración en main, su matriz remota y la corrección de checkout quedan verificadas.
+Esta integración no tiene validaciones pendientes. Continúan fuera de lo
 validado el piloto externo, navegadores comerciales/móviles físicos, carga distribuida
 o multijornada y auditoría/certificación independiente. Nada de ello se declara aprobado.
