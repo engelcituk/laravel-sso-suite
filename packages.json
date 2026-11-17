@@ -1,0 +1,119 @@
+{
+    "packages": {
+        "laravel-sso/contracts": {
+            "0.1.x-dev": {
+                "name": "laravel-sso/contracts",
+                "description": "Shared identity value objects for Laravel SSO",
+                "license": "MIT",
+                "type": "library",
+                "require": {
+                    "php": "^8.3"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "LaravelSso\\Contracts\\": "src/"
+                    }
+                },
+                "version": "0.1.x-dev",
+                "time": "2026-11-17T19:22:15+00:00",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/contracts.zip",
+                    "reference": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+                    "shasum": "4868360adb174a171ce3ae1603986ac0fbb5ee08"
+                },
+                "support": {
+                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/fba4d6fa7446e0e52adcd92048b603a02f5357f7/packages/contracts"
+                }
+            }
+        },
+        "laravel-sso/server": {
+            "0.1.x-dev": {
+                "name": "laravel-sso/server",
+                "description": "Experimental OpenID Connect provider built on Laravel Passport",
+                "license": "MIT",
+                "type": "library",
+                "require": {
+                    "php": "^8.3",
+                    "ext-openssl": "*",
+                    "laravel-sso/contracts": "^0.1@dev",
+                    "illuminate/auth": "^13.0",
+                    "illuminate/database": "^13.0",
+                    "illuminate/http": "^13.0",
+                    "illuminate/support": "^13.0",
+                    "laravel/passport": "^13.0",
+                    "firebase/php-jwt": "^7.0"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "LaravelSso\\Server\\": "src/"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "LaravelSso\\Server\\SsoServerServiceProvider"
+                        ]
+                    }
+                },
+                "version": "0.1.x-dev",
+                "time": "2026-11-17T19:22:15+00:00",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/server.zip",
+                    "reference": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+                    "shasum": "f0ccb2ec356cc5647be5d80b83877fbe781218c0"
+                },
+                "support": {
+                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/fba4d6fa7446e0e52adcd92048b603a02f5357f7/packages/server"
+                }
+            }
+        },
+        "laravel-sso/client": {
+            "0.1.x-dev": {
+                "name": "laravel-sso/client",
+                "description": "Experimental OIDC client for native Laravel Auth and local Eloquent identities",
+                "license": "MIT",
+                "type": "library",
+                "require": {
+                    "php": "^8.3",
+                    "ext-openssl": "*",
+                    "laravel-sso/contracts": "^0.1@dev",
+                    "illuminate/auth": "^13.0",
+                    "illuminate/database": "^13.0",
+                    "illuminate/http": "^13.0",
+                    "illuminate/support": "^13.0",
+                    "firebase/php-jwt": "^7.0"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "LaravelSso\\Client\\": "src/"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "LaravelSso\\Client\\SsoClientServiceProvider"
+                        ]
+                    }
+                },
+                "version": "0.1.x-dev",
+                "time": "2026-11-17T19:22:15+00:00",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/client.zip",
+                    "reference": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+                    "shasum": "769ca88038466d012ebe057fb2fc5053aaacc36d"
+                },
+                "support": {
+                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/fba4d6fa7446e0e52adcd92048b603a02f5357f7/packages/client"
+                }
+            }
+        }
+    },
+    "available-packages": [
+        "laravel-sso/contracts",
+        "laravel-sso/server",
+        "laravel-sso/client"
+    ]
+}
