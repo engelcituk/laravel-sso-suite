@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "phase": "frontend-agnostic-auth-integration",
+  "checked_at_utc": "2026-11-17T15:48:12.9558002Z",
+  "status": "passed_local",
+  "base_commit": "3ff3e589142bdf9cb00c26de2fb4a34da41c1874",
+  "source_state": "uncommitted workspace changes; not a remote CI result",
+  "fingerprint": {
+    "checked_at_utc": "2026-11-17T15:48:12.0000000Z",
+    "source_sha256": "47a7e710d2755e755f9bdeff6a1edcc49a0fbf4ceec6143ecaf586fa566ea310",
+    "file_count": 121,
+    "deployment_source_sha256": "6802a972d3e1ee361221b050a32927a23af026e3aa354b35c40e033d10f8cb4c",
+    "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    }
+  },
+  "fixture_and_test_sha256": {
+    "tools/agnostic-e2e.php": "1edd38c516a93c69139162a79d88a80a3a3f0d47151b5ca322d0d40e8157bff5",
+    "tests/AgnosticServerTest.php": "4cb70eef9fc2f8dc6e2071d08965d1215ffc2e1c71f6871af8f5603b1c8f1680",
+    "tests/AgnosticClientTest.php": "a0144691f9dad7220f146a40ae1e93c68af21db36f4856447c5864b041cc93c4",
+    "tests/AgnosticInstallerTest.php": "2eca6fe2f20747e8b3ba57e448615aa32ac0d097bf7cb440407b50e6d5db9f8e"
+  },
+  "quality": {
+    "phpunit": [
+      {
+        "php": "8.3.36",
+        "tests": 252,
+        "assertions": 1209,
+        "status": "passed",
+        "log": ".runtime/agnostic-auth/php83-tests.log"
+      },
+      {
+        "php": "8.4.27",
+        "tests": 252,
+        "assertions": 1209,
+        "status": "passed",
+        "log": ".runtime/agnostic-auth/php84-tests.log"
+      },
+      {
+        "php": "8.5.12",
+        "tests": 252,
+        "assertions": 1209,
+        "status": "passed",
+        "log": ".runtime/agnostic-auth/php85-tests.log"
+      }
+    ],
+    "new_tests": 22,
+    "own_oidc_group": {
+      "tests": 106,
+      "assertions": 414,
+      "status": "passed",
+      "official_oidf": false
+    },
+    "pint": {
+      "scope": "global, fresh cache",
+      "status": "passed"
+    },
+    "larastan": {
+      "level": 5,
+      "baseline": false,
+      "status": "passed"
+    },
+    "composer": {
+      "strict_manifests": 7,
+      "platform": "passed",
+      "locked_audit": "passed",
+      "advisories": 0,
+      "abandoned": 0,
+      "dependency_manifests_or_lock_changed": false
+    },
+    "installed_host_doctors": [
+      {
+        "host": "server",
+        "offline": true,
+        "checks": 10,
+        "status": "passed"
+      },
+      {
+        "host": "fresh",
+        "offline": true,
+        "checks": 6,
+        "status": "passed"
+      },
+      {
+        "host": "existing",
+        "offline": true,
+        "checks": 6,
+        "status": "passed"
+      }
+    ]
+  },
+  "http_e2e": {
+    "report": ".runtime/agnostic-auth/live-20261117-154245-e1306e/result.json",
+    "started_at_utc": "2026-11-17T15:42:45.0000000Z",
+    "finished_at_utc": "2026-11-17T15:43:25.0000000Z",
+    "php": "8.3.36",
+    "status": "passed",
+    "checks": [
+      "op_operational_schedule_discovered_without_console_routes",
+      "fresh_operational_schedule_discovered_without_console_routes",
+      "existing_operational_schedule_discovered_without_console_routes",
+      "op_real_http_ready",
+      "op_config_and_routes_cached",
+      "fresh_real_http_ready",
+      "fresh_config_and_routes_cached",
+      "existing_real_http_ready",
+      "existing_config_and_routes_cached",
+      "fresh_server_has_optional_login_without_host_login_or_active_column",
+      "existing_auth_route_redirects_to_central_fallback_automatically",
+      "real_csrf_rejects_missing_token",
+      "headless_login_accepts_standard_existing_user",
+      "real_code_pkce_exchange_completes_existing_client",
+      "fresh_client_without_native_login_reuses_central_session",
+      "fresh_existing_id_and_independent_acl",
+      "existing_existing_id_and_independent_acl",
+      "switch_to_local_rejects_old_sso_session_with_cached_routes",
+      "host_native_login_still_works_when_disabled",
+      "switch_to_sso_rejects_old_native_session",
+      "native_credentials_blocked_by_discovered_route",
+      "sso_returns_without_second_central_password",
+      "central_json_logout",
+      "fresh_strict_revocation_after_logout",
+      "existing_strict_revocation_after_logout",
+      "op_users_credentials_schema_acl_unchanged",
+      "op_host_pending_migration_not_executed",
+      "backchannel_outbox_drained",
+      "fresh_users_credentials_schema_acl_unchanged",
+      "fresh_host_pending_migration_not_executed",
+      "existing_users_credentials_schema_acl_unchanged",
+      "existing_host_pending_migration_not_executed"
+    ],
+    "count": 32,
+    "scope": "Disposable standard Laravel hosts, HTTP loopback development only; Laravel config/route caches enabled, PHP OPcache disabled",
+    "owned_servers_stopped": true,
+    "frontend_dependencies": [],
+    "users_changed_by_package": false
+  },
+  "preservation": {
+    "protected_example_files": 10,
+    "all_unchanged": true,
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    },
+    "migration_definitions_changed": false,
+    "host_pending_migration_executed": false,
+    "published_versions": false
+  },
+  "limits": [
+    "Disposable SQLite Laravel hosts and HTTP loopback only for this E2E; Laravel config/route caches enabled and PHP development OPcache disabled.",
+    "JSON and Inertia contracts tested; no actual Vue, React or starter-kit build executed.",
+    "Official OIDF, cross-site browser, SQL concurrency and 30-minute load campaigns not repeated for these semantic changes; previous reports retain their original fingerprints.",
+    "No remote CI, external pilot, independent review or OpenID certification executed in this phase."
+  ],
+  "earlier_attempts": [
+    {
+      "run": "live-20261117-150744-1e3ec2",
+      "status": "failed",
+      "cause": "Harness called nonexistent Application::useVendorPath; corrected fixture boot."
+    },
+    {
+      "run": "live-20261117-150815-6ce424",
+      "status": "failed",
+      "cause": "Harness expected final slash in a root redirect; corrected comparison."
+    },
+    {
+      "run": "live-20261117-151133-cdaba7",
+      "status": "failed",
+      "cause": "Rapid development mode change observed stale OPcache configuration."
+    },
+    {
+      "run": "live-20261117-151520-c11d7b",
+      "status": "failed",
+      "cause": "Repeated stale OPcache configuration in development servers; disabled development OPcache and retained Laravel caches."
+    },
+    {
+      "run": "live-20261117-151708-9d9b74",
+      "status": "passed",
+      "checks": 29
+    },
+    {
+      "run": "live-20261117-152149-a73112",
+      "status": "passed",
+      "checks": 32
+    },
+    {
+      "run": "live-20261117-153610-d66544",
+      "status": "passed",
+      "checks": 32
+    }
+  ],
+  "evidence_sha256": {
+    ".runtime/agnostic-auth/php83-tests.log": "5869286a99a4cfd67babd9f92f9fd2998f76b191db207886b5f0b0689eaf3da3",
+    ".runtime/agnostic-auth/php84-tests.log": "c953898e28ed67462e4bd05b620ac2fa2e79aee71ba6d2e37e5fdcbede19c15c",
+    ".runtime/agnostic-auth/php85-tests.log": "4c9e77f02da8bc9493c2d7e481e28fa3201313052251feb33b45dddf10b7f1c7",
+    ".runtime/agnostic-auth/conformance.log": "32527e0eff8b1698cd6f717f9c9530d0f878768bf922ebccfba8516ab3a02083",
+    ".runtime/agnostic-auth/pint-global.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/agnostic-auth/larastan-final.log": "d2725973345b50ad76bb2eb341026f081f823da6f3396063bc1fc17270db6adc",
+    ".runtime/agnostic-auth/platform.log": "73278b9ea91ebda3cdbb77d421800efb189ec1f01fd3796b437e84413a7f08da",
+    ".runtime/agnostic-auth/audit.json": "e99397fcc4e69df9bd0935f43a8483e38c4625ae5145caeda3daa5993713f6e4",
+    ".runtime/agnostic-auth/composer-examples-app-one.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/agnostic-auth/composer-examples-app-two.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/agnostic-auth/composer-examples-identity-server.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/agnostic-auth/composer-packages-client.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/agnostic-auth/composer-packages-contracts.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/agnostic-auth/composer-packages-server.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/agnostic-auth/composer-root.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/agnostic-auth/live-20261117-154245-e1306e/result.json": "4bd099e0a484f82f9827a3059dd5ca72eaf0792cc4c85b618a42a32b3f1cabff",
+    ".runtime/agnostic-auth/doctor-server.json": "b28aa8a006e0657f2b6e9a4be4ffce1d15c0cbd8f25dd23e022e8de83a86d8b4",
+    ".runtime/agnostic-auth/doctor-fresh.json": "ae5af2eefb89756901e2a157e19e066ac2ea8e13a717e7a8e3e5b86e8327ff49",
+    ".runtime/agnostic-auth/doctor-existing.json": "ae5af2eefb89756901e2a157e19e066ac2ea8e13a717e7a8e3e5b86e8327ff49"
+  },
+  "changed_php_sha256": {
+    "examples/shared/config/sso-server.php": "4096ecaa24b9b560eba1984896ae977e1791a1e405e89f0c5c4980536900f28c",
+    "packages/client/config/sso-client.php": "4dd7ca6194599a3c8b82c25b65fa2439e9d93780386bb6756dafe7b443d6994c",
+    "packages/client/src/Console/InstallCommand.php": "28542979afec739d4fa34f2e281363f75adfc72bae815e9b5d6870cdd863cb03",
+    "packages/client/src/Http/AuthenticationResponse.php": "63008ec47f2cc9f312a49557c91aa914d326579d9c532132958bb72529fa5f46",
+    "packages/client/src/Http/EnsureGlobalSession.php": "45ab6eeba4d6bbf8c2057438d1f20ea748267c53e9ebfd9a82c1ced93c83e4e9",
+    "packages/client/src/Http/IntegrateAuthentication.php": "b72f161df6a6673e451ab689df89cfbf6af1eaec88f202821c6c67f58439cd01",
+    "packages/client/src/Http/LocalAuthentication.php": "6bd0d38240b3ca54028474583c93ba5fc75c492fd37239d50c510f6d3be6a6dd",
+    "packages/client/src/SsoClientServiceProvider.php": "7a85dc2d6bde608b7639f0ff8b113b4206a52093da42f7138b3d3fbc9994fa88",
+    "packages/contracts/src/InstallationConfiguration.php": "c48b69b6ca9964b11699b9b6b7ef89291dbfd42e2401ab6ad345ea07ff82aa37",
+    "packages/server/config/sso-server.php": "d5ace42ebfedc56baaa8aa2935960470bf285524d2363e3889bb9971be6e72bb",
+    "packages/server/resources/views/login.blade.php": "9289fe54d90e89121194c9e6d0912fa216a3793ef060ab72a5bb75c3f2829cff",
+    "packages/server/src/Console/DoctorCommand.php": "53669d6d035d75442c866639a66652a9d50430f8400b65cb765d9ea17b63db5c",
+    "packages/server/src/Console/InstallCommand.php": "92f4a20dccb61d6c3ecb6d6a841c24de7ede273d909f1f3ca968c1bcf911fa7b",
+    "packages/server/src/Console/RegisterClientCommand.php": "a9aada4d6d4d8edcbb50c292a83847a923b71eb9c0cadf5e8cc61b82cda854b0",
+    "packages/server/src/GlobalSessions.php": "873db16618d98fd047ff7043f7f0ed219d4973421756d406b3c091fc5e28fd20",
+    "packages/server/src/Http/AuthenticationController.php": "68c351eb57214e3cc8784437d10ba52eeeec58e34b704490b270dfb474d3ad55",
+    "packages/server/src/Http/CodeAuthorizationController.php": "55afd279daced2c080bada2f4fbb730b15d1c11bea8c85aa7ce8b18ba4c6857a",
+    "packages/server/src/Http/DeviceController.php": "ff0f83ff27c0e01753fc88865d52d7047e476cd7b35afd4113ece0e5d643fbfc",
+    "packages/server/src/Http/LogoutEndpointController.php": "0e231f2529083a8585c052e2e992c10f0c8124a3e68d376da08a6166519b24c5",
+    "packages/server/src/Login.php": "2434f81a3d7c38b74fdd5350b4b2d104f31924617664346f1499bf572e8c5571",
+    "packages/server/src/SsoServerServiceProvider.php": "3308c8a8bbe818d2cf59401571798bcc804dc3a4843e333aef81e2f9f7403dd6",
+    "tests/AgnosticClientTest.php": "a0144691f9dad7220f146a40ae1e93c68af21db36f4856447c5864b041cc93c4",
+    "tests/AgnosticInstallerTest.php": "2eca6fe2f20747e8b3ba57e448615aa32ac0d097bf7cb440407b50e6d5db9f8e",
+    "tests/AgnosticServerTest.php": "4cb70eef9fc2f8dc6e2071d08965d1215ffc2e1c71f6871af8f5603b1c8f1680",
+    "tests/TestCase.php": "6fbdc2edc9dbee6c6e3df5d7bcf2fc611461ca8d820f85e23fb2d81f5c2c6b8a",
+    "tools/agnostic-e2e.php": "1edd38c516a93c69139162a79d88a80a3a3f0d47151b5ca322d0d40e8157bff5"
+  }
+}

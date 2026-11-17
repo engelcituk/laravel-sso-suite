@@ -9,6 +9,8 @@ y [concurrencia SQL](DATABASE-CONCURRENCY.md). Los ejemplos PHP built-in son só
 El [plan del piloto externo y revisión independiente](EXTERNAL-PILOT-PLAN.md) concreta
 la ficha del destino, las pruebas, los umbrales propuestos y las puertas de aceptación.
 Está preparado como documento; el piloto y la revisión aún no se han ejecutado.
+La [integración agnóstica posterior](AGNOSTIC-VALIDATION.md) cambia código de paquetes:
+las campañas de despliegue anteriores conservan sus fuentes y no se atribuyen a esos cambios.
 
 Antes de un piloto controlado:
 
@@ -32,8 +34,9 @@ Antes de un piloto controlado:
   es 120 solicitudes/minuto/IP, que puede ser insuficiente en modo strict detrás de NAT.
 - Respaldar el estado de revocación y recibos; no limpiar esas tablas sin una política de
   retención que impida revivir sesiones. Probar restauración y caídas antes del piloto.
-- Programar `sso:prune-server` en el OP y `sso:prune-client` en cada RP según los plazos
-  documentados. Las entregas pendientes se conservan; monitorizar y resolver sus fallos.
+- Mantener el scheduler: las tareas de entrega/limpieza se descubren automáticamente.
+  Si las programas tú mismo, usa `schedule=false` para evitar duplicados. Las entregas
+  pendientes se conservan; monitorizar y resolver sus fallos.
 - Revisar el plazo absoluto de Recordarme y proteger `/sso/devices`, su confirmación de
   contraseña y el almacenamiento de sesión. Conservar el middleware web y HTTPS para la
   cookie host-only. Aplicar revocación explícita al suspender cuentas o responder a incidentes.
@@ -44,6 +47,7 @@ Antes de un piloto controlado:
   completa ante serialización; un savepoint no refresca el snapshot. Ver
   [contrato de reintentos y matriz real](COMPATIBILITY.md).
 
-Laravel Auth debe acompañarse de sso.session en cada grupo protegido. Las comprobaciones
+La integración automática protege `auth` convencional del guard seleccionado en `web`;
+otros recursos requieren `sso.session` explícito. Las comprobaciones
 ACL son locales y permanecen obligatorias después de autenticar. Publicar una nueva versión
 requiere aprobación explícita y completar los criterios de SECURITY/ROADMAP.

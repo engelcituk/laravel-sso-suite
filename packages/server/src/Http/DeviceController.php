@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use LaravelSso\Server\Audit;
 use LaravelSso\Server\DeviceSessions;
+use LaravelSso\Server\Login;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DeviceController
@@ -29,7 +30,7 @@ final class DeviceController
         $user = Auth::guard(config('sso-server.guard'))->user();
         if (! $user) {
             return $request->expectsJson() ? response()->json(['message' => 'Authentication required.'], 401)
-                : redirect()->guest(route('login'));
+                : redirect()->guest(app(Login::class)->url());
         }
         $rows = DB::table('sso_devices')->where('subject', (string) $user->getAuthIdentifier())
             ->orderByDesc('last_seen')->orderBy('id')->simplePaginate(20);
@@ -137,7 +138,7 @@ final class DeviceController
         $devices->forgetCookie();
 
         return $request->expectsJson() ? response()->json(['signed_out' => true])->header('Cache-Control', 'no-store')
-            : redirect()->route('login');
+            : redirect(app(Login::class)->url());
     }
 
     private function success(Request $request, string $message): Response

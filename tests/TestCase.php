@@ -47,8 +47,10 @@ abstract class TestCase extends Orchestra
         $app['config']->set('auth.guards.local', ['driver' => 'session', 'provider' => 'locals']);
         $app['config']->set('auth.providers.locals', ['driver' => 'eloquent', 'model' => LocalUser::class]);
         $app['config']->set('sso-server.enabled', true);
+        $app['config']->set('sso-server.active_column', 'is_active');
         $app['config']->set('sso-server.issuer', 'https://identity.test');
         $app['config']->set('sso-client.enabled', true);
+        $app['config']->set('sso-client.integrate_auth', false); // This laboratory hosts both OP and RP; dedicated integration tests enable discovery.
         $app['config']->set('sso-client.issuer', 'https://identity.test');
         $app['config']->set('sso-client.client_id', '00000000-0000-4000-8000-000000000001');
         $app['config']->set('sso-client.guard', 'local');

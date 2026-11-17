@@ -114,24 +114,27 @@ por el sufijo de la migración, conservan un timestamp existente y no sobrescrib
 archivo. Detectan dos copias de esa migración antes de copiar configuración y terminan
 con código 1. Una ejecución concurrente tampoco sobrescribe un archivo ya creado.
 
-No editan `.env`, no habilitan SSO, no crean usuarios/ACL/clientes, no generan APP_KEY,
-no instalan Passport ni alteran tablas automáticamente. No son comandos de actualización
-de un esquema antiguo. Conserva las migraciones/claves Passport del anfitrión o prepáralas
-según [la guía OP](INSTALL-SERVER.md). Configura el modelo local según [la guía RP](INSTALL-CLIENT.md).
+Sin opciones no editan `.env` ni habilitan SSO. `--configure` escribe exclusivamente
+variables `SSO_*` en el `.env` existente, activa el paquete y limpia config/route cache.
+Nunca crean usuarios/ACL/clientes, generan APP_KEY ni cambian Auth/rutas del anfitrión.
+No son comandos de actualización de un esquema antiguo.
 
 ```sh
-php artisan sso:install-server --keys
-php artisan sso:install-server --migrate
-php artisan sso:install-client --migrate
+php artisan sso:install-server --configure --migrate --keys
+php artisan sso:install-client --configure --migrate
 ```
 
-`--keys` crea el par OIDC sólo si falta; conserva un par existente, y un par incompleto
-falla sin sobrescribirlo. Comprueba su correspondencia con el doctor. `--migrate` ejecuta
-el comando Laravel `migrate` y todas las migraciones pendientes del anfitrión, no sólo SSO.
+`--keys` crea claves OAuth/OIDC faltantes; conserva pares existentes y no sobrescribe
+los incompletos. Comprueba correspondencia y completitud con el doctor. `--migrate`
+ejecuta sólo la única migración SSO y, en el servidor, las de Passport si aún no existe
+`oauth_clients`. No ejecuta migraciones pendientes ajenas ni repara un Passport parcial.
 `--force` se reenvía exclusivamente a esa ejecución explícita en producción. Nunca llama
 `fresh`, `reset` ni `rollback`. Repetir la instalación no agrega una segunda migración
-por paquete. Para configuraciones ya copiadas, incorpora las nuevas opciones de auditoría
-manualmente; el instalador preserva tus cambios.
+por paquete. Para configuraciones ya copiadas, incorpora las nuevas opciones
+manualmente; el instalador preserva tus cambios. Las tareas de logout/limpieza ahora
+se descubren automáticamente; si mantienes tareas manuales usa `schedule=false`.
+Las preguntas del cliente ocultan el secreto; no hay opción CLI para exponerlo en el
+historial. [Flujo completo](STACK-AGNOSTIC.md).
 
 ## Diagnósticos reproducibles
 

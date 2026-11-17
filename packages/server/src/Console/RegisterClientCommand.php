@@ -7,11 +7,12 @@ namespace LaravelSso\Server\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\ClientRepository;
+use LaravelSso\Contracts\InstallationConfiguration;
 use LaravelSso\Server\Audit;
 
 final class RegisterClientCommand extends Command
 {
-    protected $signature = 'sso:client {name} {redirect} {--public} {--first-party} {--allow-confidential-without-pkce} {--backchannel=} {--post-logout=}';
+    protected $signature = 'sso:client {name} {redirect} {--public} {--first-party} {--allow-confidential-without-pkce} {--backchannel=} {--trust-backchannel : Explicitly trust this exact back-channel URL in the SSO environment} {--post-logout=}';
 
     protected $description = 'Register a Passport authorization-code client and its OIDC metadata';
 
@@ -39,11 +40,30 @@ final class RegisterClientCommand extends Command
             $parts = parse_url($url);
             if (! filter_var($url, FILTER_VALIDATE_URL) || ! in_array($parts['scheme'] ?? '', $schemes, true)
                 || isset($parts['user']) || isset($parts['pass']) || isset($parts['fragment'])
-                || ($option === 'backchannel' && ! in_array($url, config('sso-server.backchannel_allowed_urls'), true))) {
+                || ($option === 'backchannel' && ! in_array($url, config('sso-server.backchannel_allowed_urls'), true) && ! $this->option('trust-backchannel'))) {
                 $this->error('Logout URLs must be trusted HTTPS endpoints; back-channel also requires the exact outbound allowlist entry.');
 
                 return self::FAILURE;
             }
+        }
+        $backchannel = $this->option('backchannel');
+        if ($this->option('trust-backchannel') && is_string($backchannel)
+            && ! in_array($backchannel, config('sso-server.backchannel_allowed_urls'), true)) {
+            if (str_contains($backchannel, ',')) {
+                $this->error('Encode commas in the trusted URL before storing the outbound allowlist.');
+
+                return self::FAILURE;
+            }
+            $allowed = array_values(array_unique([...config('sso-server.backchannel_allowed_urls'), $backchannel]));
+            try {
+                app(InstallationConfiguration::class)->write($this->laravel->environmentFilePath(), ['SSO_BACKCHANNEL_ALLOWED_URLS' => implode(',', $allowed)]);
+            } catch (\RuntimeException $error) {
+                $this->error($error->getMessage());
+
+                return self::FAILURE;
+            }
+            config(['sso-server.backchannel_allowed_urls' => $allowed]);
+            $this->call('config:clear');
         }
         $client = DB::transaction(function () use ($clients, $redirect) {
             $client = $clients->createAuthorizationCodeGrantClient($this->argument('name'), [$redirect], ! $this->option('public'));

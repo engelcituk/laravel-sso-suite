@@ -11,6 +11,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use LaravelSso\Server\Http\AuthenticationController;
 use LaravelSso\Server\Http\CentralDeviceSession;
 use LaravelSso\Server\Http\CodeAuthorizationController;
 use LaravelSso\Server\Http\DeviceController;
@@ -50,6 +52,12 @@ final class SsoServerServiceProvider extends ServiceProvider
         if (! config('sso-server.enabled')) {
             return;
         }
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
+            if (config('sso-server.schedule', true)) {
+                $schedule->command('sso:deliver-logouts')->everyMinute()->withoutOverlapping();
+                $schedule->command('sso:prune-server --limit=1000')->hourly()->withoutOverlapping();
+            }
+        });
         $issuer = config('sso-server.issuer');
         $parts = parse_url($issuer);
         if (! filter_var($issuer, FILTER_VALIDATE_URL) || str_ends_with($issuer, '/')
@@ -134,6 +142,12 @@ final class SsoServerServiceProvider extends ServiceProvider
                 app(DeviceSessions::class)->revokeAll((string) $event->user->getAuthIdentifier());
                 app(Audit::class)->record('auth.password_reset', ['subject' => (string) $event->user->getAuthIdentifier()]);
             }
+        });
+        Route::middleware(['web', 'throttle:30,1,sso-auth'])->prefix('sso/auth')->name('sso-server.auth.')->group(function (): void {
+            Route::get('/session', [AuthenticationController::class, 'session'])->name('session');
+            Route::get('/login', [AuthenticationController::class, 'form'])->name('login');
+            Route::post('/login', [AuthenticationController::class, 'login'])->middleware('throttle:5,1,sso-login')->name('authenticate');
+            Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
         });
         Route::middleware(['web', 'throttle:30,1,sso-devices'])->prefix(config('sso-server.devices_path'))->name('sso-server.devices.')->group(function (): void {
             Route::get('/', [DeviceController::class, 'index'])->name('index');

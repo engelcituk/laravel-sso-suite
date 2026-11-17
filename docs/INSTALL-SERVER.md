@@ -1,136 +1,114 @@
-# Instalar el servidor de identidad
+# Instalar el servidor central
 
-Aquí configuras la aplicación donde tus usuarios se autentican. Ejemplo:
-`https://identidad.test`. La aplicación cliente será `https://ventas.test`.
+**Parte de un Laravel nuevo destinado a ser el servidor central. No necesita un starter kit.**
+Este Laravel guarda las cuentas centrales y autentica a las personas. Cada aplicación
+cliente conserva sus usuarios, contraseñas y permisos independientes.
+Este es el escenario prioritario del paquete. Las instrucciones para un login o una
+instalación existente son compatibilidad adicional y puedes omitirlas en greenfield.
 
-**Para configurar ambos de principio a fin, sigue la [guía rápida completa](QUICKSTART.md).**
-Todos los comandos de esta página se ejecutan dentro de tu aplicación **Identidad**.
+## 1. Prepara un Laravel normal
 
-## 1. Comprueba tu login actual
+Necesitas Laravel 13, PHP 8.3+, Composer 2, OpenSSL, una DB configurada y Auth con
+SessionGuard/proveedor Eloquent. En un Laravel limpio conserva su modelo `User` normal:
+no agregues traits SSO, columnas `is_active` ni campos de identidad remota.
 
-Necesitas Laravel 13, PHP 8.3+, Composer 2, una DB configurada y un login Laravel
-funcionando con la ruta nombrada `login`, guard `web` y un usuario existente.
-Los dos dominios deben tener HTTPS válido para el navegador y PHP; sustituye los ejemplos por los tuyos.
+Prepara `.env`, APP_KEY y tablas base mediante el procedimiento normal de tu aplicación.
+El paquete no crea cuentas ni ejecuta migraciones pendientes del anfitrión. Si el Laravel
+ya existe, conserva su configuración y datos. Para el ejemplo usaremos
+`APP_URL=https://identidad.test`, un origen dedicado sin subdirectorio.
 
-El servidor comprueba una columna de cuenta activa: `is_active` por defecto. Si tu
-aplicación ya usa otra columna booleana, usa su nombre en `active_column` del paso 5.
-**Si no existe una columna equivalente, esta versión necesita adaptar esa integración
-antes de continuar. No añadas columnas ni cambies `users` para seguir esta guía.**
-Los campos adicionales de perfil son opcionales: los ausentes se omiten.
+Como aún no hay versión publicada, agrega el repositorio Composer path de
+[la guía rápida, paso 1](QUICKSTART.md#1-permite-que-composer-encuentre-los-paquetes).
 
-## 2. Prepara Composer
-
-Descarga este repositorio, por ejemplo en `C:/laragon/www/laravel-sso`.
-En el `composer.json` de esta aplicación, agrega este elemento a `repositories`:
-
-```json
-{
-    "type": "path",
-    "url": "C:/laragon/www/laravel-sso/packages/*",
-    "options": {
-        "versions": {
-            "laravel-sso/server": "0.1.x-dev",
-            "laravel-sso/client": "0.1.x-dev",
-            "laravel-sso/contracts": "0.1.x-dev"
-        }
-    }
-}
-```
-
-Si no tienes `repositories`, crea `"repositories": [ ... ]` y coloca ahí el objeto.
-Conserva el resto del archivo. Ajusta sólo la ruta a tu copia; no necesitas poner
-`minimum-stability=dev` para todo el proyecto.
-
-## 3. Instala el paquete
+## 2. Ejecuta la instalación
 
 ```sh
 composer require laravel-sso/server:0.1.x-dev laravel-sso/contracts:0.1.x-dev
-php artisan sso:install-server
+php artisan sso:install-server --configure --migrate --keys
 ```
 
-## 4. Prepara sus tablas y claves
-
-**Si es la primera vez que instalas Passport en esta aplicación:**
+Responde `https://identidad.test` cuando pida **Public issuer URL**. También puedes indicarlo:
 
 ```sh
-php artisan migrate --path=vendor/laravel/passport/database/migrations
-php artisan passport:keys
+php artisan sso:install-server --configure --issuer=https://identidad.test --migrate --keys
 ```
 
-Si ya usas Passport, conserva sus tablas y claves y omite esos dos comandos.
+| Opción | Acción explícita |
+| --- | --- |
+| Sin opciones | Copia sólo configuración y única migración faltantes; no activa SSO |
+| `--configure` | Escribe sólo variables `SSO_*` en el `.env` existente y activa el servidor; limpia config/route cache |
+| `--migrate` | Aplica la única migración SSO y prepara las migraciones de Passport si aún no existe `oauth_clients` |
+| `--keys` | Crea claves OAuth/OIDC que falten; conserva las existentes |
+| `--headless` | Desactiva la página opcional de login, conservando el backend JSON |
+| `--allow-http` | Permite HTTP sólo fuera de producción para desarrollo |
+| `--force` | Autoriza las migraciones explícitas en producción |
 
-Para una **primera instalación SSO**:
+No cambia APP_KEY, DB, modelo, rutas del anfitrión ni atributos de usuarios. No instala
+un frontend. La migración del servidor crea siete tablas SSO; Passport tiene sus propias
+tablas/migraciones, independientes del límite de **una migración por paquete SSO**.
+Si ya tienes Passport, conserva tablas y claves; un esquema parcial debe revisarse con
+el doctor y repararse de forma controlada, no reinicializarse.
+
+## 3. Elige cómo presentar el login
+
+**Laravel limpio:** ya puedes abrir `/sso/auth/login`. Incluye un formulario mínimo
+opcional con CSRF y limitación de intentos. Usa las cuentas existentes del guard de
+Laravel. No registra usuarios ni cambia sus hashes, aunque el coste configurado haya cambiado.
+
+**Laravel con login propio:** el modo predeterminado `auto` usa la ruta nombrada `login`.
+Conserva su controlador, vistas, MFA y políticas. El POST de contraseña del paquete
+queda cerrado para no crear un acceso paralelo que omita esas políticas.
+Si la ruta tiene otro nombre, configura `login_route` en `config/sso-server.php` o
+`SSO_SERVER_LOGIN_URL` con tu ruta de acceso.
+
+**Vue, React, Blade o Inertia propios:** puedes conservar tu autenticación actual o
+usar el backend JSON del paquete. No necesitas sustituir tu stack. Consulta el
+[contrato y ejemplos de frontend](STACK-AGNOSTIC.md#frontend-propio-en-el-servidor).
+`--headless` por sí solo devuelve JSON en la ruta de login: debes proporcionar una
+pantalla propia si quieres una experiencia interactiva sin la vista opcional.
+
+No se exige una columna de cuenta activa. Si tu proyecto ya tiene una booleana y quieres
+aplicarla también a sesiones/tokens, configura `SSO_SERVER_ACTIVE_COLUMN=tu_columna`.
+Cuando la configuras, debe existir y ser verdadera; no se ignora silenciosamente.
+Los usuarios los administra el proyecto; una instalación sin cuentas necesita su proceso de altas.
+
+## 4. Registra cada aplicación cliente
+
+Para tu aplicación Ventas:
 
 ```sh
-php artisan migrate --path=database/migrations/2026_11_13_000001_create_sso_tables.php
-php artisan sso:keys
+php artisan sso:client "Ventas" https://ventas.test/sso/callback --first-party --backchannel=https://ventas.test/sso/backchannel-logout --trust-backchannel --post-logout=https://ventas.test/
 ```
 
-Se crea una migración SSO; Passport tiene sus propias migraciones. Las rutas acotadas
-evitan ejecutar otras migraciones pendientes de tu aplicación. Si SSO ya estaba instalado,
-no repitas esta parte como actualización: ve a [instalaciones previas](INSTALL-SERVER-REFERENCE.md#bases-ya-instaladas).
+Guarda el ID y secreto impresos para el backend de Ventas. Sólo se muestra el secreto
+una vez. Este comando registra un cliente nuevo cada vez; no lo repitas para consultar
+el secreto. `--first-party` omite consentimiento para tus aplicaciones aprobadas.
+Sin él se solicita consentimiento. `--trust-backchannel` agrega exactamente la URL
+indicada a la lista de destinos de logout autorizados; no permite destinos arbitrarios.
 
-## 5. Configura el servidor
+Sigue después [Instalar el cliente](INSTALL-CLIENT.md).
 
-En `.env`:
-
-```dotenv
-APP_URL=https://identidad.test
-SSO_SERVER_ENABLED=true
-SSO_ISSUER=https://identidad.test
-SESSION_DRIVER=file
-SESSION_COOKIE=identidad_session
-SESSION_SECURE_COOKIE=true
-SESSION_DOMAIN=null
-```
-
-En el array de `config/sso-server.php`, ajusta estas claves, conservando las demás:
-
-```php
-'guard' => 'web',
-'active_column' => 'is_active', // O el nombre de tu columna booleana existente.
-'backchannel_allowed_urls' => [
-    'https://ventas.test/sso/backchannel-logout',
-],
-```
-
-El issuer va sin `/` final. El servidor y Passport usan la misma conexión DB predeterminada.
-Tu login existente debe tener la ruta nombrada `login` y autenticar con Laravel Auth.
+## 5. Comprueba y opera
 
 ```sh
-php artisan config:clear
 php artisan sso:doctor-server
+php artisan schedule:list
 ```
 
-**Resultado esperado:** todas las comprobaciones del doctor aparecen como `pass`.
+El doctor debe mostrar `pass`. El scheduler descubre automáticamente entrega de logout
+cada minuto y limpieza cada hora cuando SSO está activo. Ejecuta `schedule:work` en
+desarrollo o el scheduler normal de Laravel en despliegue. No dupliques las tareas
+si ya las programabas: puedes conservar las propias y usar `'schedule' => false`.
 
-## 6. Registra Ventas como cliente
+Usa sesiones en servidor, HTTPS y cookies seguras host-only. Cada aplicación debe tener
+su APP_KEY, DB y cookie distintas. Configura TLS/proxy y permisos de claves en tu servidor;
+el instalador no cambia esos ajustes. En producción reconstruye `config:cache` y
+`route:cache`, y recarga los procesos persistentes después de configurar.
 
-```sh
-php artisan sso:client "Ventas" https://ventas.test/sso/callback --first-party --backchannel=https://ventas.test/sso/backchannel-logout --post-logout=https://ventas.test/
-```
+En una actualización, el instalador conserva los archivos copiados: compara sus claves
+con la configuración del paquete. En especial una configuración anterior puede seguir
+exigiendo `is_active` o una lista literal de back-channel; decide explícitamente su
+política. No elimines una restricción de cuentas activa sin revisar su intención.
+Una migración ya registrada no se reaplica; no uses `migrate:fresh` para actualizar.
 
-Copia los valores `SSO_CLIENT_ID` y `SSO_CLIENT_SECRET` que imprime el comando: los usarás
-en Ventas. El secreto sólo se muestra una vez; guárdalo fuera de Git.
-`--first-party` se usa aquí porque Ventas es una aplicación tuya.
-
-## 7. Mantén funcionando el logout
-
-En `routes/console.php` de Identidad:
-
-```php
-use Illuminate\Support\Facades\Schedule;
-
-Schedule::command('sso:deliver-logouts')->everyMinute()->withoutOverlapping();
-Schedule::command('sso:prune-server --limit=1000')->hourly()->withoutOverlapping();
-```
-
-En desarrollo, deja `php artisan schedule:work` ejecutándose en otra terminal.
-En despliegue, configura el scheduler de Laravel. Si cacheas configuración o usas
-procesos persistentes, reconstruye la caché y reinícialos después de cambiar valores.
-
-**Servidor listo:** el doctor pasa, tienes ID/secreto de Ventas y el scheduler está activo.
-Continúa con [instalar el cliente](INSTALL-CLIENT.md).
-
-[Opciones avanzadas del servidor](INSTALL-SERVER-REFERENCE.md) ·
-[Problemas frecuentes](QUICKSTART.md#si-algo-falla).
+[Referencia avanzada](INSTALL-SERVER-REFERENCE.md) · [Guía completa por stack](STACK-AGNOSTIC.md).

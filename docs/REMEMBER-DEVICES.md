@@ -56,7 +56,8 @@ La cookie ya no sirve después del logout, revocación, vencimiento o invalidaci
 credenciales. Las cookies de sesión nativas anteriores a esta funcionalidad también se
 contrastan con el fingerprint de contraseña que SessionGuard guardó antes de asociarlas.
 Al suspender una cuenta, llama igualmente a `GlobalSessions::revokeAll($subject)` para
-invalidar definitivamente los dispositivos existentes, además de bloquear `is_active`.
+invalidar definitivamente los dispositivos existentes, además de bloquear la columna
+de cuenta activa existente si la seleccionaste mediante `active_column`.
 
 ## Administración del propietario
 

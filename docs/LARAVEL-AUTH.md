@@ -18,10 +18,11 @@ apuntando al mismo usuario. El paquete no crea, elimina ni altera la tabla del a
 Para altas automáticas se exige una fábrica explícita del anfitrión; para usuarios ya
 existentes basta una vinculación aprobada mediante `sso:link-user`.
 
-Integra `sso.local` en las rutas nativas de autenticación y `auth` + `sso.session` en
-los recursos protegidos. Configura la redirección de invitados según el flag. La
-[guía de instalación](INSTALL-CLIENT.md) detalla orden y ejemplos. La integración
-se realiza una vez; el paquete no intercepta rutas propias que no lo utilicen.
+El cliente descubre guard/modelo desde Auth e integra rutas convencionales del grupo
+`web`: login/registro/reset/logout y recursos con `auth` del guard seleccionado.
+Para rutas personalizadas amplía sus patrones o aplica `sso.local`; para recursos con
+middleware propios utiliza `auth` + `sso.session`. La [guía de instalación](INSTALL-CLIENT.md)
+y [los contratos por stack](STACK-AGNOSTIC.md) detallan los límites e integración manual.
 
 Cambiar de modo exige autenticación nueva: una sesión local no acredita login OIDC, y
 una sesión SSO no concede acceso nativo al apagar el flag. Los cierres iniciados por SSO
@@ -33,6 +34,7 @@ contraseña vacía e inhabilita el recaller local. No modifica el esquema ni bor
 almacenados. No lo añadas a un modelo que deba soportar los dos modos.
 
 Con SSO activo, `sso.session` comprueba el índice local por petición y consulta la
-vigencia central conforme al intervalo. `strict` comprueba siempre al OP y falla cerrado.
+vigencia central conforme al intervalo. `strict` comprueba siempre al OP y falla cerrado;
+es la política de la integración automática salvo middleware explícito del anfitrión.
 Las peticiones ya iniciadas no pueden cancelarse retroactivamente. Apagar SSO debe ser
 un cambio de configuración autorizado; una caída del OP no conmuta automáticamente.

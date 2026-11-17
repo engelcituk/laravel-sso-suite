@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelSso\Server\Http;
 
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,8 +74,12 @@ final class LogoutEndpointController
         $request->session()->put('sso.logout', ['transaction' => $transaction, 'sid' => $target?->sid,
             'browser_sid' => $browserSid, 'redirect' => $redirect, 'state' => $input['state'] ?? null, 'created' => time()]);
 
-        return response()->view('sso-server::logout', ['transaction' => $transaction, 'clientName' => $clientId,
-            'account' => $target?->subject])->header('Cache-Control', 'no-store')->header('Referrer-Policy', 'no-referrer')
+        $data = ['transaction' => $transaction, 'clientName' => $clientId, 'account' => $target?->subject];
+        if ($request->expectsJson()) {
+            return response()->json(['interaction' => 'logout', 'csrf_token' => $request->session()->token()] + $data)->header('Cache-Control', 'no-store');
+        }
+
+        return response()->view('sso-server::logout', $data)->header('Cache-Control', 'no-store')->header('Referrer-Policy', 'no-referrer')
             ->header('Content-Security-Policy', "frame-ancestors 'none'; base-uri 'none'");
     }
 
@@ -87,14 +92,17 @@ final class LogoutEndpointController
             throw new InvalidRequest;
         }
         if ($request->input('approve', '1') === '0') {
-            return response('Cierre de sesión cancelado.')->header('Cache-Control', 'no-store');
+            return ($request->expectsJson() ? response()->json(['signed_out' => false, 'cancelled' => true]) : response('Cierre de sesión cancelado.'))->header('Cache-Control', 'no-store');
         }
         if ($pending['sid'] !== null) {
             $sessions->revoke($pending['sid']);
         }
         /** @var StatefulGuard $guard */
         $guard = Auth::guard(config('sso-server.guard'));
-        $guard->logout();
+        if (! $guard instanceof SessionGuard) {
+            throw new \RuntimeException('Central logout requires Laravel SessionGuard.');
+        }
+        $guard->logoutCurrentDevice();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         if ($pending['redirect'] !== null) {
@@ -103,9 +111,9 @@ final class LogoutEndpointController
                 $url .= (str_contains($url, '?') ? '&' : '?').http_build_query(['state' => $pending['state']], '', '&', PHP_QUERY_RFC3986);
             }
 
-            return redirect()->away($url)->header('Cache-Control', 'no-store');
+            return ($request->expectsJson() ? response()->json(['signed_out' => true, 'redirect_to' => $url]) : redirect()->away($url))->header('Cache-Control', 'no-store');
         }
 
-        return response('Sesión global cerrada.')->header('Cache-Control', 'no-store');
+        return ($request->expectsJson() ? response()->json(['signed_out' => true]) : response('Sesión global cerrada.'))->header('Cache-Control', 'no-store');
     }
 }

@@ -1,5 +1,9 @@
 # SSO opcional y Auth local
 
+**Integración actual:** las rutas convencionales de Auth en `web` se integran ahora
+automáticamente. Las instrucciones manuales y resultados de CI de esta página describen
+la fase original. Usa [la guía actual](INSTALL-CLIENT.md) y [sus nuevas evidencias](AGNOSTIC-VALIDATION.md).
+
 La [preparación posterior del piloto](PILOT-PREPARATION.md) repite la validación operativa
 del modo opcional. Sus resultados locales son independientes de la integración y CI
 históricas que se documentan en esta página.

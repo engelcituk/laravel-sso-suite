@@ -33,14 +33,17 @@ final class DoctorCommand extends Command
                 && ! isset($parts['path']) && (($parts['scheme'] ?? '') === 'https'
                     || (config('sso-server.allow_http') && ! app()->environment('production') && ($parts['scheme'] ?? '') === 'http'));
         });
-        $report->check('guard', 'Central guard must use SessionGuard with an Eloquent provider and password/active columns.', function (): bool {
+        $report->check('guard', 'Use SessionGuard and an Eloquent provider; an active column is optional and must exist when configured.', function (): bool {
             $guardName = config('sso-server.guard');
             $provider = config('auth.guards.'.$guardName.'.provider');
             $model = config('auth.providers.'.$provider.'.model');
             $user = new $model;
 
+            $column = config('sso-server.active_column');
+
             return Auth::guard($guardName) instanceof SessionGuard && config('auth.providers.'.$provider.'.driver') === 'eloquent'
-                && $user->getConnection()->getSchemaBuilder()->hasColumns($user->getTable(), [$user->getAuthPasswordName(), config('sso-server.active_column')]);
+                && $user->getConnection()->getSchemaBuilder()->hasColumn($user->getTable(), $user->getAuthPasswordName())
+                && ($column === null || (is_string($column) && $column !== '' && $user->getConnection()->getSchemaBuilder()->hasColumn($user->getTable(), $column)));
         });
         $report->check('session', 'Use server-side sessions and secure host-only cookies in production.', fn () => ! in_array(config('session.driver'), ['cookie', 'null'], true)
             && (! app()->environment('production') || (! in_array(config('session.driver'), ['array'], true)

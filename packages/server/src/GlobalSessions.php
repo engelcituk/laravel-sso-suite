@@ -19,7 +19,7 @@ final class GlobalSessions
         $user = Auth::createUserProvider($provider)?->retrieveById($subject);
         $column = config('sso-server.active_column');
 
-        return $user instanceof Model && (bool) $user->getAttribute($column) ? $user : null;
+        return $user instanceof Model && ($column === null || (is_string($column) && $column !== '' && (bool) $user->getAttribute($column))) ? $user : null;
     }
 
     public function valid(string $sid, bool $touch = false, bool $lock = false): ?object

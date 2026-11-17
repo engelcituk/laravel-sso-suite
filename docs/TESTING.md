@@ -1,5 +1,13 @@
 # Pruebas y evidencia
 
+Integración agnóstica del 2026-11-17: **252 / 1209** generales en PHP 8.3/8.4/8.5,
+**106 / 414** propias de OIDC, Pint global con caché nueva, Larastan y controles Composer
+aprobados. Añade 22 casos y `tools/agnostic-e2e.php`: **32 controles HTTP** en servidor
+limpio y clientes nuevo/existente, con config/route cache y ambos modos. No usa bases
+originales de ejemplos ni instala frontend. [Alcance y reproducción](AGNOSTIC-VALIDATION.md),
+[resultados con hashes](../conformance/agnostic-auth-results.json). Las campañas anteriores
+que siguen abajo no se repitieron para estos cambios de comportamiento.
+
 Cierre de formato del 2026-11-17: **Pint global aprobado con caché nueva**, los 37 archivos
 corregidos sólo en finales de línea y con tokens PHP equivalentes. PHPUnit **230 / 1076**
 en PHP 8.3/8.4/8.5, grupo normativo propio **106 / 414**, Larastan y controles Composer

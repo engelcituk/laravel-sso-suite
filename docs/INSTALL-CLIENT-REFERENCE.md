@@ -3,8 +3,8 @@
 Para instalarlo paso a paso, usa [Instalar el cliente](INSTALL-CLIENT.md) o la
 [guía rápida completa](QUICKSTART.md). Las fábricas de usuarios de esta referencia son
 una opción avanzada; la guía rápida usa vínculos explícitos y `provision=restricted`
-para conservar las cuentas existentes. Los ejemplos con `migrate` sin `--path` ejecutan
-otras migraciones pendientes: utiliza la ruta acotada de la guía rápida para una primera instalación.
+para conservar las cuentas existentes. `--migrate` ejecuta sólo la migración cliente.
+[Integración automática y contratos por stack](STACK-AGNOSTIC.md).
 
 El cliente extiende Laravel Auth. Conserva tu modelo, tabla `users`, contraseñas,
 `remember_token`, relaciones y ACL. No instala Passport ni modifica ese esquema.
@@ -14,8 +14,7 @@ Agrega el repositorio path de [la guía del servidor](INSTALL-SERVER.md), con ve
 
 ```sh
 composer require laravel-sso/client:0.1.x-dev laravel-sso/contracts:0.1.x-dev
-php artisan sso:install-client
-php artisan migrate
+php artisan sso:install-client --configure --migrate
 ```
 
 La única migración del cliente crea tres tablas propias: `sso_identities`,
@@ -34,7 +33,10 @@ tablas SSO para entrar o usar recursos locales. Las rutas `/sso/*` del paquete r
 404. `sso:doctor` informa que está desactivado sin exigir configuración OIDC.
 Instalar el paquete no sustituye tus guards, controladores o rutas de autenticación.
 
-Integra una vez los middleware en las rutas de tu aplicación, dentro del grupo `web`:
+Por defecto se integran las rutas convencionales dentro de `web`: `auth` del guard
+seleccionado exige SSO con política strict, y login/registro/reset/logout se interceptan
+por patrones configurables. Para integración manual (`integrate_auth=false`) o rutas
+personalizadas, aplica estos middleware:
 
 ```php
 Route::middleware('sso.local')->group(function () {
@@ -48,9 +50,9 @@ Route::middleware(['auth', 'sso.session'])->group(function () {
 ```
 
 Con SSO activo, `sso.local` redirige GET de navegador a `sso.login` y rechaza POST/JSON
-con 403 antes de procesar credenciales. Conserva CSRF. Si usas Breeze/Fortify u otro
-starter, añade el middleware a sus rutas correspondientes. El flag sólo controla las
-rutas integradas; no intercepta controladores nativos que el anfitrión deje sin proteger.
+con 403 antes de procesar credenciales. Conserva CSRF. Los nombres/paths convencionales
+de Laravel/Fortify están incluidos en la plantilla. Rutas personalizadas requieren sus
+patrones o middleware explícito; revisa cualquier middleware Auth propio o varios guards.
 
 `sso.session` exige una sesión OIDC vinculada al usuario actual; una sesión nativa
 anterior no se convierte en SSO. Al desactivar SSO, una sesión de origen SSO se invalida
@@ -59,7 +61,8 @@ y exige login local nuevo. El cierre SSO conserva password y remember_token medi
 
 Configura el proveedor Eloquent y `sso-client.user_model` con el mismo modelo real,
 `sso-client.guard` con el SessionGuard correcto y `local_login_url` con tu login nativo.
-La redirección de invitados debe seguir el modo, por ejemplo en bootstrap:
+En integración manual, la redirección de invitados debe seguir el modo, por ejemplo en
+bootstrap. La integración automática de rutas convencionales ya resuelve esa redirección:
 
 ```php
 $middleware->redirectGuestsTo(fn () => config('sso-client.enabled') ? '/sso/login' : '/login');
@@ -76,8 +79,10 @@ SSO_REDIRECT_URI=https://one.example.org/sso/callback
 SSO_SESSION_STATUS_URL=https://identity.example.org/oidc/session
 ```
 
-En `sso-client.allowed_urls` autoriza discovery, authorize, token, jwks, userinfo, session
-y logout del issuer mediante URLs exactas. El transporte servidor-a-servidor no sigue
+La configuración nueva deriva `sso-client.allowed_urls` para discovery, authorize, token,
+jwks, userinfo, session y logout del issuer mediante URLs exactas. Una configuración
+antigua o endpoints distintos requieren mantener esa lista explícitamente.
+El transporte servidor-a-servidor no sigue
 redirecciones. No se toma un proveedor de parámetros del visitante. Usa sesiones de
 servidor (`database`, `file` o Redis): con SSO activo se rechaza el driver cookie.
 Los tokens sólo se conservan dentro de la sesión del servidor.
@@ -147,8 +152,9 @@ Los usuarios ya vinculados conservan nombre, email, password, remember_token, ID
 
 ## Operar y actualizar
 
-Usa `auth` junto con `sso.session` en todos los recursos que deban seguir el modo.
-Sólo `auth` no comprueba origen SSO ni revocaciones. Las operaciones sensibles usan
+Con integración automática, `auth` del guard seleccionado en `web` ya verifica origen
+y revocación mediante strict. Con integración manual, usa `auth` junto con `sso.session`
+en todos los recursos que deban seguir el modo. Las operaciones sensibles usan
 `sso.session:strict`; el OP caído deniega el acceso, nunca habilita Auth local automáticamente.
 El logout activo envía POST a `route('sso.logout')` con `@csrf`; en modo local usa tu logout.
 Back-channel se autentica por firma/audiencia/tiempos y recibo de un uso, sin web/CSRF.
@@ -159,7 +165,9 @@ y se protegen mediante `sso.enabled`: una caché creada con el flag apagado no i
 activarlas. El cambio de modo es una decisión del operador, no un failover.
 
 Ejecuta `sso:doctor --offline` y luego `sso:doctor --json` para añadir discovery/JWKS reales.
-Programa `sso:prune-client --limit=1000` cada hora; elimina índices/recibos caducados, nunca
+La limpieza `sso:prune-client --limit=1000` se registra automáticamente cada hora cuando
+está activo; mantén el scheduler de Laravel. Para tareas propias usa `schedule=false`
+y evita duplicarlas. Elimina índices/recibos caducados, nunca
 usuarios, permisos o vinculaciones. La sesión local está limitada por `local_session_ttl`
 y la duración del token. Ver [retención](DATABASE-CONCURRENCY.md).
 

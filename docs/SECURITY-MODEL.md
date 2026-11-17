@@ -72,8 +72,9 @@ no exponen valores de configuración ni excepciones. Ver [garantías y operació
 ## Auth local y cambio de modo
 
 El flag se configura por el operador. No depende de disponibilidad del OP: una petición
-SSO falla cerrada aunque exista una contraseña local. La integración del anfitrión debe
-proteger sus rutas nativas con `sso.local` y sus recursos con `auth` + `sso.session`.
+SSO falla cerrada aunque exista una contraseña local. La integración automática protege
+rutas convencionales de Auth en `web` para el guard seleccionado. Rutas personalizadas,
+otros guards/middleware o integración manual requieren `sso.local` y `auth` + `sso.session`.
 Rutas fuera de esa integración conservan su comportamiento y requieren revisión propia.
 Las sesiones locales anteriores no acreditan identidad central y las sesiones SSO se
 invalidan al volver a local; se exige nueva autenticación. El cierre SSO conserva hash y
@@ -88,6 +89,15 @@ del usuario existente. Una cuenta nueva necesita un proceso local de establecimi
 de contraseña si luego se desea usar Auth local. [Pruebas y límites](OPTIONAL-AUTH.md).
 
 ## Validación externa pendiente
+
+La integración agnóstica incorpora un backend de contraseña central opcional con CSRF,
+sesión regenerada y limitación de intentos. Valida sin rehash ni escritura en users.
+El modo `auto` conserva el login/MFA del anfitrión y cierra el POST alternativo del paquete;
+habilitarlo con `authentication=package` es una decisión explícita. No incorpora MFA.
+`active_column` es opcional; si se configura debe existir y ser verdadera. Las APIs JSON
+de login/consentimiento/logout usan la sesión del mismo origen y no exponen secretos
+de cliente. No equivalen a un flujo Bearer stateless para una SPA remota.
+[Contratos y límites](STACK-AGNOSTIC.md), [pruebas](AGNOSTIC-VALIDATION.md).
 
 Los tests propios no equivalen a certificación OIDC. Faltan revisión independiente,
 certificación externa de OpenID Foundation y evaluación operativa en el destino real.

@@ -17,7 +17,7 @@ final class LocalAuthentication
     {
         if (config('sso-client.enabled')) {
             return $request->isMethod('GET') && ! $request->expectsJson()
-                ? redirect()->route('sso.login')
+                ? AuthenticationResponse::redirect($request, route('sso.login'))
                 : response()->json(['message' => 'Central authentication is enabled.'], 403);
         }
         if ($request->session()->has('sso.identity') || $request->session()->get('sso.auth_mode') === 'sso') {

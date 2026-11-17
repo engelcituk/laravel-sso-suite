@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace LaravelSso\Client;
 
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LaravelSso\Client\Contracts\ProvisionsUsers;
 use LaravelSso\Client\Http\EnsureGlobalSession;
 use LaravelSso\Client\Http\EnsureSsoEnabled;
+use LaravelSso\Client\Http\IntegrateAuthentication;
 use LaravelSso\Client\Http\LocalAuthentication;
 use LaravelSso\Client\Http\LoginController;
 use LaravelSso\Client\Http\LogoutController;
@@ -34,6 +38,14 @@ final class SsoClientServiceProvider extends ServiceProvider
         if ($this->app->runningConsoleCommand('sso:doctor', 'sso:install-client')) {
             return;
         }
+        $kernel = $this->app->make(Kernel::class);
+        $kernel->appendMiddlewareToGroup('web', IntegrateAuthentication::class);
+        $kernel->addToMiddlewarePriorityAfter(StartSession::class, IntegrateAuthentication::class);
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
+            if (config('sso-client.enabled') && config('sso-client.schedule', true)) {
+                $schedule->command('sso:prune-client --limit=1000')->hourly()->withoutOverlapping();
+            }
+        });
         if (config('sso-client.enabled') && config('session.driver') === 'cookie') {
             throw new \RuntimeException('SSO requires server-side sessions; the cookie session driver is not supported.');
         }

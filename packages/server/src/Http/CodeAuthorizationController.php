@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelSso\Server\Http;
 
 use GuzzleHttp\Psr7\Response as PsrResponse;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Passport;
 use LaravelSso\Server\Audit;
 use LaravelSso\Server\GlobalSessions;
+use LaravelSso\Server\Login;
 use LaravelSso\Server\OidcServer;
 use LaravelSso\Server\Protocol\AuthorizationInput;
 use LaravelSso\Server\Protocol\AuthorizationResponse;
@@ -125,10 +127,15 @@ final class CodeAuthorizationController
             'authorization' => serialize($authorization), 'context' => $context, 'input' => $input, 'created' => time(),
         ]);
 
-        return response()->view('sso-server::consent', ['transaction' => $transaction,
+        $data = ['transaction' => $transaction,
             'scopes' => explode(' ', $input['scope']), 'account' => $user->getAuthIdentifier(), 'clientName' => $client->getAttribute('name'),
             'requestedClaims' => array_merge(array_keys($selection['userinfo'] ?? []), array_keys($selection['id_token'] ?? [])),
-            'selectAccount' => in_array('select_account', $prompts, true)])
+            'selectAccount' => in_array('select_account', $prompts, true)];
+        if ($request->expectsJson()) {
+            return response()->json(['interaction' => 'consent', 'csrf_token' => $request->session()->token()] + $data)->header('Cache-Control', 'no-store');
+        }
+
+        return response()->view('sso-server::consent', $data)
             ->header('Cache-Control', 'no-store')->header('Content-Security-Policy', "frame-ancestors 'none'; base-uri 'none'");
     }
 
@@ -193,9 +200,12 @@ final class CodeAuthorizationController
     /** @param array<string, string> $input */
     private function login(Request $request, array $input, StatefulGuard $guard): Response
     {
+        if (! $guard instanceof SessionGuard) {
+            throw new \RuntimeException('Central authentication requires Laravel SessionGuard.');
+        }
         $epoch = $request->session()->get('sso.login_epoch');
         if ($guard->check()) {
-            $guard->logout();
+            $guard->logoutCurrentDevice();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
@@ -204,7 +214,7 @@ final class CodeAuthorizationController
         ]);
         $request->session()->put('url.intended', config('sso-server.issuer').'/oidc/authorize?'.http_build_query($input, '', '&', PHP_QUERY_RFC3986));
 
-        return redirect()->route('login')->header('Cache-Control', 'no-store');
+        return redirect(app(Login::class)->url())->header('Cache-Control', 'no-store');
     }
 
     /** @param array<string, string> $input */

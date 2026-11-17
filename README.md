@@ -6,9 +6,19 @@ Open-source Single Sign-On solution for Laravel, providing centralized authentic
 # Laravel SSO
 
 **Empieza aquí: [guía rápida — del servidor al cliente](docs/QUICKSTART.md).**
-Pasos en orden, archivos que debes editar y una prueba final de login.
+Instalación con comandos Artisan, sin starter kit obligatorio y con una prueba final de login.
 También puedes ir directo a [instalar el servidor](docs/INSTALL-SERVER.md) o
 [instalar el cliente](docs/INSTALL-CLIENT.md).
+
+**Enfoque principal: proyectos greenfield.** Un Laravel nuevo se prepara desde el inicio
+como servidor central; los demás proyectos nacen como clientes de ese servidor.
+La integración con aplicaciones existentes es compatibilidad adicional, no un requisito
+de adaptación universal. El frontend sigue siendo elección de cada proyecto.
+
+En el cliente, instalar y activar también requiere registrar la aplicación en el servidor,
+configurar sus credenciales y resolver su cuenta local. El flujo predeterminado usa una
+cuenta creada por el proyecto y un vínculo explícito; el alta automática requiere una
+fábrica del anfitrión. Una DB vacía no obtiene usuarios automáticamente al activar SSO.
 
 Monorepo **experimental, pre-alpha** de identidad centralizada para Laravel 13 y PHP 8.3+.
 Implementación OIDC original sobre la persistencia OAuth de Passport 13 y League OAuth2 Server.
@@ -20,6 +30,11 @@ usuario Eloquent y sus Gates/Policies; la vinculación `(iss, sub)` vive en tabl
 `users`, sus contraseñas ni sus permisos. Consulta [integración de los dos modos](docs/INSTALL-CLIENT.md)
 y [resultados de la fase](docs/OPTIONAL-AUTH.md).
 El cliente no depende de Passport. No hay dependencias de frontend ni ACL obligatoria.
+El servidor funciona en un Laravel limpio: ofrece login opcional y backend JSON;
+si ya existe login del anfitrión, lo conserva. El cliente descubre el guard/modelo de Auth
+e integra las rutas convencionales. Blade, Vue, React e Inertia pueden usar el mismo backend.
+[Guía detallada de stacks, proyectos nuevos y existentes](docs/STACK-AGNOSTIC.md) y
+[evidencia local de esta integración](docs/AGNOSTIC-VALIDATION.md).
 
 ## Qué funciona y qué falta
 

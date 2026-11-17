@@ -3,18 +3,42 @@
 Actualizado 2026-11-17 (Cancún). Primera vertical integrada **experimental**, sin publicación de versiones,
 certificación ni recomendación de producción. Una vertical no cierra toda su fase.
 
+**Prioridad de producto: greenfield.** Preparar un Laravel nuevo como servidor central
+y conectar proyectos que nacen como clientes es el alcance principal. La compatibilidad
+con aplicaciones existentes es adicional; no se exige adaptar universalmente su Auth.
+El servidor limpio y el cliente nuevo tienen evidencia HTTP. El cliente aún requiere
+registro/configuración y resolución de su usuario local: vínculo explícito por defecto,
+o fábrica propia para altas automáticas. No se declara cerrado un flujo de DB vacía
+que sólo necesite instalar y activar sin ninguna política de cuentas.
+
 | Fase | Estado real | Evidencia / cierre pendiente |
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
 | 1 fundamento | base local y CI remota verificadas | compatibilidad ampliada integrada en main, 14/14: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
-| 2 servidor | perfil Code reevaluado localmente | cinco planes oficiales repetidos tras compatibilidad/Auth opcional: 58 PASSED, 0 FAILED/WARNING, 16 REVIEW verificados y 10 SKIPPED justificados; sin certificación |
-| 3 cliente | validación OIDC y modos ampliada | validadores normativos, navegadores cross-site y 30 casos con Auth local/SSO, cachés y reinicios aprobados; falta evaluación externa |
+| 2 servidor | integración sin starter kit verificada localmente | login opcional/JSON, login del anfitrión prioritario y columna activa opcional; grupo Code propio aprobado; resultados OIDF oficiales anteriores conservan su alcance |
+| 3 cliente | integración agnóstica y modos verificados localmente | guard/modelo descubiertos, rutas Auth convencionales, JSON/Inertia y E2E con cliente nuevo/existente; navegadores/SQL de fases anteriores no repetidos para este ajuste |
 | 4 identidad local | modo opcional integrado y verificado en main | SSO_CLIENT_ENABLED, tablas propias sin tocar users/passwords, 18 casos nuevos y CI de integración 14/14 |
 | 5 sesiones | funcionalidades y recuperación locales verificadas | Recordarme, dispositivos, revocación y retención; carga actual con caída OP de 60 s y pausa de worker de 120 s, colas 0/0 al cierre; evaluación externa pendiente |
-| 6 instalación | preparación local del piloto verificada | dos despliegues optimizados, 60 controles cross-site, ambos modos con cachés/reinicios, ensayo SSO-only en dos motores y carga actual de 30 min; piloto externo pendiente |
+| 6 instalación | instaladores y guía agnóstica verificados localmente | comandos configuran SSO, migraciones acotadas, claves y tareas; 32 controles HTTP en tres Laravel; piloto externo pendiente y campañas previas separadas |
 | 7 publicación | pendiente | cierre local de calidad aprobado: Pint global sin hallazgos, PHPUnit en PHP 8.3/8.4/8.5, Larastan y Composer; CI previa histórica; faltan auditoría/certificación externa y autorización para publicar |
 
 ## Resultados ejecutados
+
+- **Integración agnóstica, workspace sobre `3ff3e589`, 2026-11-17**: servidor Laravel
+  sin starter kit, sin login previo ni `is_active`; backend/vista opcional y JSON.
+  Login del anfitrión prioritario para no eludir MFA. Cliente nuevo/existente con Auth,
+  modelo y permisos locales; integración automática de rutas convencionales, control
+  explícito de rutas personalizadas y navegación Inertia sin dependencia de frontend.
+  Instaladores con `--configure`, migraciones acotadas, claves faltantes y scheduler
+  descubierto. **252 pruebas / 1209 aserciones** en PHP 8.3.36/8.4.27/8.5.12, **106 / 414**
+  normativas propias, Pint global, Larastan y Composer aprobados. **32 controles HTTP**
+  reales con tres hosts desechables y cachés Laravel; ambos modos, CSRF, Code/PKCE,
+  logout y conservación de filas/esquema/ACL. Diez archivos originales protegidos
+  intactos; una migración por paquete y ninguna definición modificada. Sin cambios
+  de dependencias, CI remota ni publicación. OIDF oficial, navegadores, SQL y carga
+  anteriores no se repitieron para estos cambios semánticos y conservan sus huellas.
+  [Guía directa](QUICKSTART.md), [contratos por stack](STACK-AGNOSTIC.md),
+  [alcance e intentos](AGNOSTIC-VALIDATION.md), [JSON](../conformance/agnostic-auth-results.json).
 
 - **Cierre de los 37 archivos señalados por Pint, 2026-11-17**: la ejecución global con
   caché nueva reprodujo los 37 caminos y la repetición posterior pasó con **cero hallazgos**.
@@ -170,6 +194,14 @@ sí se repitieron en la preparación actual del piloto; no equivalen a evaluaci�
 | Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
 
 ## Próxima fase
+
+**Para usarlo ya en desarrollo:** integra una aplicación propia con la
+[guía rápida](QUICKSTART.md), verifica los vínculos de cuentas y prueba sus rutas y
+permisos. No hace falta contratar un revisor para instalar el paquete experimental.
+La adaptación agnóstica solicitada queda implementada y verificada en el workspace;
+su siguiente comprobación práctica es el entorno y frontend concretos del anfitrión.
+Las campañas operativas descritas abajo son históricas: deben repetirse sobre el código
+elegido para el piloto antes de atribuirle aquellas garantías. El paquete sigue pre-alpha.
 
 Los bloques de concurrencia/retención, Recordarme/dispositivos y auditoría/instalación/
 diagnóstico, despliegues y carga de 30 min quedan atendidos en el alcance local documentado. Se conserva la reproducción

@@ -11,7 +11,9 @@
 | Doctor detecta esquema antiguo | la migración inicial consolidada no se reaplica; adaptar sólo tablas propias de forma controlada, sin migrate:fresh sobre datos existentes |
 | Logout local pero global pendiente | OP accesible, confirmación central, worker y sso_logout_deliveries |
 | Vuelve a pedir login cada pocos minutos | access token corto; redirección al OP debe recuperar sesión central |
-| is_active ausente | agregar campo o configurar active_column del modelo central |
+| is_active ausente | no se exige esa columna; revisar una configuración antigua de active_column y conservar o cambiar explícitamente su política, sin agregar campos obligatorios |
+| POST /sso/auth/login devuelve 404 | en auto con login del anfitrión es esperado: conserva su MFA; usar el login existente o elegir explícitamente el backend package |
+| Login propio sigue abierto en el cliente | añadir su nombre/path personalizado a la configuración o aplicar sso.local; revisar otros guards/middleware |
 | Table already exists al publicar | no repetir publicación con timestamps nuevos; revisar duplicados antes de migrar |
 | Discovery 403 sólo en Nginx | una regla genérica de archivos ocultos puede bloquear /.well-known; conservar una excepción exacta para discovery |
 | Callback 400 / UserInfo falla sólo en Apache | comprobar que Authorization llega al entorno PHP; conservar el manejo del .htaccess Laravel o la configuración probada del laboratorio |

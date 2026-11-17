@@ -6,7 +6,8 @@ No se comparten cookies, APP_KEY ni bases de datos.
 
 ## Políticas actuales
 
-El OP genera sid opaco aleatorio. Comprueba cuenta activa, revocación, inactividad
+El OP genera sid opaco aleatorio. Comprueba existencia de cuenta y, si se configuró,
+su columna booleana activa; también revocación, inactividad
 (1800 segundos por defecto) y duración absoluta (28800 segundos). Una sesión expirada o
 revocada no se recrea silenciosamente desde la cookie central existente: requiere login.
 Cada código guarda nonce/sid; cada access token tiene una vinculación persistente al sid.
@@ -19,7 +20,7 @@ Es una extensión privada del proyecto, no introspección OAuth ni un estándar 
 Con middleware `sso.session`, una comprobación positiva se acepta durante el intervalo
 configurado (30 s por defecto). Después exige otra respuesta positiva; cualquier fallo
 de red, HTTP o de claims deniega acceso. **No hay modo fail-open**. `strict` consulta
-en cada request. El ejemplo usa strict y un timeout de 3 s.
+en cada request. El ejemplo y la integración automática de Auth usan strict y un timeout de 3 s.
 
 Límite operativo: nuevas verificaciones de autorización pueden aceptar una revocación durante
 el intervalo de caché, más una comprobación remota ya en curso (timeout). Con defaults,
@@ -55,7 +56,8 @@ El evento Laravel Logout del guard central también revoca su sid. Administraci�
 inyectar `GlobalSessions` y llamar `revoke($sid)` para un dispositivo/sesión o
 `revokeAll($subject)` para todos. `revoke($sid)` también retira el acceso persistente y
 los otros sid del mismo dispositivo, para que Recordarme no reabra el logout. Esas APIs deben exponerse sólo tras autorización y CSRF
-en tu aplicación, nunca como endpoints públicos por sujeto. Marcar is_active=false bloquea
+en tu aplicación, nunca como endpoints públicos por sujeto. Marcar como falsa la columna
+existente seleccionada mediante `active_column` bloquea
 las verificaciones; para invalidar definitivamente las sesiones al suspender una cuenta,
 llama también revokeAll en tu servicio administrativo.
 

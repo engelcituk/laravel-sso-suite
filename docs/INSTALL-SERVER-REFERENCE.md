@@ -2,8 +2,8 @@
 
 Para instalarlo paso a paso, usa [Instalar el servidor](INSTALL-SERVER.md) o la
 [guía rápida completa](QUICKSTART.md). Esta página amplía opciones y comportamiento.
-Los ejemplos con `migrate` sin `--path` ejecutan todas las migraciones pendientes del
-anfitrión; para una primera instalación, usa las rutas acotadas de la guía rápida.
+El instalador con `--migrate` ejecuta sólo las migraciones propias/Passport descritas
+abajo. No ejecuta pendientes ajenos. [Integración agnóstica y contratos JSON](STACK-AGNOSTIC.md).
 
 ## Bases ya instaladas
 
@@ -26,11 +26,7 @@ tu configuración). Ajusta la ruta a este checkout:
 
 ```sh
 composer require laravel-sso/server:0.1.x-dev laravel-sso/contracts:0.1.x-dev
-php artisan vendor:publish --tag=passport-migrations
-php artisan sso:install-server
-php artisan migrate
-php artisan passport:keys
-php artisan sso:keys
+php artisan sso:install-server --configure --migrate --keys
 ```
 
 `sso:install-server` se puede repetir: conserva configuración, timestamp y una única
@@ -54,11 +50,15 @@ Las rutas actuales se montan desde la raíz; utiliza un origen dedicado, sin sub
 Guarda claves y APP_KEY en almacenamiento protegido, con ACL de Windows o permisos Unix.
 
 Configura el guard en `sso-server.guard` y su proveedor Eloquent. El modelo central necesita
-su columna de contraseña y una columna existente de cuenta activa, seleccionada mediante
-`active_column` (por defecto `is_active`). Los atributos de perfil, como `name`, `email`
-y `email_verified_at`, se omiten cuando no existen. Las credenciales y recuperación son responsabilidad de tu aplicación central,
-usando Laravel Hash y SessionGuard. Define la ruta nombrada `login`. El ejemplo implementa
-un formulario Blade, CSRF y rate limiting. El paquete no reemplaza tu login existente.
+su columna de contraseña. `active_column` es opcional, con valor predeterminado `null`;
+si seleccionas una columna booleana existente, se exige que sea verdadera. No se agrega
+ninguna columna a users. Los atributos de perfil, como `name`, `email`
+y `email_verified_at`, se omiten cuando no existen. Altas y recuperación son responsabilidad
+de tu aplicación central. El modo `auto` utiliza la ruta `login` del anfitrión si existe;
+si no hay login ni login_url, habilita el formulario/backend opcional `/sso/auth/login`.
+El backend valida sin rehash ni escritura de atributos de users. Si existe login/MFA del
+anfitrión, su POST de contraseña queda cerrado. `authentication=package` es una elección
+explícita para usar ese backend desde una UI propia; consulta [los contratos](STACK-AGNOSTIC.md).
 El ejemplo incluye Recordarme opt-in y un enlace a `/sso/devices`. El provider registra
 el middleware central y escucha los eventos nativos de autenticación/logout/reset de
 contraseña. La cookie por dispositivo sustituye el recaller persistente compartido;
@@ -73,10 +73,11 @@ para consumir códigos y persistir tokens/contexto en una transacción. Se recha
 conexión Passport diferente. Las claves JWT OIDC son independientes de las claves OAuth.
 El servidor OIDC sólo habilita Authorization Code y no cambia los grants OAuth del anfitrión.
 
-Agrega a `sso-server.backchannel_allowed_urls` los endpoints exactos de los clientes y registra:
+Registra los endpoints exactos de los clientes. `--trust-backchannel` autoriza explícitamente
+el destino en `SSO_BACKCHANNEL_ALLOWED_URLS`; puedes mantener una allowlist manual:
 
 ```sh
-php artisan sso:client "Application One" https://one.example.org/sso/callback --first-party --backchannel=https://one.example.org/sso/backchannel-logout --post-logout=https://one.example.org/
+php artisan sso:client "Application One" https://one.example.org/sso/callback --first-party --backchannel=https://one.example.org/sso/backchannel-logout --trust-backchannel --post-logout=https://one.example.org/
 ```
 
 `--first-party` omite consentimiento sólo para aplicaciones que controles y hayas aprobado.
@@ -109,8 +110,9 @@ Un atributo normal esencial ausente se omite sin inventarlo. Las restricciones s
 coincidir con el usuario autenticado. Para acr se anuncia y devuelve sólo `0`, sin afirmar
 MFA ni un nivel de aseguramiento superior. Una solicitud esencial de otro acr se rechaza.
 
-Ejecuta `sso:deliver-logouts` con scheduler o worker externo cada minuto. Por ejemplo en
-`routes/console.php` del OP:
+El paquete registra automáticamente `sso:deliver-logouts` cada minuto y limpieza cada hora
+cuando está activo. Si prefieres programarlos tú mismo, usa `'schedule' => false` antes
+de declarar tareas equivalentes. Ejemplo de programación manual en `routes/console.php`:
 
 ```php
 Schedule::command('sso:deliver-logouts')->everyMinute()->withoutOverlapping();
@@ -122,5 +124,6 @@ siendo necesaria para acotar la revocación. Ver [sesiones](SESSIONS.md).
 
 Para la limpieza programa también `sso:prune-server --limit=1000`, por ejemplo cada hora
 con `withoutOverlapping()`. Conserva hints recientes, access tokens todavía vigentes y
-sesiones con entregas pendientes; sólo borra estado propio del paquete. El scheduler no
-se configura automáticamente. Plazos, límites y evidencia en [concurrencia y retención](DATABASE-CONCURRENCY.md).
+sesiones con entregas pendientes; sólo borra estado propio del paquete. El scheduler
+ya descubre las tareas del paquete; necesita el proceso/cron normal de Laravel. Plazos,
+límites y evidencia en [concurrencia y retención](DATABASE-CONCURRENCY.md).

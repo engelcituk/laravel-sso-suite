@@ -28,13 +28,13 @@ final class EnsureGlobalSession
                 $request->session()->regenerateToken();
 
                 return $request->expectsJson() ? response()->json(['message' => 'Authenticate locally after changing modes.'], 401)
-                    : redirect(config('sso-client.local_login_url'));
+                    : AuthenticationResponse::redirect($request, config('sso-client.local_login_url'));
             }
 
             $guard = Auth::guard(config('sso-client.guard'));
             if (! $guard->check()) {
                 return $request->expectsJson() ? response()->json(['message' => 'Unauthenticated.'], 401)
-                    : redirect(config('sso-client.local_login_url'));
+                    : AuthenticationResponse::redirect($request, config('sso-client.local_login_url'));
             }
 
             return $next($request);
@@ -84,6 +84,6 @@ final class EnsureGlobalSession
         $request->session()->regenerateToken();
 
         return $request->expectsJson() ? response()->json(['message' => 'SSO session is not active.'], 401)
-            : redirect()->route('sso.login');
+            : AuthenticationResponse::redirect($request, route('sso.login'));
     }
 }

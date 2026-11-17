@@ -18,11 +18,16 @@ posterior de modo opcional sustituye la decisión inicial de modelos sin credenc
 
 Con `SSO_CLIENT_ENABLED=false`, los middleware integrados utilizan Auth local sin
 consultas SSO ni HTTP al OP. Con `true`, exigen identidad OIDC y sesión central vigente.
-Los cambios de modo exigen autenticación nueva. El anfitrión integra una vez `sso.local`
-en sus rutas de autenticación y `auth` + `sso.session` en recursos protegidos. Las rutas
-del paquete siempre se registran y se habilitan en ejecución mediante `sso.enabled`.
+Los cambios de modo exigen autenticación nueva. Se integran automáticamente rutas
+convencionales `web` de Auth del guard seleccionado. Rutas personalizadas requieren
+patrones o `sso.local` / `auth` + `sso.session` explícitos. Las rutas
+del cliente siempre se registran y se habilitan en ejecución mediante `sso.enabled`.
 Las altas automáticas requieren una fábrica explícita del anfitrión; la vinculación
 manual conserva usuarios existentes. [Contrato y evidencia](OPTIONAL-AUTH.md).
+
+El servidor ofrece login mínimo/JSON opcionales para Laravel sin starter kit y conserva
+el login del anfitrión cuando existe. No obliga a agregar columnas a users ni dependencia
+de frontend. [Flujos nuevos/existentes y límites](STACK-AGNOSTIC.md).
 
 ## Primera vertical
 
