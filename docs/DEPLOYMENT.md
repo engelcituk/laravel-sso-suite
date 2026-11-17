@@ -6,6 +6,10 @@ Apache/PHP/PostgreSQL optimizados, tres motores de navegador cross-site y una ca
 de 30 min con ocho usuarios y recuperación de fallos. Ver [resultados y límites](DEPLOYMENT-VALIDATION.md)
 y [concurrencia SQL](DATABASE-CONCURRENCY.md). Los ejemplos PHP built-in son sólo locales.
 
+El [plan del piloto externo y revisión independiente](EXTERNAL-PILOT-PLAN.md) concreta
+la ficha del destino, las pruebas, los umbrales propuestos y las puertas de aceptación.
+Está preparado como documento; el piloto y la revisión aún no se han ejecutado.
+
 Antes de un piloto controlado:
 
 - HTTPS en todos los endpoints y proxy de confianza configurado correctamente. No activar

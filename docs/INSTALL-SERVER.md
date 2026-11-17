@@ -1,111 +1,136 @@
-# Instalar el servidor
+# Instalar el servidor de identidad
 
-Antes de publicación, agrega un repositorio path a tu `composer.json` (fusiona, no reemplaces
-tu configuración). Ajusta la ruta a este checkout:
+Aquí configuras la aplicación donde tus usuarios se autentican. Ejemplo:
+`https://identidad.test`. La aplicación cliente será `https://ventas.test`.
+
+**Para configurar ambos de principio a fin, sigue la [guía rápida completa](QUICKSTART.md).**
+Todos los comandos de esta página se ejecutan dentro de tu aplicación **Identidad**.
+
+## 1. Comprueba tu login actual
+
+Necesitas Laravel 13, PHP 8.3+, Composer 2, una DB configurada y un login Laravel
+funcionando con la ruta nombrada `login`, guard `web` y un usuario existente.
+Los dos dominios deben tener HTTPS válido para el navegador y PHP; sustituye los ejemplos por los tuyos.
+
+El servidor comprueba una columna de cuenta activa: `is_active` por defecto. Si tu
+aplicación ya usa otra columna booleana, usa su nombre en `active_column` del paso 5.
+**Si no existe una columna equivalente, esta versión necesita adaptar esa integración
+antes de continuar. No añadas columnas ni cambies `users` para seguir esta guía.**
+Los campos adicionales de perfil son opcionales: los ausentes se omiten.
+
+## 2. Prepara Composer
+
+Descarga este repositorio, por ejemplo en `C:/laragon/www/laravel-sso`.
+En el `composer.json` de esta aplicación, agrega este elemento a `repositories`:
 
 ```json
 {
-  "repositories": [{"type": "path", "url": "C:/ruta/laravel-sso/packages/*",
-    "options": {"versions": {"laravel-sso/server": "0.1.x-dev", "laravel-sso/contracts": "0.1.x-dev"}}}]
+    "type": "path",
+    "url": "C:/laragon/www/laravel-sso/packages/*",
+    "options": {
+        "versions": {
+            "laravel-sso/server": "0.1.x-dev",
+            "laravel-sso/client": "0.1.x-dev",
+            "laravel-sso/contracts": "0.1.x-dev"
+        }
+    }
 }
 ```
 
+Si no tienes `repositories`, crea `"repositories": [ ... ]` y coloca ahí el objeto.
+Conserva el resto del archivo. Ajusta sólo la ruta a tu copia; no necesitas poner
+`minimum-stability=dev` para todo el proyecto.
+
+## 3. Instala el paquete
+
 ```sh
-composer require laravel-sso/server:0.1.x-dev
-php artisan vendor:publish --tag=passport-migrations
+composer require laravel-sso/server:0.1.x-dev laravel-sso/contracts:0.1.x-dev
 php artisan sso:install-server
-php artisan migrate
+```
+
+## 4. Prepara sus tablas y claves
+
+**Si es la primera vez que instalas Passport en esta aplicación:**
+
+```sh
+php artisan migrate --path=vendor/laravel/passport/database/migrations
 php artisan passport:keys
+```
+
+Si ya usas Passport, conserva sus tablas y claves y omite esos dos comandos.
+
+Para una **primera instalación SSO**:
+
+```sh
+php artisan migrate --path=database/migrations/2026_11_13_000001_create_sso_tables.php
 php artisan sso:keys
 ```
 
-`sso:install-server` se puede repetir: conserva configuración, timestamp y una única
-migración publicada. El publisher genérico de Laravel cambia timestamps al repetirlo;
-prefiere el instalador. Opciones y diagnóstico en [auditoría y operaciones](AUDIT-OPERATIONS.md).
-Si Passport ya está instalado conserva sus migraciones y claves existentes.
-El paquete contiene una única migración, `create_sso_tables.php`, que crea las siete tablas
-con su esquema final: política PKCE, nonce opcional, contexto de claims, enlace código/token
-y entregas de logout, dispositivos y credenciales Recordarme. No hay migraciones incrementales en esta versión en desarrollo.
-Los ejemplos sincronizan su copia de esa definición sin cambiar el timestamp ni duplicarla.
-Si conservas copias de las migraciones incrementales de un checkout anterior, retíralas
-del directorio de migraciones y actualiza la copia de `create_sso_tables.php`.
-Esto no modifica una base ya migrada ni su historial; la definición consolidada se aplica
-a instalaciones nuevas. No ejecutes `migrate:fresh` sobre datos que debas conservar.
-`sso:keys` nunca reemplaza archivos existentes; genera RSA 3072, sin exponer la clave privada.
-Tras configurar y activar el OP ejecuta `php artisan sso:doctor-server --json`.
+Se crea una migración SSO; Passport tiene sus propias migraciones. Las rutas acotadas
+evitan ejecutar otras migraciones pendientes de tu aplicación. Si SSO ya estaba instalado,
+no repitas esta parte como actualización: ve a [instalaciones previas](INSTALL-SERVER-REFERENCE.md#bases-ya-instaladas).
 
-Activa `SSO_SERVER_ENABLED=true` y configura `SSO_ISSUER=https://identity.example.org` sin
-slash final. El issuer debe coincidir exactamente con el origen/ruta pública real del OP.
-Las rutas actuales se montan desde la raíz; utiliza un origen dedicado, sin subdirectorio.
-Guarda claves y APP_KEY en almacenamiento protegido, con ACL de Windows o permisos Unix.
+## 5. Configura el servidor
 
-Configura el guard en `sso-server.guard` y su proveedor Eloquent. El modelo central necesita
-`name`, `email`, `email_verified_at` y el indicador configurable `active_column` (por defecto
-`is_active`). Las credenciales y recuperación son responsabilidad de tu aplicación central,
-usando Laravel Hash y SessionGuard. Define la ruta nombrada `login`. El ejemplo implementa
-un formulario Blade, CSRF y rate limiting. El paquete no reemplaza tu login existente.
-El ejemplo incluye Recordarme opt-in y un enlace a `/sso/devices`. El provider registra
-el middleware central y escucha los eventos nativos de autenticación/logout/reset de
-contraseña. La cookie por dispositivo sustituye el recaller persistente compartido;
-configuración, integración y política de replay en [Recordarme](REMEMBER-DEVICES.md).
-Las solicitudes externas GET/POST de /oidc/authorize y /oidc/logout no exigen CSRF de
-Laravel. Las decisiones locales usan /oidc/consent y /oidc/logout/confirm con CSRF.
-Conserva los nombres de rutas en las vistas personalizadas y utiliza SessionGuard::login
-para emitir Login, requerido por la prueba de reautenticación prompt/max_age.
+En `.env`:
 
-OIDC y Passport deben utilizar la misma conexión de base de datos predeterminada, necesaria
-para consumir códigos y persistir tokens/contexto en una transacción. Se rechaza una
-conexión Passport diferente. Las claves JWT OIDC son independientes de las claves OAuth.
-El servidor OIDC sólo habilita Authorization Code y no cambia los grants OAuth del anfitrión.
-
-Agrega a `sso-server.backchannel_allowed_urls` los endpoints exactos de los clientes y registra:
-
-```sh
-php artisan sso:client "Application One" https://one.example.org/sso/callback --first-party --backchannel=https://one.example.org/sso/backchannel-logout --post-logout=https://one.example.org/
+```dotenv
+APP_URL=https://identidad.test
+SSO_SERVER_ENABLED=true
+SSO_ISSUER=https://identidad.test
+SESSION_DRIVER=file
+SESSION_COOKIE=identidad_session
+SESSION_SECURE_COOKIE=true
+SESSION_DOMAIN=null
 ```
 
-`--first-party` omite consentimiento sólo para aplicaciones que controles y hayas aprobado.
-Sin esa opción se presenta consentimiento CSRF con transacción de un uso. `--public` crea
-un cliente sin secreto; S256 sigue siendo obligatorio. El comando muestra el secreto de
-cliente confidencial una sola vez. No lo copies a logs, tickets ni control de versiones.
-No hay registro dinámico ni URLs suministradas por visitantes.
-
-S256 se exige por defecto también a los clientes confidenciales. Sólo para interoperar
-con clientes confidenciales antiguos puede registrarse uno con
-`--allow-confidential-without-pkce`. Esta opción guarda `require_pkce=false` en esa
-inscripción; no modifica el resto de clientes ni el cliente Laravel, que siempre envía
-S256. Se rechaza combinarla con `--public`. Si una solicitud incluye parámetros PKCE,
-deben ser S256 válidos y el token endpoint siempre comprueba el verifier correspondiente.
-La evaluación Basic oficial se ejecutó con esta excepción explícitamente autorizada.
-
-La tabla `sso_clients` nace con `require_pkce=true`. El OP enlaza cada access token con su
-código de autorización para revocarlo al detectar reutilización.
-
-`sso-server.claim_attributes` asigna los atributos normales de profile/email a columnas del
-modelo; admite rutas de atributos JSON casteados, por ejemplo `given_name => oidc_profile.given_name`.
-No exige agregar todas esas columnas a users: los datos inexistentes se omiten. La lectura
-no carga relaciones Eloquent. Configura sólo fuentes reales y fiables; los atributos de
-administración, contraseñas y roles no forman parte del catálogo de claims solicitado por RPs.
-
-El parámetro OIDC claims permite pedir atributos concretos en userinfo o id_token. El OP
-guarda esa selección junto al código y al access token, la muestra en el consentimiento y
-respeta value/values; no puede ampliarse desde el POST de consentimiento ni desde token.
-Un atributo normal esencial ausente se omite sin inventarlo. Las restricciones sub deben
-coincidir con el usuario autenticado. Para acr se anuncia y devuelve sólo `0`, sin afirmar
-MFA ni un nivel de aseguramiento superior. Una solicitud esencial de otro acr se rechaza.
-
-Ejecuta `sso:deliver-logouts` con scheduler o worker externo cada minuto. Por ejemplo en
-`routes/console.php` del OP:
+En el array de `config/sso-server.php`, ajusta estas claves, conservando las demás:
 
 ```php
-Schedule::command('sso:deliver-logouts')->everyMinute()->withoutOverlapping();
+'guard' => 'web',
+'active_column' => 'is_active', // O el nombre de tu columna booleana existente.
+'backchannel_allowed_urls' => [
+    'https://ventas.test/sso/backchannel-logout',
+],
 ```
 
-Activa `php artisan schedule:work` en desarrollo o el cron de Laravel en despliegue.
-Sin procesamiento, la bandeja permanece pendiente; la comprobación remota del cliente sigue
-siendo necesaria para acotar la revocación. Ver [sesiones](SESSIONS.md).
+El issuer va sin `/` final. El servidor y Passport usan la misma conexión DB predeterminada.
+Tu login existente debe tener la ruta nombrada `login` y autenticar con Laravel Auth.
 
-Para la limpieza programa también `sso:prune-server --limit=1000`, por ejemplo cada hora
-con `withoutOverlapping()`. Conserva hints recientes, access tokens todavía vigentes y
-sesiones con entregas pendientes; sólo borra estado propio del paquete. El scheduler no
-se configura automáticamente. Plazos, límites y evidencia en [concurrencia y retención](DATABASE-CONCURRENCY.md).
+```sh
+php artisan config:clear
+php artisan sso:doctor-server
+```
+
+**Resultado esperado:** todas las comprobaciones del doctor aparecen como `pass`.
+
+## 6. Registra Ventas como cliente
+
+```sh
+php artisan sso:client "Ventas" https://ventas.test/sso/callback --first-party --backchannel=https://ventas.test/sso/backchannel-logout --post-logout=https://ventas.test/
+```
+
+Copia los valores `SSO_CLIENT_ID` y `SSO_CLIENT_SECRET` que imprime el comando: los usarás
+en Ventas. El secreto sólo se muestra una vez; guárdalo fuera de Git.
+`--first-party` se usa aquí porque Ventas es una aplicación tuya.
+
+## 7. Mantén funcionando el logout
+
+En `routes/console.php` de Identidad:
+
+```php
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('sso:deliver-logouts')->everyMinute()->withoutOverlapping();
+Schedule::command('sso:prune-server --limit=1000')->hourly()->withoutOverlapping();
+```
+
+En desarrollo, deja `php artisan schedule:work` ejecutándose en otra terminal.
+En despliegue, configura el scheduler de Laravel. Si cacheas configuración o usas
+procesos persistentes, reconstruye la caché y reinícialos después de cambiar valores.
+
+**Servidor listo:** el doctor pasa, tienes ID/secreto de Ventas y el scheduler está activo.
+Continúa con [instalar el cliente](INSTALL-CLIENT.md).
+
+[Opciones avanzadas del servidor](INSTALL-SERVER-REFERENCE.md) ·
+[Problemas frecuentes](QUICKSTART.md#si-algo-falla).

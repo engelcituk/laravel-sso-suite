@@ -5,6 +5,11 @@ Open-source Single Sign-On solution for Laravel, providing centralized authentic
 
 # Laravel SSO
 
+**Empieza aquí: [guía rápida — del servidor al cliente](docs/QUICKSTART.md).**
+Pasos en orden, archivos que debes editar y una prueba final de login.
+También puedes ir directo a [instalar el servidor](docs/INSTALL-SERVER.md) o
+[instalar el cliente](docs/INSTALL-CLIENT.md).
+
 Monorepo **experimental, pre-alpha** de identidad centralizada para Laravel 13 y PHP 8.3+.
 Implementación OIDC original sobre la persistencia OAuth de Passport 13 y League OAuth2 Server.
 Licencia MIT. Nombres `laravel-sso/*` provisionales; **todavía no están publicados en Packagist**.
@@ -34,7 +39,10 @@ y probados, incluidas carreras en MySQL/PostgreSQL. El alcance y lo pendiente fi
 No se admite refresh OIDC: al expirar el access token se repite una redirección silenciosa
 si la sesión central sigue activa. No se anuncia un grant que no esté habilitado.
 
-## Empezar desde el checkout
+## Probar los ejemplos del repositorio
+
+Esta sección ejecuta el laboratorio de ejemplo. Para integrarlo en tus propias
+aplicaciones, sigue la [guía rápida de instalación](docs/QUICKSTART.md).
 
 Requisitos: PHP 8.3–8.5, Composer 2, OpenSSL, mbstring, PDO SQLite, DOM y extensiones
 habituales de Laravel. La instalación raíz incluye Testbench y Laravel para el laboratorio.
@@ -108,6 +116,7 @@ composer audit --locked
 [despliegues, navegadores cross-site y carga de 30 min](docs/DEPLOYMENT-VALIDATION.md),
 [preparación del piloto con OIDC repetido y ambos modos con cachés](docs/PILOT-PREPARATION.md),
 [cierre de Pint global y calidad en PHP 8.3/8.4/8.5](docs/FORMAT-QUALITY.md),
+[plan del piloto externo y revisión independiente](docs/EXTERNAL-PILOT-PLAN.md),
 [modelo de seguridad](docs/SECURITY-MODEL.md), [arquitectura](docs/ARCHITECTURE.md),
 [decisiones y fuentes](docs/DECISIONS.md), [Auth](docs/LARAVEL-AUTH.md),
 [ACL local](docs/LOCAL-ACL.md), [sesiones y logout](docs/SESSIONS.md),

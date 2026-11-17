@@ -1,169 +1,192 @@
-# Instalar el cliente
+# Instalar el cliente en tu aplicación
 
-El cliente extiende Laravel Auth. Conserva tu modelo, tabla `users`, contraseñas,
-`remember_token`, relaciones y ACL. No instala Passport ni modifica ese esquema.
+Aquí conectas tu aplicación **Ventas**, `https://ventas.test`, al servidor de identidad,
+`https://identidad.test`. Necesitas Laravel 13, PHP 8.3+, Composer 2, tu Auth actual y
+usuarios existentes. Sustituye los dominios por los tuyos, con HTTPS válido.
 
-Agrega el repositorio path de [la guía del servidor](INSTALL-SERVER.md), con versiones
-`laravel-sso/client: 0.1.x-dev` y `laravel-sso/contracts: 0.1.x-dev`:
+Primero [registra Ventas en el servidor](INSTALL-SERVER.md#6-registra-ventas-como-cliente)
+y ten a mano su `SSO_CLIENT_ID` y `SSO_CLIENT_SECRET`.
+**Todos los comandos siguientes se ejecutan dentro de Ventas.** El cliente no instala Passport.
+
+Tu modelo `User`, contraseñas y permisos se conservan. La vinculación se guarda en tablas
+SSO y no crea usuarios automáticamente.
+
+## 1. Prepara Composer
+
+Descarga este repositorio, por ejemplo en `C:/laragon/www/laravel-sso`.
+En el `composer.json` de esta aplicación, agrega este elemento a `repositories`:
+
+```json
+{
+    "type": "path",
+    "url": "C:/laragon/www/laravel-sso/packages/*",
+    "options": {
+        "versions": {
+            "laravel-sso/server": "0.1.x-dev",
+            "laravel-sso/client": "0.1.x-dev",
+            "laravel-sso/contracts": "0.1.x-dev"
+        }
+    }
+}
+```
+
+Si no tienes `repositories`, crea `"repositories": [ ... ]` y coloca ahí el objeto.
+Conserva el resto del archivo. Ajusta sólo la ruta a tu copia; no necesitas poner
+`minimum-stability=dev` para todo el proyecto.
+
+## 2. Instala el paquete y sus tablas
+
+Con el repositorio Composer del paso 1 ya agregado:
 
 ```sh
-composer require laravel-sso/client:0.1.x-dev
+composer require laravel-sso/client:0.1.x-dev laravel-sso/contracts:0.1.x-dev
 php artisan sso:install-client
-php artisan migrate
+php artisan migrate --path=database/migrations/2026_11_13_000002_create_sso_local_sessions.php
 ```
 
-La única migración del cliente crea tres tablas propias: `sso_identities`,
-`sso_local_sessions` y `sso_logout_receipts`. El instalador conserva archivos y el
-timestamp de una copia existente. No borres columnas de tu tabla de usuarios ni uses
-`SsoOnly` en un modelo que deba seguir admitiendo contraseña local.
+El cliente crea tres tablas propias mediante una sola migración. No necesita Passport.
+Este comando de migración es para una primera instalación SSO.
 
-## Integración de los dos modos
+<a id="activar-oidc"></a>
+
+## 3. Configura la conexión con Identidad
+
+En `.env` de Ventas:
 
 ```dotenv
-SSO_CLIENT_ENABLED=false
+APP_URL=https://ventas.test
+SSO_CLIENT_ENABLED=true
+SSO_ISSUER=https://identidad.test
+SSO_CLIENT_ID=PEGA_EL_ID_GENERADO_EN_EL_SERVIDOR
+SSO_CLIENT_SECRET=PEGA_EL_SECRETO_GENERADO_EN_EL_SERVIDOR
+SSO_REDIRECT_URI=https://ventas.test/sso/callback
+SSO_SESSION_STATUS_URL=https://identidad.test/oidc/session
+SESSION_DRIVER=file
+SESSION_COOKIE=ventas_session
+SESSION_SECURE_COOKIE=true
+SESSION_DOMAIN=null
 ```
 
-Es el valor predeterminado. Funciona el Auth nativo; no se consulta al OP ni se necesitan
-tablas SSO para entrar o usar recursos locales. Las rutas `/sso/*` del paquete responden
-404. `sso:doctor` informa que está desactivado sin exigir configuración OIDC.
-Instalar el paquete no sustituye tus guards, controladores o rutas de autenticación.
+En el array de `config/sso-client.php`, ajusta estas claves:
 
-Integra una vez los middleware en las rutas de tu aplicación, dentro del grupo `web`:
+```php
+'user_model' => App\Models\User::class,
+'guard' => 'web',
+'provision' => 'restricted',
+'local_login_url' => '/login',
+'after_login' => '/panel',
+'allowed_urls' => [
+    'https://identidad.test/.well-known/openid-configuration',
+    'https://identidad.test/oidc/authorize',
+    'https://identidad.test/oidc/token',
+    'https://identidad.test/oidc/jwks',
+    'https://identidad.test/oidc/userinfo',
+    'https://identidad.test/oidc/session',
+    'https://identidad.test/oidc/logout',
+],
+```
+
+`user_model` y `guard` deben coincidir con tu configuración actual de Auth.
+Conserva las APP_KEY existentes e independientes; no compartas cookies entre aplicaciones.
+
+<a id="integración-de-los-dos-modos"></a>
+
+## 4. Protege tu panel y tus rutas de login
+
+En `routes/web.php`, agrega una ruta de prueba:
+
+```php
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['auth', 'sso.session:strict'])->get('/panel', function () {
+    return ['usuario_local' => auth()->id()];
+});
+```
+
+Si ya tienes `/panel`, agrega esos middleware a su ruta/grupo en vez de duplicarla.
+Conserva tus Gates/Policies en los recursos que los usan.
+
+Agrega `sso.local` a tus rutas nativas de login, registro, recuperación y logout,
+después de `web` y antes de `guest`. Si se cargan desde `routes/auth.php`, sustituye
+el `require` actual por:
 
 ```php
 Route::middleware('sso.local')->group(function () {
-    // Tus rutas/controladores de login, registro, recuperación y logout nativos.
-    // Aplica sso.local antes del middleware guest de esas rutas.
-});
-
-Route::middleware(['auth', 'sso.session'])->group(function () {
-    Route::get('/dashboard', fn () => response()->json(['local_id' => auth()->id()]));
+    require __DIR__.'/auth.php';
 });
 ```
 
-Con SSO activo, `sso.local` redirige GET de navegador a `sso.login` y rechaza POST/JSON
-con 403 antes de procesar credenciales. Conserva CSRF. Si usas Breeze/Fortify u otro
-starter, añade el middleware a sus rutas correspondientes. El flag sólo controla las
-rutas integradas; no intercepta controladores nativos que el anfitrión deje sin proteger.
+Si usas Fortify u otro sistema que registra sus propias rutas, aplica `sso.local` a
+esas rutas desde su configuración; no declares un segundo login. El flag no las intercepta solo.
 
-`sso.session` exige una sesión OIDC vinculada al usuario actual; una sesión nativa
-anterior no se convierte en SSO. Al desactivar SSO, una sesión de origen SSO se invalida
-y exige login local nuevo. El cierre SSO conserva password y remember_token mediante
-`logoutCurrentDevice()`; el logout nativo mantiene el comportamiento de tu aplicación.
-
-Configura el proveedor Eloquent y `sso-client.user_model` con el mismo modelo real,
-`sso-client.guard` con el SessionGuard correcto y `local_login_url` con tu login nativo.
-La redirección de invitados debe seguir el modo, por ejemplo en bootstrap:
+Dentro del callback `withMiddleware` existente de `bootstrap/app.php`, agrega:
 
 ```php
 $middleware->redirectGuestsTo(fn () => config('sso-client.enabled') ? '/sso/login' : '/login');
 ```
 
-## Activar OIDC
+<a id="vincular-usuarios-sin-cambiar-sus-datos"></a>
 
-```dotenv
-SSO_CLIENT_ENABLED=true
-SSO_ISSUER=https://identity.example.org
-SSO_CLIENT_ID=identificador-registrado
-SSO_CLIENT_SECRET=secreto-del-cliente
-SSO_REDIRECT_URI=https://one.example.org/sso/callback
-SSO_SESSION_STATUS_URL=https://identity.example.org/oidc/session
-```
+## 5. Vincula una cuenta existente y comprueba
 
-En `sso-client.allowed_urls` autoriza discovery, authorize, token, jwks, userinfo, session
-y logout del issuer mediante URLs exactas. El transporte servidor-a-servidor no sigue
-redirecciones. No se toma un proveedor de parámetros del visitante. Usa sesiones de
-servidor (`database`, `file` o Redis): con SSO activo se rechaza el driver cookie.
-Los tokens sólo se conservan dentro de la sesión del servidor.
+Ejemplo: la persona tiene ID **7 en Identidad** e ID **42 en Ventas**. Verifica que son
+la misma persona; no basta con que coincida el correo. En el modelo predeterminado,
+el `sub` central es su ID. Si personalizaste el identificador, usa el valor de
+`getAuthIdentifier()` del usuario central.
 
-El callback valida state/nonce, firma, issuer, audiencia y tiempos; comprueba `iss` si el
-OP lo anuncia y `at_hash` si aparece. UserInfo debe tener el mismo `sub` que el ID Token.
-Un fallo impide el login. No sincroniza el perfil de usuarios ya vinculados.
-Puedes fijar `max_age` (segundos, incluido 0); no se acepta desde el visitante.
-
-## Vincular usuarios sin cambiar sus datos
-
-Por defecto `provision=restricted`: un operador vincula una cuenta local existente con
-el `iss/sub` verificado del OP. No se buscan coincidencias por correo ni se reasignan
-identidades ya vinculadas a otro propietario.
+En Ventas:
 
 ```sh
-php artisan sso:link-user 42 sujeto-central --issuer=https://identity.example.org
+php artisan config:clear
+php artisan sso:link-user 42 7
+php artisan sso:doctor
 ```
 
-También puedes usar `app(\LaravelSso\Client\IdentityLinks::class)->link($user, $issuer, $subject)`
-desde un proceso autorizado. La relación se guarda en `sso_identities`, con índice único
-sensible a mayúsculas `(issuer, subject)`. Conserva la clase concreta del modelo y su ID
-como texto (hasta 191 bytes); no exige morph map ni columnas en `users`. El modelo debe
-usar la misma conexión que las tablas SSO para mantener atomicidad.
+**Resultado esperado:** vínculo creado y todas las comprobaciones en `pass`.
+El vínculo se guarda en `sso_identities`; el usuario y su contraseña permanecen iguales.
 
-Para altas automáticas, configura `provision=automatic` y una fábrica propia en
-`create_user`. Preferir una clase invocable permite usar `config:cache`:
+## 6. Entra y cierra sesión
+
+Abre **`https://ventas.test/sso/login`**. Entrarás por Identidad y volverás a `/panel`
+de Ventas, que mostrará el ID local **42**. No necesitas programar el callback.
+
+En una vista Blade de Ventas, puedes usar:
+
+```blade
+<a href="{{ route('sso.login') }}">Entrar con SSO</a>
+
+<form method="POST" action="{{ route('sso.logout') }}">
+    @csrf
+    <button type="submit">Cerrar sesión global</button>
+</form>
+```
+
+Para otra aplicación, repite el registro del cliente en el servidor con su propio dominio y estos pasos
+en esa aplicación. Usa su propio ID/secreto, cookie y vínculo de usuario.
+
+<a id="operar-y-actualizar"></a>
+
+## 7. Programa la limpieza y elige el modo
+
+En `routes/console.php` de Ventas:
 
 ```php
-// config/sso-client.php
-'provision' => 'automatic',
-'create_user' => App\Auth\CreateSsoUser::class,
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('sso:prune-client --limit=1000')->hourly()->withoutOverlapping();
 ```
 
-```php
-namespace App\Auth;
+En desarrollo, deja `php artisan schedule:work` en otra terminal; en despliegue configura
+el scheduler de Laravel. Después de cambios, reconstruye la caché de configuración y
+reinicia los procesos persistentes si los usas.
 
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use LaravelSso\Contracts\Identity;
+- `SSO_CLIENT_ENABLED=true`: entrada por Identidad; una caída del servidor deniega acceso.
+- `SSO_CLIENT_ENABLED=false`: Auth local; `/sso/*` devuelve 404 y exige nuevo login local.
 
-final class CreateSsoUser
-{
-    public function __invoke(Identity $identity): User
-    {
-        // El anfitrión decide sus campos obligatorios y el tratamiento de email duplicado.
-        return User::create([
-            'name' => is_string($identity->attributes['name'] ?? null) ? $identity->attributes['name'] : null,
-            'email' => is_string($identity->attributes['email'] ?? null) ? $identity->attributes['email'] : null,
-            'password' => Hash::make(Str::random(64)),
-        ]);
-    }
-}
-```
+El flag funciona sobre las rutas que integraste en el paso 4. No se cambia automáticamente.
+Para volver a local, cambia el flag y ejecuta `php artisan config:clear` en desarrollo,
+o reconstruye `config:cache` y reinicia los procesos persistentes en despliegue.
+Los botones SSO del ejemplo son para el modo activo; al volver a local usa tus botones nativos.
 
-La fábrica sólo se llama para un alta nueva, dentro de la transacción. Devuelve un usuario
-persistido del modelo configurado, sin otorgar privilegios. El secreto aleatorio del ejemplo
-no es la contraseña central y no se aplica a usuarios existentes. Si después quieres login
-local para esos usuarios nuevos, define un proceso de establecimiento/recuperación de
-contraseña del anfitrión. No inventes una contraseña compartida. `automatic` sin fábrica
-rechaza el alta. Una cuenta local con el mismo email no se enlaza automáticamente.
-
-`allowed` puede rechazar el login; el alta y la vinculación se revierten en ese caso.
-Aplica además Gates/Policies en cada recurso para mantener la autorización persistente.
-Los usuarios ya vinculados conservan nombre, email, password, remember_token, ID y ACL.
-
-## Operar y actualizar
-
-Usa `auth` junto con `sso.session` en todos los recursos que deban seguir el modo.
-Sólo `auth` no comprueba origen SSO ni revocaciones. Las operaciones sensibles usan
-`sso.session:strict`; el OP caído deniega el acceso, nunca habilita Auth local automáticamente.
-El logout activo envía POST a `route('sso.logout')` con `@csrf`; en modo local usa tu logout.
-Back-channel se autentica por firma/audiencia/tiempos y recibo de un uso, sin web/CSRF.
-
-Después de cambiar el entorno, reconstruye la configuración cacheada en cada instancia
-y recarga procesos persistentes según tu despliegue. Las rutas SSO siempre se registran
-y se protegen mediante `sso.enabled`: una caché creada con el flag apagado no impide
-activarlas. El cambio de modo es una decisión del operador, no un failover.
-
-Ejecuta `sso:doctor --offline` y luego `sso:doctor --json` para añadir discovery/JWKS reales.
-Programa `sso:prune-client --limit=1000` cada hora; elimina índices/recibos caducados, nunca
-usuarios, permisos o vinculaciones. La sesión local está limitada por `local_session_ttl`
-y la duración del token. Ver [retención](DATABASE-CONCURRENCY.md).
-
-**Bases de desarrollo ya instaladas:** los cambios están consolidados en la migración
-inicial. Laravel no vuelve a ejecutar una migración registrada; copiar el archivo no
-actualiza esas bases. Revisa y aplica el cambio de las tablas propias (`sso_identities`
-y columnas de propietario en `sso_local_sessions`) mediante un procedimiento de esquema
-controlado y respaldado, y vincula los usuarios existentes con `iss/sub` verificados.
-No ejecutes `migrate:fresh` sobre una aplicación con datos. Las antiguas columnas SSO de
-tu modelo pueden quedar sin uso; el paquete no las borra ni rellena contraseñas ausentes.
-Los ejemplos actualizados describen instalaciones nuevas; no se han reseteado tus bases.
-
-[Contrato, resultados y límites del modo opcional](OPTIONAL-AUTH.md).
+[Opciones avanzadas del cliente](INSTALL-CLIENT-REFERENCE.md) ·
+[Problemas frecuentes](QUICKSTART.md#si-algo-falla) · [Guía completa](QUICKSTART.md).

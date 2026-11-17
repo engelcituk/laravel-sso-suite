@@ -184,6 +184,11 @@ y carga completa repetidos. No se presenta como una nueva CI remota ni como pilo
 El cierre posterior de los 37 archivos de Pint ya pasó la calidad local; al cambiar sólo
 finales de línea, conserva las campañas anteriores con sus huellas originales.
 La siguiente fase es un piloto externo con destino concreto y revisión independiente.
+Su [plan de ejecución y aceptación](EXTERNAL-PILOT-PLAN.md) ya está preparado: ficha G0
+de entorno/responsables, requisitos, 21 casos obligatorios, carga distribuida y observación
+de 48 h propuestas, encargo del revisor y puertas de cierre. Sigue pendiente asignar
+destino, responsables, revisor, umbrales ratificados y ventanas; no se ha ejecutado el piloto
+ni la revisión. El plan mantiene cuentas intactas, una migración por paquete y sin publicación.
 La adaptación de bases existentes se ensayó en espacios descartables de ambos motores:
 la migración inicial consolidada no se reaplica sola y no se entrega un actualizador de
 producción. No se modificaron tus bases de ejemplos ni se eliminaron credenciales.
