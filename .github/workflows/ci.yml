@@ -1,5 +1,9 @@
 name: quality
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore: [composer]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -57,8 +61,43 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          extensions: zip
           tools: composer:v2
       - run: for package in packages/* examples/app-one examples/app-two examples/identity-server; do composer validate --strict --no-check-lock "$package/composer.json"; done
+      - name: Build standalone GitHub distributions
+        run: |
+          mkdir -p .runtime/distribution-ci
+          php tools/build-distribution.php build --source="$GITHUB_SHA" --output=.runtime/distribution-ci
+          php tools/build-distribution.php index --source="$GITHUB_SHA" --output=.runtime/distribution-ci --archives-ref="$GITHUB_SHA"
+      - name: Verify Composer downloads and Laravel autodiscovery in disposable hosts
+        run: php tools/verify-distribution.php .runtime/distribution-ci "$(command -v composer)"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: composer-distribution-checks
+          path: .runtime/distribution-check/**/result.json
+          include-hidden-files: false
+          retention-days: 7
+          if-no-files-found: warn
+  github-distribution:
+    needs: [test, package-manifests, database-concurrency]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: composer-distribution
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; Node.js 24
+        with:
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: zip
+          coverage: none
+      - run: bash tools/publish-distribution.sh "$GITHUB_SHA"
   database-concurrency:
     runs-on: ubuntu-latest
     strategy:

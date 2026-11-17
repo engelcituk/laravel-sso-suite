@@ -6,6 +6,10 @@ Tres paquetes Composer independientes: `laravel-sso/server`, `laravel-sso/client
 `laravel-sso/contracts`. Namespace provisional `LaravelSso`; antes de publicar se
 pueden renombrar los manifiestos y namespaces conjuntamente (no en tiempo de ejecución).
 El cliente no depende de Passport ni del servidor. Redis es opcional.
+La rama `composer` del mismo repositorio aloja un índice Composer y tres ZIP independientes.
+Las descargas apuntan a commits inmutables y conservan la estructura de cada paquete;
+la automatización actualiza el índice tras aprobar la calidad de `main`.
+[Distribución y lockfiles](GITHUB-DISTRIBUTION.md).
 
 Cada paquete extiende un proyecto anfitrión, no reemplaza su aplicación. Los servicios
 públicos se componen desde sus propios controladores, jobs o consola. `RegistersClients`

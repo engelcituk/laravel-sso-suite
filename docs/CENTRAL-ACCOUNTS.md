@@ -23,13 +23,14 @@ En un Laravel nuevo con DB, APP_KEY y migraciones base normales ya preparadas, s
 [la instalación del servidor](INSTALL-SERVER.md):
 
 ```sh
+composer config repositories.laravel-sso composer https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer
 composer require laravel-sso/server:0.1.x-dev laravel-sso/contracts:0.1.x-dev
 php artisan sso:install-server --configure --migrate --keys
 php artisan sso:doctor-server
 ```
 
-Responde el issuer público, por ejemplo `https://identidad.test`. Antes de publicación
-necesitas el repositorio Composer path explicado en [la guía rápida](QUICKSTART.md).
+Responde el issuer público, por ejemplo `https://identidad.test`. Los paquetes se
+descargan desde el [repositorio Composer de GitHub](GITHUB-DISTRIBUTION.md).
 No necesitas un starter kit. El modelo central convencional tiene `name`, `email` único
 y contraseña; no se agregan columnas a users. La tabla `password_reset_tokens` es la
 normal de Laravel, creada por sus migraciones base, no por una migración SSO adicional.

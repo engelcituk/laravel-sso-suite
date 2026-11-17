@@ -33,6 +33,19 @@ Artisan, sin convertir al paquete en una aplicación administrativa.
 
 ## Resultados ejecutados
 
+- **Distribución Composer desde GitHub, 2026-11-17**: rama `composer` del mismo repositorio
+  con índice y tres ZIP independientes del commit `fba4d6f`. Archivos ligados a commits
+  fijos y checksums; cliente sin Passport/servidor y una migración por paquete Laravel.
+  La distribución inicial está disponible. El workflow de `main` incorpora la actualización
+  automática y exige aprobar PHP, manifiestos y perfiles SQL antes de actualizar el índice.
+  Verificación: **31 controles loopback y 31 por GitHub HTTPS**, instalando únicamente
+  dos hosts efímeros por recorrido; autoload, descubrimiento, copia de configuración,
+  migración, reinstalación e integridad. Suite **320 / 1677** en PHP 8.3 y Pint global.
+  Sin tags, releases ni instalaciones en proyectos del usuario; código de paquetes,
+  migraciones, usuarios, contraseñas y diez originales protegidos intactos.
+  [Guía de distribución](GITHUB-DISTRIBUTION.md),
+  [evidencias](../conformance/github-distribution-results.json).
+
 - **Revisión de documentación, 2026-11-17**: README orientado a instalación, índice por
   tema y ejemplos genéricos de aplicaciones, cuentas y dominios. Se actualizan changelog,
   decisiones, esquema, servicios públicos y alcance del plan de revisión; los informes

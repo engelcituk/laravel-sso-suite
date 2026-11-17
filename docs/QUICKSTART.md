@@ -27,41 +27,21 @@ columnas a `users`.** Cada aplicación conserva su DB, APP_KEY y cookie independ
 Identidad necesita cuentas centrales con email válido; puedes crearlas con `sso:user`.
 El cliente usa el esquema Laravel convencional: `name`, `email` único y `password`.
 
-El paquete sigue siendo experimental y no está publicado en Packagist. Para usarlo
-ahora, configura Composer con tu copia del repositorio. No hace falta publicar una versión.
+El paquete sigue siendo experimental y no está publicado en Packagist. Composer puede
+descargarlo desde GitHub mediante el origen remoto siguiente, sin una copia local de la suite.
 
 ## 1. Permite que Composer encuentre los paquetes
 
-En el `composer.json` de cada proyecto, agrega este objeto a `repositories`.
-Si no existe esa propiedad, crea `"repositories": [ ... ]`. Conserva el resto del archivo.
+En la terminal de **cada proyecto Laravel**, ejecuta una vez:
 
-```json
-{
-    "type": "path",
-    "url": "../laravel-sso-suite/packages/*",
-    "options": {
-        "versions": {
-            "laravel-sso/server": "0.1.x-dev",
-            "laravel-sso/client": "0.1.x-dev",
-            "laravel-sso/contracts": "0.1.x-dev"
-        }
-    }
-}
+```sh
+composer config repositories.laravel-sso composer https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer
 ```
 
-El ejemplo supone esta distribución; el nombre de cada proyecto es libre:
-
-```text
-workspace/
-├── laravel-sso-suite/
-│   └── packages/
-├── identity-server/
-└── client-app/
-```
-
-La ruta es relativa al `composer.json` de cada aplicación. Ajústala si organizas las
-carpetas de otra manera; también puedes usar una ruta absoluta local. No cambies
-`minimum-stability` global.
+El comando agrega un repositorio remoto a su `composer.json`. Tus proyectos pueden
+estar en cualquier carpeta, incluidos sitios de Herd bajo `www`. No cambies
+`minimum-stability` global. Si configuraste antes un origen `path` para estos paquetes,
+elimínalo. [Distribución, lockfile y actualizaciones](GITHUB-DISTRIBUTION.md).
 
 ## 2. Instala el servidor central — en Identidad
 

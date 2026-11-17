@@ -9,10 +9,10 @@ automáticos sólo de cuentas nuevas. Las existentes se conservan. `--migrate` e
 El cliente extiende Laravel Auth. Conserva tu modelo, tabla `users`, contraseñas,
 `remember_token`, relaciones y ACL. No instala Passport ni modifica ese esquema.
 
-Agrega el repositorio path de [la guía del servidor](INSTALL-SERVER.md), con versiones
-`laravel-sso/client: 0.1.x-dev` y `laravel-sso/contracts: 0.1.x-dev`:
+Configura el [origen remoto de GitHub](GITHUB-DISTRIBUTION.md) y descarga el cliente:
 
 ```sh
+composer config repositories.laravel-sso composer https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer
 composer require laravel-sso/client:0.1.x-dev laravel-sso/contracts:0.1.x-dev
 php artisan sso:install-client --configure --migrate
 ```

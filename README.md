@@ -10,14 +10,20 @@ biblioteca de permisos ni un panel administrativo. Funcionan con Blade, Vue, Rea
 
 **Estado experimental, pre-alpha.** Laravel 13, PHP 8.3–8.5 y Passport 13 en el servidor.
 El cliente no depende de Passport. Licencia MIT. Los nombres `laravel-sso/*` son
-provisionales y todavía no hay versiones publicadas en Packagist.
+provisionales; la distribución de desarrollo está en GitHub, sin versiones estables en Packagist.
 
 ## Empezar
 
 **Empieza aquí: [guía rápida — del servidor al cliente](docs/QUICKSTART.md).**
 El recorrido prepara dos proyectos Laravel nuevos, registra una aplicación, crea una
-cuenta central y comprueba el primer login. Mientras no exista una versión publicada,
-la instalación utiliza un repositorio Composer `path` apuntando a una copia local.
+cuenta central y comprueba el primer login. Composer descarga los paquetes desde el
+mismo repositorio GitHub; no necesitas una copia local del código junto a tus aplicaciones.
+
+```sh
+composer config repositories.laravel-sso composer https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer
+```
+
+Después instala `server` o `client` siguiendo su guía. [Distribución y actualizaciones](docs/GITHUB-DISTRIBUTION.md).
 
 | Necesidad | Guía |
 | --- | --- |
@@ -121,7 +127,7 @@ por defecto. Back-channel marca la sesión revocada antes de la siguiente operac
 
 Consulta [instalación del servidor](docs/INSTALL-SERVER.md) e
 [instalación del cliente](docs/INSTALL-CLIENT.md) para consumir los paquetes mediante
-repositorios Composer path. Los manifiestos de `examples/*` permiten instalaciones por
+el [repositorio Composer de GitHub](docs/GITHUB-DISTRIBUTION.md). Los manifiestos de `examples/*` permiten instalaciones por
 aplicación; el laboratorio raíz reutiliza vendor sólo para facilitar las pruebas. Las bases,
 APP_KEY, sesiones y autorizaciones siguen siendo independientes.
 

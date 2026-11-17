@@ -2,6 +2,9 @@
 
 ## Unreleased — pre-alpha
 
+- Distribución Composer desde GitHub en el mismo repositorio: índice y ZIP independientes
+  por paquete, referencias inmutables y actualización automatizada tras calidad, sin tags
+  ni releases. Instalación sin una copia local de la suite.
 - Paquetes independientes para servidor de identidad, cliente Laravel y contratos
   compartidos; sin frontend, starter kit o biblioteca de permisos obligatorios.
 - Authorization Code + PKCE S256, RS256, discovery/JWKS, UserInfo y validación de callback.

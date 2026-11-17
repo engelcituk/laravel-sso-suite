@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "phase": "same-repository-github-composer-distribution",
+  "checked_at_utc": "2026-11-17T20:02:14.1373641Z",
+  "status": "passed_live_github",
+  "source_commit": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+  "distribution": {
+    "repository": "engelcituk/laravel-sso-suite",
+    "branch": "composer",
+    "commit": "9544a80fb6a36f8f093deadfd99a813175bff507",
+    "composer_url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer",
+    "initialization": "Explicit requested development distribution; only generated branch pushed",
+    "idempotent_repeat_preserved_commit": true,
+    "packages": [
+      {
+        "name": "laravel-sso/contracts",
+        "version": "0.1.x-dev",
+        "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/contracts.zip",
+        "source_commit": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+        "archive_commit": "f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08",
+        "sha1": "4868360adb174a171ce3ae1603986ac0fbb5ee08",
+        "sha256": "3d1d427f9b7e9f41991592395a0c291fd6a0724a583b732da087b086080d88d1",
+        "file_count": 8,
+        "migrations": 0
+      },
+      {
+        "name": "laravel-sso/server",
+        "version": "0.1.x-dev",
+        "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/server.zip",
+        "source_commit": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+        "archive_commit": "f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08",
+        "sha1": "f0ccb2ec356cc5647be5d80b83877fbe781218c0",
+        "sha256": "b7e44a99ac3d7ae5bd35c64e1ccfbf780f0d6606e6bea620a78c686e0a7424df",
+        "file_count": 64,
+        "migrations": 1
+      },
+      {
+        "name": "laravel-sso/client",
+        "version": "0.1.x-dev",
+        "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/client.zip",
+        "source_commit": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+        "archive_commit": "f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08",
+        "sha1": "769ca88038466d012ebe057fb2fc5053aaacc36d",
+        "sha256": "1dc4e69190f8ac7b4c75059c56655da00861b8c9ad8a41a9acf4265c3fe5b645",
+        "file_count": 31,
+        "migrations": 1
+      }
+    ]
+  },
+  "automation": {
+    "workflow": "quality",
+    "job": "github-distribution",
+    "needs": [
+      "test",
+      "package-manifests",
+      "database-concurrency"
+    ],
+    "job_only_contents_write": true,
+    "pull_request_publication": false,
+    "force_push": false,
+    "concurrency_serialized": true,
+    "stale_main_skipped": true,
+    "status": "Prepared locally; integration into main pending. Initial distribution is already live."
+  },
+  "quality": {
+    "distribution_profiles": [
+      {
+        "transport": "loopback",
+        "checks": 31,
+        "hosts": 2,
+        "composer_installs": "Independent disposable vendors under .runtime",
+        "passed": true,
+        "owned_http_server_stopped": true,
+        "evidence": {
+          "path": ".runtime/distribution-check/20261117-194945-2742f95f/result.json",
+          "sha256": "834607635607dfcf90f46f9e1a72b2cb1d8bba75f1f95398631cf9fe08d3f848"
+        }
+      },
+      {
+        "transport": "GitHub HTTPS",
+        "checks": 31,
+        "hosts": 2,
+        "composer_installs": "Independent disposable vendors under .runtime",
+        "passed": true,
+        "owned_http_server_stopped": true,
+        "evidence": {
+          "path": ".runtime/distribution-check/20261117-200001-56cc9b5e/result.json",
+          "sha256": "01e479257db10bc12797a051f1d9748f6765c09685626a57f9b67700cf5e8a33"
+        }
+      }
+    ],
+    "phpunit": {
+      "php": "8.3.36",
+      "tests": 320,
+      "assertions": 1677,
+      "status": "passed",
+      "evidence": {
+        "path": ".runtime/github-distribution/phpunit.log",
+        "sha256": "056b0eee0775aa3a9e39105ce244f7c3c667cf0726356dd0b7061f9a5ac7330b"
+      }
+    },
+    "pint": {
+      "scope": "global, fresh cache",
+      "status": "passed",
+      "evidence": {
+        "path": ".runtime/github-distribution/pint-verified.json",
+        "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2"
+      }
+    },
+    "root_composer_validate": "strict passed",
+    "workflow_yaml": "parsed; write scope, prerequisites and branch exclusion checked",
+    "publisher_shell": "bash -n passed",
+    "documentation": {
+      "documents": 40,
+      "local_links": 299,
+      "json_examples": 0,
+      "fences_balanced": true,
+      "non_generic_example_references": 0,
+      "errors": []
+    }
+  },
+  "invariants": {
+    "source_packages_unchanged": true,
+    "original_example_files_unchanged": 10,
+    "existing_users_and_passwords_unchanged": true,
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    },
+    "new_migrations": 0,
+    "user_projects_installed_or_changed": 0,
+    "tags_created": 0,
+    "releases_created": 0,
+    "additional_repositories_created": 0,
+    "stable_versions_published": false,
+    "main_commit_unchanged": true
+  },
+  "notes": [
+    "First builder attempt rejected preexisting package LICENSE files; allowlist corrected and original package licenses preserved.",
+    "Loopback transport replaces only fixture URLs and permits HTTP only in disposable consumers. Live GitHub consumers retain secure-http=true.",
+    "Composer plugins/scripts disabled in verification; Laravel package discovery and installers invoked explicitly in temporary hosts.",
+    "Installers tested for file publication only: no user database, migrations or keys are created in those hosts.",
+    "The development label remains 0.1.x-dev; dist references identify a committed source and immutable archive commit."
+  ],
+  "not_repeated": [
+    "PHP 8.4/8.5 matrix",
+    "SQL matrix",
+    "Official OIDF suite",
+    "Cross-site browser matrix",
+    "Load campaign",
+    "Remote CI for the new workflow"
+  ],
+  "changed_source": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "4ca2f8084ce01cb62346e9a83eb0449859a87faffebea1016701064e4ffe6d98"
+    },
+    {
+      "path": "tools/build-distribution.php",
+      "sha256": "586b12e452c4c5833e27eb476b82459542bd583c896ac907ef3a1f1adb492768"
+    },
+    {
+      "path": "tools/verify-distribution.php",
+      "sha256": "3202350784f64826f811b347a7339e88498873654881c3645a668851f58baaec"
+    },
+    {
+      "path": "tools/publish-distribution.sh",
+      "sha256": "80b500049b9c53d72232514834bd35c7dfe422f5fe87b693af78168e67eb9880"
+    },
+    {
+      "path": "README.md",
+      "sha256": "fdd5d623f317ca37e8194e6966db3e893911072839c684376589c75951139209"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "813bd9511825a63c58f77051a211eb7fcff8ae13db51d67aab9f4c158a744a83"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "2e880d16719d9ff5edaf414d50e6c7044fda7271c5beab603721a756b9980ed3"
+    },
+    {
+      "path": "docs/GITHUB-DISTRIBUTION.md",
+      "sha256": "f4cbe244c1abdc9e2e3d7b9d1842430dc1dbada3029a89ac6f506d3231bef312"
+    },
+    {
+      "path": "docs/QUICKSTART.md",
+      "sha256": "4c97243e310989a9fbfa4008225e9ff254806bade7b6b5f7daf30e6d3bbee1e6"
+    },
+    {
+      "path": "docs/INSTALL-SERVER.md",
+      "sha256": "d2718ff307a38af9690958b5f8797f8dd8f36d06c5b34be417de771373abe4af"
+    },
+    {
+      "path": "docs/INSTALL-CLIENT.md",
+      "sha256": "02ff29398443c5be7f13ded032bcc78270bf0630e6eb20c02df4931215cecd20"
+    },
+    {
+      "path": "docs/INSTALL-SERVER-REFERENCE.md",
+      "sha256": "cd7edd9f50298d734ca357a3c18d7682e589684fd0cf3894e95e85c24afca935"
+    },
+    {
+      "path": "docs/INSTALL-CLIENT-REFERENCE.md",
+      "sha256": "2622217df9fc9ad679c1366d9d9937f9192ba534cbf023fc759e872c9229a365"
+    },
+    {
+      "path": "docs/CENTRAL-ACCOUNTS.md",
+      "sha256": "22b09dea74a33a2c6d126fd592eb531eddf34fc023abcb6a0c99b3ae83650a41"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "sha256": "4230903790f95ffa35047b1faead296037c86224dc2700248b61ebf85aa38773"
+    },
+    {
+      "path": "docs/DECISIONS.md",
+      "sha256": "3913e5f3bb407808a724a8301dd6d347bf2b8d914e7d9cf6e55189e62c395c5f"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "sha256": "6e6e4c44085af88e4f6a80ea79e393d1399435381a2370bcace27bce8397c7ff"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "sha256": "c6003078626fde29f3381026b25b7138a2373a091a5ebacbe830cb30642569b8"
+    }
+  ],
+  "evidence": [
+    {
+      "path": ".runtime/github-distribution/remote-index.json",
+      "sha256": "8681fcf559ba577b22d3d254eccc44b32223485d276ce820261b836a574e2ada"
+    },
+    {
+      "path": ".runtime/github-distribution/workflow-final.log",
+      "sha256": "e43e38d0f82b8af4f013aeb2d42e547a188e93005dd980dc22cecf95613bac56"
+    },
+    {
+      "path": ".runtime/github-distribution/docs-final.json",
+      "sha256": "7e219b6b9d77317dfeefa5dcad6ad009e1efe27aba11a5de6d9e1a7f7d9bfbbf"
+    },
+    {
+      "path": ".runtime/github-distribution/publish-repeat.log",
+      "sha256": "0849d4d4fa3381637fffb99e7980d0071f63de432e71a7e71c6fdb76681afb3d"
+    }
+  ]
+}

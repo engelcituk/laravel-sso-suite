@@ -29,11 +29,13 @@ La persona también debe estar asignada a esa aplicación en el servidor central
 
 Requisitos: Laravel 13, PHP 8.3+, Composer 2, Auth con SessionGuard/proveedor Eloquent,
 sesiones del servidor y DB base del proyecto preparada. No necesita Passport ni starter kit.
-Agrega el repositorio Composer path de [la guía rápida](QUICKSTART.md#1-permite-que-composer-encuentre-los-paquetes).
+Composer descarga el paquete desde [GitHub](GITHUB-DISTRIBUTION.md); no necesitas
+una copia de la suite junto al proyecto. El primer comando siguiente configura ese origen.
 
 ## 2. Instala y configura
 
 ```sh
+composer config repositories.laravel-sso composer https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer
 composer require laravel-sso/client:0.1.x-dev laravel-sso/contracts:0.1.x-dev
 php artisan sso:install-client --configure --migrate
 ```

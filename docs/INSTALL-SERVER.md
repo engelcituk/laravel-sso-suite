@@ -19,12 +19,13 @@ Instalar el paquete no crea cuentas demo ni ejecuta migraciones pendientes del a
 ya existe, conserva su configuración y datos. Para el ejemplo usaremos
 `APP_URL=https://identidad.test`, un origen dedicado sin subdirectorio.
 
-Como aún no hay versión publicada, agrega el repositorio Composer path de
-[la guía rápida, paso 1](QUICKSTART.md#1-permite-que-composer-encuentre-los-paquetes).
+La [distribución de desarrollo](GITHUB-DISTRIBUTION.md) se descarga desde GitHub;
+el primer comando siguiente configura su origen en tu aplicación.
 
 ## 2. Ejecuta la instalación
 
 ```sh
+composer config repositories.laravel-sso composer https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer
 composer require laravel-sso/server:0.1.x-dev laravel-sso/contracts:0.1.x-dev
 php artisan sso:install-server --configure --migrate --keys
 ```

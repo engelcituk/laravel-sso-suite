@@ -18,17 +18,11 @@ existentes. El instalador mantiene el timestamp de la única migración publicad
 
 ## Instalación y configuración ampliadas
 
-Antes de publicación, agrega un repositorio path a tu `composer.json` (fusiona, no reemplaces
-tu configuración). Ajusta la ruta a este checkout:
-
-```json
-{
-  "repositories": [{"type": "path", "url": "C:/ruta/laravel-sso/packages/*",
-    "options": {"versions": {"laravel-sso/server": "0.1.x-dev", "laravel-sso/contracts": "0.1.x-dev"}}}]
-}
-```
+Configura el [origen remoto de GitHub](GITHUB-DISTRIBUTION.md) en el proyecto anfitrión.
+Los paquetes se descargan como ZIP independientes; no necesitas una copia local de la suite.
 
 ```sh
+composer config repositories.laravel-sso composer https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/composer
 composer require laravel-sso/server:0.1.x-dev laravel-sso/contracts:0.1.x-dev
 php artisan sso:install-server --configure --migrate --keys
 ```

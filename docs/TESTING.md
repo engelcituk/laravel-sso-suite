@@ -1,5 +1,14 @@
 # Pruebas y evidencia
 
+La distribución GitHub se valida con `tools/verify-distribution.php`: instala con
+Composer en dos hosts nuevos bajo `.runtime`, sin plugins/scripts de terceros y sin
+usar el vendor del laboratorio. Prueba estructura, integridad, reconstrucción,
+dependencias, autoload, descubrimiento Laravel y copia de configuración/migración.
+Pasan **31 controles loopback y 31 por HTTPS real de GitHub**, además de la suite
+**320 / 1677** en PHP 8.3 y Pint global. No crea DB ni cuentas en esos hosts, ni accede
+a los proyectos del usuario. [Resultados](../conformance/github-distribution-results.json),
+[construcción, rama y workflow](GITHUB-DISTRIBUTION.md).
+
 La revisión editorial de los ejemplos conserva el comportamiento de los paquetes.
 Se verifican los 39 documentos Markdown, sus enlaces/anclas locales y ejemplos JSON.
 Los nombres y dominios genéricos de los fixtures pasan **56 pruebas / 373 aserciones**

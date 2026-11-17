@@ -11,6 +11,7 @@ son marcadores o datos sintéticos.
 | Guía | Contenido |
 | --- | --- |
 | [Guía rápida](QUICKSTART.md) | Instalación de servidor y cliente nuevos, cuenta central y primer login |
+| [Distribución desde GitHub](GITHUB-DISTRIBUTION.md) | Origen Composer remoto, descargas independientes, lockfile y actualizaciones |
 | [Servidor](INSTALL-SERVER.md) | Requisitos, instalación, autenticación y registro de aplicaciones |
 | [Cliente](INSTALL-CLIENT.md) | Conexión, cuenta local, rutas protegidas y comprobación de acceso |
 | [Aplicaciones y cuentas](CENTRAL-ACCOUNTS.md) | Alta administrativa, asignaciones, registro público y recuperación |

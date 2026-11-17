@@ -1,6 +1,7 @@
 # Decisiones técnicas
 
-- ADR-001: monorepo de paquetes path Composer, nombres provisionales laravel-sso/*.
+- ADR-001: monorepo con nombres provisionales laravel-sso/*. El laboratorio usa paquetes
+  path; las aplicaciones consumidoras usan la distribución remota de ADR-039.
 - ADR-002: Laravel ^13, PHP ^8.3 y Passport ^13. Versiones resueltas en composer.lock.
 - ADR-003 (sustituida por ADR-033): inicialmente representaciones Eloquent locales sin
   credenciales. El vínculo de identidad se mantiene por `(iss, sub)`, nunca por email.
@@ -106,6 +107,11 @@
   códigos/tokens; revocación definitiva/idempotente por aplicación. La emisión y los
   cambios usan un bloqueo por cliente con reintentos de serialización. El anfitrión
   conserva las rutas, autorización y frontend de su administración.
+
+- ADR-039: distribución de desarrollo desde la rama `composer` del mismo repositorio.
+  Tres ZIP independientes con sus manifests/proveedores y un índice Composer; referencias
+  de archivos a commits fijos, checksum y lockfile. Se conserva el historial y se actualiza
+  tras aprobar calidad, sin tags, releases, repositorios adicionales ni plugins de instalación.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 
