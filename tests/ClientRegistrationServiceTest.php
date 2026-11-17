@@ -40,11 +40,11 @@ final class ClientRegistrationServiceTest extends TestCase
         Http::preventStrayRequests();
         $registry = app(RegistersClients::class);
         $this->assertInstanceOf(Clients::class, $registry);
-        $created = $registry->create(new ClientDefinition('Nominas ISR', 'https://nominas.test/sso/callback'));
+        $created = $registry->create(new ClientDefinition('Example client', 'https://app.test/sso/callback'));
         $oauth = DB::table('oauth_clients')->where('id', $created->id)->first();
         $metadata = DB::table('sso_clients')->where('client_id', $created->id)->first();
-        $this->assertSame('Nominas ISR', $oauth->name);
-        $this->assertSame(['https://nominas.test/sso/callback'], json_decode($oauth->redirect_uris, true));
+        $this->assertSame('Example client', $oauth->name);
+        $this->assertSame(['https://app.test/sso/callback'], json_decode($oauth->redirect_uris, true));
         $this->assertNotNull($created->plainSecret());
         $this->assertNotSame($created->plainSecret(), $oauth->secret);
         $this->assertTrue(Hash::check($created->plainSecret(), $oauth->secret));
@@ -61,18 +61,18 @@ final class ClientRegistrationServiceTest extends TestCase
 
     public function test_explicit_options_preserve_public_pkce_and_trusted_logout_metadata(): void
     {
-        config(['sso-server.backchannel_allowed_urls' => ['https://nominas.test/backchannel']]);
-        $created = app(RegistersClients::class)->create(new ClientDefinition('Public client', 'https://nominas.test/cb',
-            public: true, firstParty: true, restrictUsers: false, backchannelLogoutUri: 'https://nominas.test/backchannel',
-            postLogoutRedirectUri: 'https://nominas.test/done'));
+        config(['sso-server.backchannel_allowed_urls' => ['https://app.test/backchannel']]);
+        $created = app(RegistersClients::class)->create(new ClientDefinition('Public client', 'https://app.test/cb',
+            public: true, firstParty: true, restrictUsers: false, backchannelLogoutUri: 'https://app.test/backchannel',
+            postLogoutRedirectUri: 'https://app.test/done'));
         $this->assertNull($created->plainSecret());
         $this->assertNull(DB::table('oauth_clients')->where('id', $created->id)->value('secret'));
         $metadata = DB::table('sso_clients')->where('client_id', $created->id)->first();
         $this->assertTrue((bool) $metadata->require_pkce);
         $this->assertTrue((bool) $metadata->auto_approve);
         $this->assertFalse((bool) $metadata->restrict_users);
-        $this->assertSame('https://nominas.test/backchannel', $metadata->backchannel_logout_uri);
-        $this->assertSame(['https://nominas.test/done'], json_decode($metadata->post_logout_redirect_uris, true));
+        $this->assertSame('https://app.test/backchannel', $metadata->backchannel_logout_uri);
+        $this->assertSame(['https://app.test/done'], json_decode($metadata->post_logout_redirect_uris, true));
     }
 
     public static function invalidDefinitions(): array
@@ -80,20 +80,20 @@ final class ClientRegistrationServiceTest extends TestCase
         return [
             'empty name' => [['name' => ''], []],
             'long name' => [['name' => str_repeat('a', 256)], []],
-            'http callback' => [['redirectUri' => 'http://nominas.test/cb'], []],
-            'callback credentials' => [['redirectUri' => 'https://user:password@nominas.test/cb'], []],
-            'callback fragment' => [['redirectUri' => 'https://nominas.test/cb#fragment'], []],
-            'callback control' => [['redirectUri' => "https://nominas.test/cb\n"], []],
+            'http callback' => [['redirectUri' => 'http://app.test/cb'], []],
+            'callback credentials' => [['redirectUri' => 'https://user:password@app.test/cb'], []],
+            'callback fragment' => [['redirectUri' => 'https://app.test/cb#fragment'], []],
+            'callback control' => [['redirectUri' => "https://app.test/cb\n"], []],
             'public without pkce' => [['public' => true, 'requirePkce' => false], ['--public' => true, '--allow-confidential-without-pkce' => true]],
-            'untrusted backchannel' => [['backchannelLogoutUri' => 'https://nominas.test/backchannel'], ['--backchannel' => 'https://nominas.test/backchannel']],
-            'http logout' => [['postLogoutRedirectUri' => 'http://nominas.test/done'], ['--post-logout' => 'http://nominas.test/done']],
+            'untrusted backchannel' => [['backchannelLogoutUri' => 'https://app.test/backchannel'], ['--backchannel' => 'https://app.test/backchannel']],
+            'http logout' => [['postLogoutRedirectUri' => 'http://app.test/done'], ['--post-logout' => 'http://app.test/done']],
         ];
     }
 
     #[DataProvider('invalidDefinitions')]
     public function test_service_and_artisan_share_validation_and_leave_no_partial_records(array $overrides, array $options): void
     {
-        $parameters = $overrides + ['name' => 'Nominas ISR', 'redirectUri' => 'https://nominas.test/cb'];
+        $parameters = $overrides + ['name' => 'Example client', 'redirectUri' => 'https://app.test/cb'];
         try {
             app(RegistersClients::class)->create(new ClientDefinition(...$parameters));
             $this->fail('Invalid client accepted by the service.');
@@ -135,7 +135,7 @@ final class ClientRegistrationServiceTest extends TestCase
         $this->app->useEnvironmentPath($path);
         try {
             config(['sso-server.backchannel_allowed_urls' => []]);
-            $definition = new ClientDefinition('Nominas ISR', 'https://nominas.test/cb', backchannelLogoutUri: 'https://nominas.test/backchannel');
+            $definition = new ClientDefinition('Example client', 'https://app.test/cb', backchannelLogoutUri: 'https://app.test/backchannel');
             $registry = app(RegistersClients::class);
             $registry->validate($definition, trustBackchannel: true);
             try {
@@ -145,7 +145,7 @@ final class ClientRegistrationServiceTest extends TestCase
                 $this->assertArrayHasKey('backchannel_logout_uri', $error->errors());
             }
             $this->assertSame([], config('sso-server.backchannel_allowed_urls'));
-            config(['sso-server.backchannel_allowed_urls' => ['https://nominas.test/backchannel']]);
+            config(['sso-server.backchannel_allowed_urls' => ['https://app.test/backchannel']]);
             $registry->create($definition);
             $this->assertSame($original, file_get_contents($path.'/.env'));
             $this->assertSame(1, DB::table('sso_clients')->count());
@@ -160,7 +160,7 @@ final class ClientRegistrationServiceTest extends TestCase
         Event::fake([AuditEvent::class]);
         Schema::drop('sso_clients');
         try {
-            app(RegistersClients::class)->create(new ClientDefinition('Nominas ISR', 'https://nominas.test/cb'));
+            app(RegistersClients::class)->create(new ClientDefinition('Example client', 'https://app.test/cb'));
             $this->fail('Missing metadata table must fail.');
         } catch (QueryException) {
             $this->assertSame(0, DB::table('oauth_clients')->count());
@@ -173,7 +173,7 @@ final class ClientRegistrationServiceTest extends TestCase
         Event::fake([AuditEvent::class]);
         try {
             DB::transaction(function (): void {
-                app(RegistersClients::class)->create(new ClientDefinition('Nominas ISR', 'https://nominas.test/cb'));
+                app(RegistersClients::class)->create(new ClientDefinition('Example client', 'https://app.test/cb'));
                 $this->assertSame(1, DB::table('sso_clients')->count());
                 Event::assertNotDispatched(AuditEvent::class);
                 throw new \RuntimeException('Host save failed.');
@@ -189,7 +189,7 @@ final class ClientRegistrationServiceTest extends TestCase
     public function test_creation_result_exposes_secret_explicitly_and_redacts_json_debug_serialization_and_audit(): void
     {
         Event::fake([AuditEvent::class]);
-        $created = app(RegistersClients::class)->create(new ClientDefinition('Nominas ISR', 'https://nominas.test/cb'));
+        $created = app(RegistersClients::class)->create(new ClientDefinition('Example client', 'https://app.test/cb'));
         $secret = $created->plainSecret();
         $this->assertNotNull($secret);
         $this->assertSame(['id' => $created->id], json_decode(json_encode($created), true));
@@ -203,7 +203,7 @@ final class ClientRegistrationServiceTest extends TestCase
         $this->assertStringNotContainsString($secret, $debug);
         Event::assertDispatchedTimes(AuditEvent::class, 1);
         Event::assertDispatched(AuditEvent::class, fn ($event) => $event->name === 'client.registered'
-            && ! str_contains(json_encode($event), $secret) && ! str_contains(json_encode($event), 'Nominas ISR'));
+            && ! str_contains(json_encode($event), $secret) && ! str_contains(json_encode($event), 'Example client'));
     }
 
     public function test_artisan_is_an_adapter_to_the_injectable_contract(): void
@@ -221,16 +221,16 @@ final class ClientRegistrationServiceTest extends TestCase
         })
             ->andReturn(new CreatedClient($id, 'one-time-creation-secret'));
         $this->app->instance(RegistersClients::class, $registry);
-        $this->assertSame(0, Artisan::call('sso:client', ['name' => 'Nominas ISR', 'redirect' => 'https://nominas.test/cb',
+        $this->assertSame(0, Artisan::call('sso:client', ['name' => 'Example client', 'redirect' => 'https://app.test/cb',
             '--first-party' => true, '--allow-all-users' => true, '--allow-confidential-without-pkce' => true,
-            '--backchannel' => 'https://nominas.test/backchannel', '--post-logout' => 'https://nominas.test/done']));
-        $this->assertSame('Nominas ISR', $definition->name);
+            '--backchannel' => 'https://app.test/backchannel', '--post-logout' => 'https://app.test/done']));
+        $this->assertSame('Example client', $definition->name);
         $this->assertFalse($definition->public);
         $this->assertTrue($definition->firstParty);
         $this->assertFalse($definition->requirePkce);
         $this->assertFalse($definition->restrictUsers);
-        $this->assertSame('https://nominas.test/backchannel', $definition->backchannelLogoutUri);
-        $this->assertSame('https://nominas.test/done', $definition->postLogoutRedirectUri);
+        $this->assertSame('https://app.test/backchannel', $definition->backchannelLogoutUri);
+        $this->assertSame('https://app.test/done', $definition->postLogoutRedirectUri);
         $output = Artisan::output();
         $this->assertStringContainsString('SSO_CLIENT_ID='.$id, $output);
         $this->assertStringContainsString('SSO_CLIENT_SECRET=one-time-creation-secret', $output);
@@ -249,9 +249,9 @@ final class ClientRegistrationServiceTest extends TestCase
 
             return response()->json(['client_id' => $created->id, 'client_secret' => $created->plainSecret()], 201)->header('Cache-Control', 'no-store');
         });
-        $this->postJson('/host/clients', ['name' => 'Nominas ISR', 'redirect_uri' => 'https://nominas.test/cb'])->assertForbidden();
+        $this->postJson('/host/clients', ['name' => 'Example client', 'redirect_uri' => 'https://app.test/cb'])->assertForbidden();
         $this->assertSame(0, DB::table('oauth_clients')->count());
-        $response = $this->actingAs($admin, 'web')->postJson('/host/clients', ['name' => 'Nominas ISR', 'redirect_uri' => 'https://nominas.test/cb',
+        $response = $this->actingAs($admin, 'web')->postJson('/host/clients', ['name' => 'Example client', 'redirect_uri' => 'https://app.test/cb',
             'restrict_users' => false, 'require_pkce' => false, 'is_admin' => true])->assertCreated();
         $this->assertNotNull($response->json('client_secret'));
         $metadata = DB::table('sso_clients')->where('client_id', $response->json('client_id'))->first();

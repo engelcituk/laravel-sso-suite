@@ -111,8 +111,8 @@ en PASSED. El runner devuelve 1 si existen fallos, advertencias o revisiones.
 `tools/oidf-review.php` audita sus exports sin cambiar ese estado: comprueba semántica de
 formularios, CSRF, origen de acciones, respuestas 400 y capacidades para los saltos.
 
-**Política PKCE:** S256 es obligatorio por defecto y siempre para clientes públicos. El
-usuario autorizó una excepción explícita por cliente confidencial para evaluar Basic,
+**Política PKCE:** S256 es obligatorio por defecto y siempre para clientes públicos. La
+evaluación de Basic usa una excepción explícita por cliente confidencial de laboratorio,
 cuyos flujos anteriores no envían PKCE. Si PKCE está presente se valida S256 y su verifier;
 nuestro cliente Laravel siempre lo envía. No se modificó la suite para eludir comprobaciones.
 No se anuncian address/phone/offline_access ni claims/request objects no implementados.

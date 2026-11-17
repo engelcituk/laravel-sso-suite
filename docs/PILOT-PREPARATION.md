@@ -5,7 +5,7 @@ Actualización posterior, 2026-11-17: los 37 archivos señalados por Pint ya est
 resultados y huellas de la preparación original; no se reescriben para atribuir sus
 campañas a los bytes posteriores al formato.
 
-16 de noviembre de 2026, Cancún (ejecuciones UTC del 17 de noviembre). Validación local
+16 de noviembre de 2026, UTC−05:00 (ejecuciones UTC del 17 de noviembre). Validación local
 del workspace sobre `98b6e47`; las modificaciones de esta fase se identifican mediante
 huellas de fuentes y dependencias. No se atribuyen a una nueva CI remota ni a un piloto
 externo. No se publicaron versiones, tags, releases, imágenes ni evidencias externas.
@@ -25,7 +25,7 @@ privados e informes. No quedaron contenedores de estas campañas ejecutándose.
 
 Directorio privado: `.runtime/conformance/official-pilot-verified-20261117-033225/`.
 Inicio UTC `2026-11-17T03:32:25+00:00`, fin `03:35:24+00:00` (22:32:25–22:35:24 del
-16 de noviembre en Cancún). Suite oficial sin modificar, revisión
+16 de noviembre en UTC−05:00). Suite oficial sin modificar, revisión
 `daca6ad2068468d42557ea1152f899cc3ac01a10` y JAR
 `8b77b18cef94f0aa21505f3d5ecdb6cb5ec7f90c37f61988bc00068a406eba0f`.
 
@@ -92,7 +92,7 @@ Pasaron además los seis doctores con aplicaciones optimizadas y **12 controles 
 La campaña final `pilot-soak-30m-verified` solicitó 1800 segundos y terminó en
 **1806,038 segundos**, con ocho usuarios HTTP, cuatro por despliegue. Inicio UTC
 `2026-11-17T03:41:53+00:00`, fin `04:11:59+00:00` (22:41:53–23:11:59 del 16 de noviembre
-en Cancún). Los ocho procesos terminaron correctamente.
+en UTC−05:00). Los ocho procesos terminaron correctamente.
 
 | Resultado de la campaña | Valor observado |
 | --- | ---: |
@@ -133,7 +133,7 @@ correctamente. No se resolvió borrando tablas de la aplicación.
 `tools/deployment-upgrade.php` es exclusivamente un ensayo protegido por entorno/ruta;
 no es un actualizador de producción. Una instalación real requiere su propio respaldo,
 revisión de esquema y comprobación de `iss/sub`. No se ejecutó `migrate:fresh` ni se
-adaptaron tus bases existentes. Sigue habiendo una migración servidor, una cliente y
+adaptaron bases existentes fuera del laboratorio. Sigue habiendo una migración servidor, una cliente y
 ninguna en contracts.
 
 ## Correcciones y calidad

@@ -6,9 +6,9 @@ identidad en tablas propias; sus conteos y commits se registran por separado.
 
 El [run 43680036096, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096)
 pasó **14/14 trabajos, sin advertencias del runner ni fallos**, el 2026-11-15
-**05:12:00–05:14:44 UTC** (00:12:00–00:14:44 en Cancún), en **main**.
+**05:12:00–05:14:44 UTC** (00:12:00–00:14:44 en UTC−05:00), en **main**.
 Commit probado: `3f552358b4e7d1e36e3d8955b686222735b378b8`.
-Con autorización del usuario, `codex/expanded-compatibility` se integró por fast-forward:
+La rama `codex/expanded-compatibility` se integró por fast-forward:
 main avanzó de `08f1ad4` a `3f55235`, sin conflictos ni reescribir commits.
 La actualización de este informe es posterior al commit probado. No se publicaron versiones.
 

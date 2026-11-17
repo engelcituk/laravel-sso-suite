@@ -1,7 +1,7 @@
 # Docker y suite OpenID Foundation en Windows
 
-2026-11-13. Docker funciona tras el reinicio inicial del usuario. No se necesitó otro
-reinicio de Windows. Se ejecutaron los cinco planes; ver [resultados](OIDC-CONFORMANCE-RESULTS.md).
+2026-11-13. En el entorno Windows verificado, Docker quedó operativo tras habilitar
+su virtualización y reiniciar el sistema. Se ejecutaron los cinco planes; ver [resultados](OIDC-CONFORMANCE-RESULTS.md).
 El código Laravel, los ejemplos y las pruebas locales siguen disponibles con Herd/Laragon.
 
 ## Entorno verificado

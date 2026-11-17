@@ -24,8 +24,8 @@ La persona también debe estar asignada a esa aplicación en el servidor central
 | Dato | Valor |
 | --- | --- |
 | Servidor de identidad | `https://identidad.test` |
-| Esta aplicación | `https://ventas.test` |
-| Callback registrado | `https://ventas.test/sso/callback` |
+| Esta aplicación | `https://app.test` |
+| Callback registrado | `https://app.test/sso/callback` |
 
 Requisitos: Laravel 13, PHP 8.3+, Composer 2, Auth con SessionGuard/proveedor Eloquent,
 sesiones del servidor y DB base del proyecto preparada. No necesita Passport ni starter kit.
@@ -116,7 +116,7 @@ La plantilla nueva lee `SSO_CLIENT_PROVISION`, con `greenfield` por defecto.
 
 ## 5. Usa el login/logout desde tu frontend
 
-Abre `https://ventas.test/sso/login`. El paquete hace Code + PKCE, valida el callback
+Abre `https://app.test/sso/login`. El paquete hace Code + PKCE, valida el callback
 y autentica al usuario local con Laravel. Otra app ya conectada reutiliza la sesión
 central. Las cuentas y permisos locales siguen siendo independientes.
 

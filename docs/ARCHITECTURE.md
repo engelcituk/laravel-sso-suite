@@ -1,6 +1,6 @@
 # Arquitectura
 
-Estado inicial experimental. No certificado por OpenID Foundation ni listo para producción.
+Estado experimental. No certificado por OpenID Foundation ni listo para producción.
 
 Tres paquetes Composer independientes: `laravel-sso/server`, `laravel-sso/client` y
 `laravel-sso/contracts`. Namespace provisional `LaravelSso`; antes de publicar se
@@ -24,8 +24,8 @@ El RP conserva el usuario Eloquent del anfitrión, con sus credenciales locales 
 La tabla propia `sso_identities` vincula `(issuer, subject)` con la clase concreta del
 modelo y su clave local, mediante un índice único sensible a mayúsculas. No se agregan
 columnas ni se modifican filas existentes en `users`. Greenfield inserta sólo cuentas
-nuevas con una lista acotada de campos. Nunca se vincula por email. La solicitud
-posterior de modo opcional sustituye la decisión inicial de modelos sin credenciales.
+nuevas con una lista acotada de campos. Nunca se vincula por email. La integración
+conserva las credenciales locales para permitir el modo Auth nativo del anfitrión.
 
 Con `SSO_CLIENT_ENABLED=false`, los middleware integrados utilizan Auth local sin
 consultas SSO ni HTTP al OP. Con `true`, exigen identidad OIDC y sesión central vigente.

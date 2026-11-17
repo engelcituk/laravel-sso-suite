@@ -78,13 +78,13 @@ Puedes crear las cuentas mediante `sso:user`; el registro público permanece cer
 
 ## 4. Registra cada aplicación cliente
 
-Para tu aplicación Ventas:
+Por ejemplo, para una aplicación disponible en `https://app.test`:
 
 ```sh
-php artisan sso:client "Ventas" https://ventas.test/sso/callback --first-party --backchannel=https://ventas.test/sso/backchannel-logout --trust-backchannel --post-logout=https://ventas.test/
+php artisan sso:client "Aplicación cliente" https://app.test/sso/callback --first-party --backchannel=https://app.test/sso/backchannel-logout --trust-backchannel --post-logout=https://app.test/
 ```
 
-Guarda el ID y secreto impresos para el backend de Ventas. Sólo se muestra el secreto
+Guarda el ID y secreto impresos para el backend del cliente. Sólo se muestra el secreto
 una vez. Este comando registra un cliente nuevo cada vez; no lo repitas para consultar
 el secreto. `--first-party` omite consentimiento para tus aplicaciones aprobadas.
 Sin él se solicita consentimiento. `--trust-backchannel` agrega exactamente la URL

@@ -1,6 +1,6 @@
 # Roadmap y evidencia
 
-Actualizado 2026-11-17 (Cancún). Primera vertical integrada **experimental**, sin publicación de versiones,
+Actualizado 2026-11-17. Integración **experimental**, sin publicación de versiones,
 certificación ni recomendación de producción. Una vertical no cierra toda su fase.
 
 **Prioridad de producto: greenfield.** Preparar un Laravel nuevo como servidor central
@@ -13,7 +13,7 @@ manual para personas nuevas. Las cuentas existentes se conservan y no se adoptan
 [Contrato y evidencia de este cierre](GREENFIELD-PROVISIONING.md).
 La administración descendente añade sistemas con usuarios asignados, alta manual
 central y recuperación de contraseña, con registro público opcional y sin stack impuesto.
-[Guía del flujo Nóminas ISR](CENTRAL-ACCOUNTS.md).
+[Guía de aplicaciones, cuentas y acceso](CENTRAL-ACCOUNTS.md).
 La creación de clientes se extrae a `RegistersClients`/`Clients`: tu aplicación puede
 componerla desde su propio CRUD, sin ejecutar Artisan, activar el protocolo ni adoptar
 un backend administrativo del paquete. [Contrato público](CLIENT-REGISTRATION-SERVICE.md).
@@ -28,10 +28,21 @@ Artisan, sin convertir al paquete en una aplicación administrativa.
 | 3 cliente | integración agnóstica y modos verificados localmente | guard/modelo descubiertos, rutas Auth convencionales, JSON/Inertia y E2E con cliente nuevo/existente; navegadores/SQL de fases anteriores no repetidos para este ajuste |
 | 4 identidad local | alta greenfield verificada localmente; modo opcional previo en main | primer login crea/vincula sólo cuentas nuevas, sin actualizar existentes; 12 casos nuevos, E2E de DB vacía y dos carreras en cuatro perfiles SQL |
 | 5 sesiones | funcionalidades y recuperación locales verificadas | Recordarme, dispositivos, revocación y retención; carga actual con caída OP de 60 s y pausa de worker de 120 s, colas 0/0 al cierre; evaluación externa pendiente |
-| 6 instalación | instaladores y guía agnóstica verificados localmente | comandos configuran SSO, migraciones acotadas, claves y tareas; 32 controles HTTP en tres Laravel; piloto externo pendiente y campañas previas separadas |
+| 6 instalación | instaladores y guía agnóstica verificados localmente | comandos configuran SSO, migraciones acotadas, claves y tareas; 53 controles HTTP en tres Laravel en la última validación de gestión; piloto externo pendiente y campañas previas separadas |
 | 7 publicación | pendiente | cierre local de calidad aprobado: Pint global sin hallazgos, PHPUnit en PHP 8.3/8.4/8.5, Larastan y Composer; CI previa histórica; faltan auditoría/certificación externa y autorización para publicar |
 
 ## Resultados ejecutados
+
+- **Revisión de documentación, 2026-11-17**: README orientado a instalación, índice por
+  tema y ejemplos genéricos de aplicaciones, cuentas y dominios. Se actualizan changelog,
+  decisiones, esquema, servicios públicos y alcance del plan de revisión; los informes
+  históricos conservan sus resultados y fuentes. Se verifican los 39 documentos Markdown,
+  enlaces/anclas locales, bloques JSON y delimitadores de código. Los ejemplos equivalentes
+  pasan **56 pruebas / 373 aserciones**, **53 controles HTTP** y Pint global. No cambia
+  la lógica de los paquetes ni sus migraciones; los diez archivos originales protegidos
+  conservan sus hashes. No se publican versiones.
+  [Índice de documentación](README.md),
+  [resultados de la revisión](../conformance/documentation-review-results.json).
 
 - **Gestión pública de clientes, 2026-11-17**: `ManagesClients`, `ClientChanges` y
   `ClientDetails` agregan listado paginado sin secretos, consulta, edición parcial y
@@ -136,7 +147,7 @@ Artisan, sin convertir al paquete en una aplicación administrativa.
 - **Preparación verificable del piloto, workspace sobre `98b6e47`**: cinco planes OIDC
   oficiales repetidos, 84 FINISHED: **58 PASSED, 0 FAILED/WARNING, 16 REVIEW verificados
   y 10 SKIPPED justificados**. Run privado `official-pilot-verified-20261117-033225`,
-  UTC 03:32:25–03:35:24 del 17 de noviembre (22:32:25–22:35:24 del 16 en Cancún).
+  UTC 03:32:25–03:35:24 del 17 de noviembre (22:32:25–22:35:24 del 16 en UTC−05:00).
   **30 casos / 174 controles** de modos con cachés reales, reinicios de FPM/Apache,
   caída/recuperación del OP y sesiones no transferibles; **60 controles cross-site** y
   doce de proxy aprobados. Los cuatro RP conservaron usuarios, hashes, recaller y ACL
@@ -156,7 +167,7 @@ Artisan, sin convertir al paquete en una aplicación administrativa.
   [campaña actual](../conformance/pilot-deployment-results.json).
 - **Modo SSO/Auth local en main**: run `44007989216`, commit
   `249ca73`, **14/14 trabajos aprobados**, UTC 2026-11-17 03:07:58–03:10:47
-  (16 de noviembre 22:07:58–22:10:47 en Cancún). Nueve perfiles PHP/dependencias:
+  (16 de noviembre 22:07:58–22:10:47 en UTC−05:00). Nueve perfiles PHP/dependencias:
   **230 / 1076** generales y **106 / 414** normativos, E2E real y audit aprobados.
   Cuatro perfiles SQL: **246 / 1152** MySQL y **246 / 1150** PostgreSQL, ambos aislamientos.
   Pint (147 archivos), Larastan y manifiestos aprobados; cero advertencias del runner.
@@ -167,7 +178,7 @@ Artisan, sin convertir al paquete en una aplicación administrativa.
   Se conservan la rama y sus runs previos 14/14; no se alteraron bases locales ni se
   publicaron versiones. [Contrato y evidencia](OPTIONAL-AUTH.md).
 - Compatibilidad ampliada en **main**: **14/14 trabajos aprobados** en `3f55235`, run `43680036096`,
-  UTC 2026-11-15 05:12:00–05:14:44 (00:12:00–00:14:44 en Cancún).
+  UTC 2026-11-15 05:12:00–05:14:44 (00:12:00–00:14:44 en UTC−05:00).
   Nueve combinaciones PHP/dependencias: **212 / 994** generales y **106 / 414** normativos
   cada una; cuatro perfiles SQL: **228 / 1070** MySQL y **228 / 1068** PostgreSQL.
   Ambos motores pasaron READ COMMITTED y REPEATABLE READ. Cero fallos/advertencias del runner;
@@ -176,7 +187,7 @@ Artisan, sin convertir al paquete en una aplicación administrativa.
   fast-forward, sin conflictos ni publicación de versiones. Se conservan las validaciones
   previas de rama. [Versiones, correcciones y evidencia](COMPATIBILITY.md).
 - GitHub Actions remoto en **main**: **6/6 trabajos aprobados** en `7553a96`, run `43674756937`,
-  2026-11-15 03:59:30–04:02:12 UTC (14 de noviembre en Cancún). PHP 8.3/8.4/8.5:
+  2026-11-15 03:59:30–04:02:12 UTC (14 de noviembre en UTC−05:00). PHP 8.3/8.4/8.5:
   209 / 982 generales y 106 / 414 normativos por versión; MySQL 224 / 1055 y PostgreSQL
   224 / 1053. Se revisaron los seis logs: **cero advertencias del runner y cero fallos**.
   Checkout v7.0.1 fijado por SHA, con Node 24, validado localmente y en remoto; resuelve
@@ -302,7 +313,7 @@ destino, responsables, revisor, umbrales ratificados y ventanas; no se ha ejecut
 ni la revisión. El plan mantiene cuentas intactas, una migración por paquete y sin publicación.
 La adaptación de bases existentes se ensayó en espacios descartables de ambos motores:
 la migración inicial consolidada no se reaplica sola y no se entrega un actualizador de
-producción. No se modificaron tus bases de ejemplos ni se eliminaron credenciales.
+producción. Las bases y credenciales originales del laboratorio se conservaron.
 
 1. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
    móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.
@@ -311,15 +322,13 @@ producción. No se modificaron tus bases de ejemplos ni se eliminaron credencial
    nombre público y split de paquetes;
    autorización explícita antes de publicar versiones.
 
-## Registro de ejecución
+## Interpretar las evidencias
 
-El directorio comenzó vacío y se inicializó Git. Composer 2.11.1. PHP por defecto tenía
-OPcache de otra ABI; se usó PHP 8.3/8.4 y una copia de php.ini 8.5 aislada en .runtime,
-sin modificar la instalación global. OpenSSL necesitó OPENSSL_CONF explícito. PHP
-is_readable fallaba bajo sandbox Windows aunque permitía lectura; las verificaciones PHP
-se ejecutaron fuera del sandbox. Secretos, claves, bases y logs están ignorados por Git.
+Cada ejecución identifica su fecha, entorno, revisión o huella de fuentes y alcance.
+Los informes de fases anteriores conservan sus resultados originales; no acreditan
+automáticamente cambios posteriores. Los logs completos, claves y bases del laboratorio
+permanecen en directorios privados ignorados por Git; los resúmenes públicos omiten secretos.
 
-Las contradicciones iniciales sobre users se resolvieron con representaciones Eloquent
-locales. La solicitud posterior de desacoplamiento sustituye el requisito de no tener
-credenciales: ahora se conservan users y sus contraseñas; el vínculo SSO vive en tablas
-propias. Los criterios antiguos de "sin tabla users" también quedan sustituidos.
+El contrato actual conserva el modelo de usuario del anfitrión y sus credenciales locales.
+La identidad SSO se vincula mediante tablas propias. Las altas greenfield crean sólo
+cuentas nuevas; una cuenta existente requiere un vínculo explícito verificado.

@@ -1,9 +1,8 @@
 # ACL local con usuarios Eloquent
 
-Esta guía sustituye las menciones contradictorias de ACL sin users del prompt original.
 Cada cliente conserva su tabla users, credenciales y permisos. La identidad issuer/subject
 se vincula en `sso_identities`; las relaciones de negocio siguen usando users.id.
-El modo opcional posterior sustituye la decisión inicial de usuarios sin credenciales.
+El servidor central autentica; las decisiones de autorización pertenecen a cada cliente.
 
 `examples/shared/client-model.php` contiene ReportPolicy. Un Gate llama a esa Policy y
 consulta `report_permissions` en la base local. Aprovisionar una identidad no agrega permisos.

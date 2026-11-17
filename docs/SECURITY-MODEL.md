@@ -94,7 +94,7 @@ campos obligatorios, nunca recibe la contraseña central. El paquete no escribe 
 del usuario existente. Una cuenta nueva necesita un proceso local de establecimiento
 de contraseña si luego se desea usar Auth local. [Pruebas y límites](OPTIONAL-AUTH.md).
 
-## Validación externa pendiente
+## Cuentas y administración central
 
 Las aplicaciones nuevas registradas por CLI exigen asignación explícita de usuarios
 centrales. Revocar una asignación invalida sólo sus tokens de esa aplicación; no borra
@@ -115,6 +115,16 @@ habilitarlo con `authentication=package` es una decisión explícita. No incorpo
 de login/consentimiento/logout usan la sesión del mismo origen y no exponen secretos
 de cliente. No equivalen a un flujo Bearer stateless para una SPA remota.
 [Contratos y límites](STACK-AGNOSTIC.md), [pruebas](AGNOSTIC-VALIDATION.md).
+
+Los servicios públicos de clientes requieren autorización del anfitrión, también para
+consultas. No crean un panel ni un rol administrativo. Sus DTO de lectura excluyen
+secretos; editar invalida los códigos/tokens de esa aplicación y revocar la bloquea
+definitivamente. El bloqueo por cliente coordina estas operaciones con la emisión OIDC.
+No se modifican cuentas ni se cierran sesiones de otras aplicaciones. La revocación
+no elimina una cookie o un JWT ya recibido: su efecto en el RP depende de las
+comprobaciones de sesión configuradas. [API y garantías](CLIENT-REGISTRATION-SERVICE.md).
+
+## Validación externa pendiente
 
 Los tests propios no equivalen a certificación OIDC. Faltan revisión independiente,
 certificación externa de OpenID Foundation y evaluación operativa en el destino real.

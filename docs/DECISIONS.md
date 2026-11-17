@@ -3,7 +3,7 @@
 - ADR-001: monorepo de paquetes path Composer, nombres provisionales laravel-sso/*.
 - ADR-002: Laravel ^13, PHP ^8.3 y Passport ^13. Versiones resueltas en composer.lock.
 - ADR-003 (sustituida por ADR-033): inicialmente representaciones Eloquent locales sin
-  credenciales, conforme a secciones 6–7. Se conserva `(iss, sub)`, nunca el email.
+  credenciales. El vínculo de identidad se mantiene por `(iss, sub)`, nunca por email.
 - ADR-004: RS256 por política fija; biblioteca firebase/php-jwt para JWS/JWK.
   Claves OIDC separadas de las claves OAuth de Passport. No criptografía propia.
 - ADR-005: inicialmente Authorization Code + S256; sin implicit, password grant,
@@ -13,7 +13,7 @@
 - ADR-007: endpoints remotos del RP deben coincidir con allowlist explícita. Sin redirects
   HTTP, sin emisores suministrados por requests y sin descubrimiento multi-tenant abierto.
 - ADR-008: SQLite y matrices reales MySQL/PostgreSQL. Distinguir motores/aislamientos
-  ejecutados localmente de la matriz CI remota aún sin ejecutar. Redis no es obligatorio.
+  ejecutados localmente de las [ejecuciones CI remotas](CI-REMOTE.md). Redis no es obligatorio.
 - ADR-009: fases abiertas hasta cumplir sus criterios, no simular logout ni conformidad.
 - ADR-010: ampliar Code con nonce/state opcionales en OP, S256 obligatorio por defecto, Basic,
   form_post y RFC 9207. El RP propio sigue creando transacciones con state/nonce y sid.
@@ -22,8 +22,8 @@
 - ADR-012: pruebas normativas propias con JUnit/JSON, separadas del harness OIDF fijado
   por revisión. La suite oficial se ejecuta localmente en Docker; sus resultados no
   equivalen a certificación externa ni se confunden con las pruebas propias.
-- ADR-013: S256 obligatorio por defecto y para clientes públicos. El usuario autorizó
-  compatibilidad sin PKCE sólo mediante inscripción explícita de clientes confidenciales;
+- ADR-013: S256 obligatorio por defecto y para clientes públicos. La compatibilidad
+  sin PKCE exige inscripción explícita de clientes confidenciales;
   no cambia el RP Laravel ni permite plain o verifier incorrecto cuando se usa PKCE.
 - ADR-014: en Code, perfil/email proceden de UserInfo con sub coincidente; replay de código
   revoca sólo los tokens ligados a ese código y al cliente autenticado.
@@ -35,11 +35,11 @@
 - ADR-017: REVIEW conserva el estado oficial. La auditoría local verifica semántica de
   DOM/formularios/CSRF y respuestas 400; los SKIPPED se contrastan con discovery y pruebas
   negativas de capacidades. Nada se convierte artificialmente en PASSED.
-- ADR-018: una migración inicial por paquete. El servidor crea sus siete tablas con
+- ADR-018: una migración inicial por paquete Laravel. El servidor crea sus ocho tablas con
   todos los campos e índices definitivos en `create_sso_tables.php`; el cliente conserva
   su propia migración. Durante este desarrollo los cambios se incorporan al esquema
   inicial, sin acumular migraciones incrementales. Consolidar archivos no altera datos
-  ni reescribe el historial de bases ya instaladas.
+  ni reescribe el historial de bases ya instaladas. Contracts no contiene migraciones.
 - ADR-019: canje, revocación y limpieza final se serializan mediante el bloqueo de sid;
   se leen vinculaciones actuales y se conserva la señal de replay tras rollback. La matriz
   prueba MySQL REPEATABLE READ y PostgreSQL READ COMMITTED con conexiones independientes.
@@ -81,18 +81,31 @@
   debe reintentarla completa. No se reintentan errores de integridad arbitrarios ni se
   publican callbacks propios de intentos revertidos. Ver [resultados](COMPATIBILITY.md).
 
-- ADR-033: modo explícito mediante SSO_CLIENT_ENABLED, desactivado por defecto. El usuario
-  solicita extender Auth local sin tocar users ni sus contraseñas. La identidad se guarda
+- ADR-033: modo explícito mediante SSO_CLIENT_ENABLED, desactivado por defecto. La integración
+  extiende Auth local sin modificar el esquema de users ni las contraseñas existentes. La identidad se guarda
   en sso_identities; las sesiones incluyen el propietario local. Una migración inicial
   por paquete, sin migraciones incrementales. No hay conversión automática de esquemas
   ya instalados ni vinculación por correo. SsoOnly pasa a ser opt-in para modelos exclusivos.
-- ADR-034: las altas automáticas usan una fábrica del anfitrión dentro de la transacción;
+- ADR-034: las altas personalizadas del modo `automatic` usan una fábrica del anfitrión dentro de la transacción;
   los usuarios vinculados no sincronizan perfil ni credenciales. Clase invocable cacheable,
   misma conexión, unicidad de identidad, rollback y eventos después de commit. La lectura
   del propietario bloqueada obtiene estado actual bajo MySQL REPEATABLE READ.
 - ADR-035: sso.local protege rutas nativas y sso.session protege recursos en ambos modos.
   El cambio de origen exige nuevo login; logoutCurrentDevice conserva el recaller nativo.
   El modo local es política del operador, nunca fallback automático ante caída del OP.
+
+- ADR-036: `greenfield` es la política predeterminada para clientes nuevos. La fábrica
+  incluida crea cuenta local y vínculo en la misma transacción al primer login válido;
+  rechaza colisiones de email y conserva las cuentas ya vinculadas. `restricted` mantiene
+  la vinculación explícita y `automatic` permite esquemas personalizados.
+- ADR-037: la administración central crea cuentas y asigna acceso por aplicación sin
+  sincronizar credenciales. Registro público opt-in sin asignaciones; recuperación con
+  el broker Laravel del guard central y revocación de las sesiones de su cuenta objetivo.
+- ADR-038: `RegistersClients` y `ManagesClients` son contratos públicos compartidos por
+  CRUD anfitriones y Artisan. Lecturas sin secretos; edición parcial con invalidación de
+  códigos/tokens; revocación definitiva/idempotente por aplicación. La emisión y los
+  cambios usan un bloqueo por cliente con reintentos de serialización. El anfitrión
+  conserva las rutas, autorización y frontend de su administración.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

@@ -13,15 +13,16 @@ pueden seleccionar una fábrica del proyecto.
 
 ## Qué ocurre al entrar
 
-1. Ventas envía al navegador a `/sso/login`.
+1. La aplicación cliente envía al navegador a `/sso/login`.
 2. El cliente lo redirige a Identidad mediante Authorization Code + PKCE.
 3. Identidad usa el login del proyecto o su formulario opcional. Sólo Identidad recibe la contraseña central.
-4. El callback de Ventas valida el resultado y resuelve `(issuer, subject)`; si es nuevo,
+4. El callback del cliente valida el resultado y resuelve `(issuer, subject)`; si es nuevo,
    crea y vincula la cuenta local automáticamente en modo greenfield.
-5. Laravel Auth entra como la cuenta local vinculada. Los permisos siguen siendo los de Ventas.
+5. Laravel Auth entra como la cuenta local vinculada. Los permisos siguen siendo los del cliente.
 
-Ejemplo: sujeto central 7 → Ventas 42 → Contabilidad 18. No necesitan el mismo ID,
-correo o contraseña. El mismo usuario puede tener permisos distintos en cada aplicación.
+Un sujeto central puede tener ID local 42 en Aplicación A e ID local 18 en Aplicación B.
+Las cuentas no necesitan compartir ID, correo o contraseña. La misma persona puede tener
+permisos distintos en cada aplicación.
 El cliente no recibe ni guarda la contraseña central.
 
 ## Qué necesitas preparar y qué integra el paquete
@@ -240,11 +241,11 @@ Para iniciar SSO, usa un enlace normal o:
 window.location.assign('/sso/login');
 ```
 
-Para logout, usa un formulario POST de navegador con el token CSRF de **Ventas**:
+Para logout, usa un formulario POST de navegador con el token CSRF de **la aplicación cliente**:
 
 ```html
 <form method="post" action="/sso/logout">
-    <input type="hidden" name="_token" value="TOKEN_CSRF_DE_VENTAS">
+    <input type="hidden" name="_token" value="TOKEN_CSRF_DEL_CLIENTE">
     <button type="submit">Cerrar sesión global</button>
 </form>
 ```
@@ -284,9 +285,10 @@ duplicar tareas manuales. El instalador no elimina esas decisiones. La plantilla
 lee las variables de entorno y deriva endpoints del issuer confiable; no confía en
 URLs enviadas por visitantes.
 
-Una migración ya registrada no se reaplica. Este ajuste de integración no cambia
-ninguna definición de migración. Conserva respaldos y el historial; no uses
-`migrate:fresh` en una instalación con datos.
+Una migración ya registrada no se reaplica al copiar su definición actualizada.
+Los cambios de esquema se consolidan en la migración inicial durante el desarrollo;
+las bases ya instaladas necesitan un procedimiento revisado para sus tablas SSO.
+Conserva respaldos y el historial; no uses `migrate:fresh` en una instalación con datos.
 
 Los instaladores con `--configure` limpian caché de configuración y rutas. Al terminar
 el despliegue reconstruye ambas y recarga procesos persistentes. Al cambiar sólo el

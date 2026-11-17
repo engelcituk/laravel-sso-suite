@@ -1,10 +1,10 @@
 # Auditoría, instalación y diagnóstico
 
-La fase agrega `LaravelSso\Contracts\AuditEvent` y comandos Artisan en ambos paquetes.
-La fase original no agregó tablas ni migraciones: servidor conserva su única definición
-inicial y cliente la suya. El modo opcional posterior añade `sso_identities` dentro de
-esa migración cliente, sin tocar users. El catálogo actual suma 40 nombres. Contracts
-continúa sin Laravel/Passport. [Resultados posteriores y CI](OPTIONAL-AUTH.md).
+La suite expone `LaravelSso\Contracts\AuditEvent` y comandos Artisan en ambos paquetes.
+El catálogo contiene 40 nombres. Los eventos se despachan después del commit y no
+requieren una tabla adicional de auditoría. El servidor conserva una migración inicial,
+el cliente otra y contracts ninguna. Contracts no depende de Laravel ni de Passport.
+La tabla de identidad del cliente es propia del paquete; no cambia el esquema de users.
 
 ## Eventos de seguridad
 

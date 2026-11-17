@@ -1,6 +1,6 @@
 # Cierre de formato y calidad
 
-17 de noviembre de 2026, Cancún. Validación local del workspace sobre
+17 de noviembre de 2026. Validación local del workspace sobre
 `5616b3688106a6a64b3c11c1f687d33e258770f8`. No se publicaron versiones ni se activó
 una nueva CI remota. [Resumen estructurado sin secretos](../conformance/format-quality-results.json).
 
@@ -20,7 +20,7 @@ los caminos, SHA256 antes/después y la huella de tokens de los 37 archivos.
 No se cambiaron condiciones, consultas, atributos de usuarios, contraseñas ni definiciones
 de esquema. La única migración del cliente recibió el mismo ajuste de formato; su nombre
 y sus tokens permanecen iguales. Servidor conserva una migración, cliente una y contracts
-ninguna. No se creó ninguna migración incremental ni se ejecutaron migraciones en tus bases.
+ninguna. No se creó ninguna migración incremental ni se migraron las bases de ejemplos existentes.
 
 Con `core.autocrlf=true`, Git puede normalizar estas diferencias de finales de línea al
 comparar contenido. Los hashes de archivos y la ejecución de Pint verifican el cambio

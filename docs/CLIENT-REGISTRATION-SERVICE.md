@@ -21,14 +21,14 @@ $clients = app(ManagesClients::class);
 $page = $clients->listing(status: 'active', perPage: 20, page: 1);
 $client = $clients->find($id);
 $updated = $clients->update($id, new ClientChanges(
-    name: 'Nóminas ISR',
-    redirectUri: 'https://nominas.test/sso/callback',
+    name: 'Aplicación cliente',
+    redirectUri: 'https://app.test/sso/callback',
     restrictUsers: true,
 ));
 $revoked = $clients->revoke($id);
 ```
 
-`listing()` devuelve `LengthAwarePaginator<ClientDetails>`, ordenado por ID estable.
+`listing()` devuelve `LengthAwarePaginator<int, ClientDetails>`, ordenado por ID estable.
 Sus enlaces conservan el filtro y el tamaño de página.
 `status` admite `active` (predeterminado), `revoked` o `all`; `perPage` admite 1–100 y
 `page` 1–1 000 000. Incluye sólo clientes registrados en ambas tablas OAuth/SSO, sin
@@ -143,7 +143,7 @@ Route::middleware('auth')->prefix('admin/sso-clients')->group(function () {
 ```sh
 php artisan sso:clients
 php artisan sso:clients --status=all --per-page=20 --page=1 --json
-php artisan sso:client-update UUID --name="Nóminas ISR" --redirect=https://nominas.test/sso/callback
+php artisan sso:client-update UUID --name="Aplicación cliente" --redirect=https://app.test/sso/callback
 php artisan sso:client-update UUID --first-party=1 --require-pkce=1 --restrict-users=1
 php artisan sso:client-update UUID --backchannel= --post-logout=
 php artisan sso:client-revoke UUID
@@ -162,8 +162,8 @@ use LaravelSso\Server\ClientDefinition;
 use LaravelSso\Server\Contracts\RegistersClients;
 
 $created = app(RegistersClients::class)->create(new ClientDefinition(
-    name: 'Nóminas ISR',
-    redirectUri: 'https://nominas.test/sso/callback',
+    name: 'Aplicación cliente',
+    redirectUri: 'https://app.test/sso/callback',
     firstParty: true,
 ));
 
@@ -260,11 +260,11 @@ Ejemplo con logout, **después de autorizar el destino en la configuración del 
 
 ```php
 $created = $clients->create(new ClientDefinition(
-    name: 'Nóminas ISR',
-    redirectUri: 'https://nominas.test/sso/callback',
+    name: 'Aplicación cliente',
+    redirectUri: 'https://app.test/sso/callback',
     firstParty: true,
-    backchannelLogoutUri: 'https://nominas.test/sso/backchannel-logout',
-    postLogoutRedirectUri: 'https://nominas.test/',
+    backchannelLogoutUri: 'https://app.test/sso/backchannel-logout',
+    postLogoutRedirectUri: 'https://app.test/',
 ));
 ```
 
@@ -318,7 +318,7 @@ acepta esa excepción y siempre vuelve a exigir la allowlist vigente.
 El comando conserva sus opciones y salida:
 
 ```sh
-php artisan sso:client "Nóminas ISR" https://nominas.test/sso/callback --first-party --backchannel=https://nominas.test/sso/backchannel-logout --trust-backchannel --post-logout=https://nominas.test/
+php artisan sso:client "Aplicación cliente" https://app.test/sso/callback --first-party --backchannel=https://app.test/sso/backchannel-logout --trust-backchannel --post-logout=https://app.test/
 ```
 
 Traduce los argumentos a `ClientDefinition`, llama al contrato y presenta ID/secreto.

@@ -1,9 +1,9 @@
-# Del servidor a tus sistemas y usuarios
+# Administrar aplicaciones, cuentas y acceso
 
-**Sí puedes administrar el alta desde el servidor central.** El flujo es: registrar
-“Nóminas ISR”, crear su cuenta central, asignarle ese sistema y configurar el cliente.
+El flujo de administración consiste en registrar una aplicación cliente, crear una
+cuenta central, asignarle acceso a esa aplicación y configurar el cliente.
 Cada persona tiene una cuenta central y puede estar asignada a uno o varios sistemas.
-Los roles y permisos dentro de Nóminas siguen perteneciendo a Nóminas.
+Cada aplicación conserva sus roles y permisos locales.
 
 No hay sincronización de contraseñas ni copia periódica de usuarios. En un cliente nuevo,
 el primer login válido de una persona asignada crea su cuenta local automáticamente.
@@ -34,13 +34,13 @@ No necesitas un starter kit. El modelo central convencional tiene `name`, `email
 y contraseña; no se agregan columnas a users. La tabla `password_reset_tokens` es la
 normal de Laravel, creada por sus migraciones base, no por una migración SSO adicional.
 
-## 2. Da de alta Nóminas ISR — en el servidor
+## 2. Registra una aplicación — en el servidor
 
 ```sh
-php artisan sso:client "Nóminas ISR" https://nominas.test/sso/callback --first-party --backchannel=https://nominas.test/sso/backchannel-logout --trust-backchannel --post-logout=https://nominas.test/
+php artisan sso:client "Aplicación cliente" https://app.test/sso/callback --first-party --backchannel=https://app.test/sso/backchannel-logout --trust-backchannel --post-logout=https://app.test/
 ```
 
-Guarda el `SSO_CLIENT_ID` y el secreto que muestra una vez. Usaremos `ID_DE_NOMINAS`
+Guarda el `SSO_CLIENT_ID` y el secreto que muestra una vez. Usaremos `ID_DEL_CLIENTE`
 como marcador de ese UUID; sustitúyelo en los comandos siguientes.
 
 **Las aplicaciones nuevas creadas por este comando sólo admiten usuarios asignados.**
@@ -48,12 +48,12 @@ como marcador de ese UUID; sustitúyelo en los comandos siguientes.
 `--allow-all-users` habilita explícitamente cualquier cuenta central elegible y no permite
 administrar denegaciones individuales con los comandos de asignación.
 
-## 3. Crea y asigna la cuenta — todavía en el servidor
+## 3. Crea y asigna una cuenta — en el servidor
 
 Si quieres introducir manualmente la contraseña inicial:
 
 ```sh
-php artisan sso:user persona@example.test --name="Persona de Nóminas" --client=ID_DE_NOMINAS
+php artisan sso:user persona@example.test --name="Usuario de ejemplo" --client=ID_DEL_CLIENTE
 ```
 
 Pide y confirma la contraseña en un **prompt oculto**. No existe opción `--password`
@@ -63,7 +63,7 @@ el máximo 72 bytes; se guarda sólo su hash. La salida muestra `SSO_SUBJECT`, e
 Si prefieres que la persona establezca su propia contraseña desde un enlace de correo:
 
 ```sh
-php artisan sso:user persona@example.test --name="Persona de Nóminas" --client=ID_DE_NOMINAS --send-reset
+php artisan sso:user persona@example.test --name="Usuario de ejemplo" --client=ID_DEL_CLIENTE --send-reset
 ```
 
 Necesita correo configurado. Crea la cuenta con un valor aleatorio descartado y envía
@@ -76,7 +76,7 @@ no adopta ni actualiza cuentas que ya existan con ese email. Para asignar una cu
 central existente, usa su ID, por ejemplo 7:
 
 ```sh
-php artisan sso:client-user ID_DE_NOMINAS 7
+php artisan sso:client-user ID_DEL_CLIENTE 7
 ```
 
 La asignación es idempotente. Puedes repetir `--client=...` en el alta para varios
@@ -85,7 +85,7 @@ sistemas, o ejecutar el comando de asignación por cada sistema.
 Para retirar un acceso:
 
 ```sh
-php artisan sso:client-user ID_DE_NOMINAS 7 --remove
+php artisan sso:client-user ID_DEL_CLIENTE 7 --remove
 ```
 
 Retira esa asignación y revoca sus tokens de ese sistema. No borra usuarios ni modifica
@@ -94,9 +94,9 @@ petición protegida; con política acotada se aplica su ventana de comprobación
 operación no envía logout back-channel: la comprobación remota y los tokens revocados
 hacen efectiva la denegación. Una petición ya autorizada puede terminar.
 
-## 4. Configura Nóminas como cliente
+## 4. Configura la aplicación cliente
 
-En la aplicación Nóminas, instala el paquete y responde issuer, callback, ID y secreto:
+En el proyecto cliente, instala el paquete y responde issuer, callback, ID y secreto:
 
 ```sh
 composer require laravel-sso/client:0.1.x-dev laravel-sso/contracts:0.1.x-dev
@@ -104,15 +104,16 @@ php artisan sso:install-client --configure --migrate
 php artisan sso:doctor
 ```
 
-Abre `https://nominas.test/sso/login`. Una cuenta asignada se autentica en Identidad y
-regresa a Nóminas. En greenfield se crea su registro local y vínculo al primer acceso;
+Abre `https://app.test/sso/login`. Una cuenta asignada se autentica en Identidad y
+regresa a la aplicación cliente. En greenfield se crea su registro local y vínculo al primer acceso;
 no necesita fábrica propia ni comando de vinculación. Otro usuario central sin esa
 asignación no obtiene acceso, aunque tenga contraseña válida.
 
-### Tu Nóminas actual ya tiene un usuario
+### Aplicaciones con usuarios locales existentes
 
-Puedes conservarlo con su ID, contraseña y relaciones. Crea su cuenta central y asígnala
-al sistema. Después **verifica una vez** que representan a la misma persona y, en Nóminas:
+Una cuenta local existente conserva su ID, contraseña y relaciones. Crea o selecciona
+su cuenta central y asígnala a la aplicación. **Verifica que ambas cuentas representan
+a la misma persona** y ejecuta en el proyecto cliente:
 
 ```sh
 php artisan sso:link-user 1 7
@@ -125,7 +126,7 @@ email linking automático. En clientes nuevos este paso no existe.
 
 ## Registro público opcional
 
-Tu flujo manual funciona con el valor predeterminado:
+El alta administrativa funciona con el registro público cerrado, valor predeterminado:
 
 ```dotenv
 SSO_SERVER_REGISTRATION=closed
@@ -215,13 +216,14 @@ el esquema de users. Las siete tablas anteriores conservan sus definiciones exis
 
 Una base que ya registró la migración inicial no recibe esos cambios al copiar archivos
 ni al repetir `migrate`. Necesita un procedimiento revisado y respaldado que adapte
-sólo el esquema SSO. El doctor detecta el faltante. No se ha aplicado ese procedimiento
-a tus bases originales ni se ofrece `migrate:fresh` como actualización.
+sólo el esquema SSO. El doctor detecta el faltante. El instalador no convierte automáticamente
+esquemas antiguos; `migrate:fresh` no es un procedimiento de actualización.
 
 Las filas antiguas conservan la política abierta por compatibilidad (`restrict_users=false`);
 las aplicaciones creadas ahora con `sso:client` quedan restringidas por defecto. Para
 adoptar la asignación en una aplicación antigua, prepara primero sus membresías y activa
-su política en una operación controlada del esquema/administración SSO. La configuración
+`restrictUsers: true` mediante `ManagesClients::update()` o `sso:client-update UUID --restrict-users=1`.
+Ese cambio invalida sus códigos y tokens, como cualquier edición efectiva. La configuración
 copiada se conserva: incorpora las opciones nuevas que decidas usar.
 
 ## Evidencia

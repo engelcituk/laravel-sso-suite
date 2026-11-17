@@ -47,7 +47,7 @@ según el despliegue. [Instalación y ejemplos completos](INSTALL-CLIENT.md).
 
 [Run 44007989216 de main](https://github.com/engelcituk/laravel-sso-suite/actions/runs/44007989216),
 commit `249ca73178df67c1804cfd1c0ef5e1ca298d547e`, **14/14 trabajos aprobados**.
-UTC 2026-11-17 03:07:58–03:10:47; 16 de noviembre 22:07:58–22:10:47 en Cancún.
+UTC 2026-11-17 03:07:58–03:10:47; 16 de noviembre 22:07:58–22:10:47 en UTC−05:00.
 Los catorce logs de esta ejecución se revisaron por separado. No aparecieron fallos ni
 advertencias del runner y no hicieron falta correcciones adicionales para la integración.
 Los timestamps se conservan tal como los informa GitHub. La actualización de este informe

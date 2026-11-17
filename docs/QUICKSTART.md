@@ -1,21 +1,24 @@
 # Guía rápida: de Laravel limpio a SSO
 
-**Identidad autentica. Ventas conserva sus usuarios y permisos.** Puedes usar Laravel
+**El servidor de identidad autentica. El cliente conserva sus usuarios y permisos.** Puedes usar Laravel
 sin starter kit, Blade, Vue, React o Inertia. El paquete no instala un frontend.
 
 El recorrido principal parte de **dos proyectos Laravel nuevos**: Identidad nace como
-servidor central y Ventas como cliente. Las notas para proyectos existentes son opcionales.
+servidor central y el segundo proyecto actúa como cliente. Las notas para proyectos existentes son opcionales.
 Los paquetes agregan capacidades a esos proyectos; su CRUD y frontend siguen siendo
-tuyos. Puedes [crear sistemas desde tus controladores](CLIENT-REGISTRATION-SERVICE.md)
+tuyos. Puedes [gestionar aplicaciones desde tus controladores](CLIENT-REGISTRATION-SERVICE.md)
 con el mismo servicio que usa Artisan, sin instalar un panel administrativo.
-La cuenta central la administra Identidad. **Ventas puede comenzar con `users` vacía:**
+La cuenta central la administra Identidad. **El cliente puede comenzar con `users` vacía:**
 el primer login SSO válido crea y vincula automáticamente su cuenta local. No necesitas
 una fábrica propia ni ejecutar `sso:link-user` para una persona nueva.
 
 | Dónde ejecutas los comandos | Qué instalas | URL de ejemplo |
 | --- | --- | --- |
 | Laravel nuevo dedicado a identidad | `laravel-sso/server` | `https://identidad.test` |
-| Cada proyecto cliente nuevo | `laravel-sso/client` | `https://ventas.test` |
+| Cada proyecto cliente nuevo | `laravel-sso/client` | `https://app.test` |
+
+Estos dominios son ejemplos. Configura su resolución y certificados HTTPS para el
+entorno local, o sustitúyelos por tus dominios en todos los comandos y callbacks.
 
 Requisitos: Laravel 13, PHP 8.3+, Composer 2, DB y Auth con proveedor Eloquent y
 SessionGuard. En una instalación limpia, prepara primero su `.env`, APP_KEY y tablas
@@ -29,13 +32,13 @@ ahora, configura Composer con tu copia del repositorio. No hace falta publicar u
 
 ## 1. Permite que Composer encuentre los paquetes
 
-En el `composer.json` de Identidad y de Ventas, agrega este objeto a `repositories`.
+En el `composer.json` de cada proyecto, agrega este objeto a `repositories`.
 Si no existe esa propiedad, crea `"repositories": [ ... ]`. Conserva el resto del archivo.
 
 ```json
 {
     "type": "path",
-    "url": "C:/laragon/www/laravel-sso/packages/*",
+    "url": "../laravel-sso-suite/packages/*",
     "options": {
         "versions": {
             "laravel-sso/server": "0.1.x-dev",
@@ -46,7 +49,19 @@ Si no existe esa propiedad, crea `"repositories": [ ... ]`. Conserva el resto de
 }
 ```
 
-Ajusta la ruta a tu checkout. No cambies `minimum-stability` global.
+El ejemplo supone esta distribución; el nombre de cada proyecto es libre:
+
+```text
+workspace/
+├── laravel-sso-suite/
+│   └── packages/
+├── identity-server/
+└── client-app/
+```
+
+La ruta es relativa al `composer.json` de cada aplicación. Ajústala si organizas las
+carpetas de otra manera; también puedes usar una ruta absoluta local. No cambies
+`minimum-stability` global.
 
 ## 2. Instala el servidor central — en Identidad
 
@@ -70,21 +85,21 @@ Si tu DB nueva está vacía, el paso 3 permite crear las personas desde el servi
 No se crean cuentas demo al instalar. Conserva las migraciones base de Laravel, incluida
 `password_reset_tokens`, para utilizar la recuperación central de contraseña.
 
-## 3. Registra Ventas — todavía en Identidad
+## 3. Registra la aplicación cliente — en Identidad
 
 ```sh
-php artisan sso:client "Ventas" https://ventas.test/sso/callback --first-party --backchannel=https://ventas.test/sso/backchannel-logout --trust-backchannel --post-logout=https://ventas.test/
+php artisan sso:client "Aplicación cliente" https://app.test/sso/callback --first-party --backchannel=https://app.test/sso/backchannel-logout --trust-backchannel --post-logout=https://app.test/
 ```
 
 Guarda el **SSO_CLIENT_ID** y **SSO_CLIENT_SECRET** que imprime. El secreto se muestra
-una vez y pertenece al backend de Ventas. `--first-party` omite consentimiento porque
+una vez y pertenece al backend del cliente. `--first-party` omite consentimiento porque
 es una aplicación tuya. `--trust-backchannel` autoriza exactamente ese destino de logout.
 
 Las aplicaciones nuevas sólo permiten cuentas centrales asignadas. Para crear y asignar
-una persona desde Identidad, sustituye `ID_DE_VENTAS` por el `SSO_CLIENT_ID` anterior:
+una persona desde Identidad, sustituye `ID_DEL_CLIENTE` por el `SSO_CLIENT_ID` anterior:
 
 ```sh
-php artisan sso:user persona@example.test --name="Persona de Ventas" --client=ID_DE_VENTAS
+php artisan sso:user persona@example.test --name="Usuario de ejemplo" --client=ID_DEL_CLIENTE
 ```
 
 Pide una contraseña inicial en un prompt oculto. También puedes añadir `--send-reset`
@@ -92,13 +107,13 @@ para enviar un enlace de establecimiento de contraseña si ya configuraste corre
 Si la cuenta central ya existe con ID 7, asígnala sin volver a crearla:
 
 ```sh
-php artisan sso:client-user ID_DE_VENTAS 7
+php artisan sso:client-user ID_DEL_CLIENTE 7
 ```
 
 El registro público queda cerrado por defecto. Login y recuperación están en
 `/sso/auth/login` y `/sso/auth/forgot-password`. [Flujo completo, correo y JSON](CENTRAL-ACCOUNTS.md).
 
-## 4. Instala el cliente — en Ventas
+## 4. Instala el paquete en el proyecto cliente
 
 ```sh
 composer require laravel-sso/client:0.1.x-dev laravel-sso/contracts:0.1.x-dev
@@ -110,7 +125,7 @@ Responde:
 | Pregunta | Respuesta |
 | --- | --- |
 | Identity server URL | `https://identidad.test` |
-| Public callback URL | `https://ventas.test/sso/callback` |
+| Public callback URL | `https://app.test/sso/callback` |
 | Client ID | El ID del paso 3 |
 | Client secret | El secreto del paso 3; no se muestra al escribirlo |
 
@@ -136,7 +151,7 @@ En `config/sso-client.php`, cambia únicamente el destino si deseas ir a ese pan
 'after_login' => '/panel',
 ```
 
-## 5. Comprueba el cliente — en Ventas
+## 5. Comprueba la conexión del cliente
 
 ```sh
 php artisan sso:doctor
@@ -144,7 +159,7 @@ php artisan sso:doctor
 
 La configuración nueva usa `provision=greenfield`. Puedes dejar `users` vacía: el callback
 creará una cuenta local y el vínculo `(issuer, subject)` juntos, después de validar OIDC.
-No necesitas crearla antes ni asignar permisos para que exista. Sus permisos los decide Ventas.
+No necesitas crearla antes ni asignar permisos para que exista. Sus permisos los decide el cliente.
 
 Se guarda sólo nombre, email y verificación de email cuando el servidor envía `true`.
 La columna `password` estándar recibe un hash de un valor aleatorio que se descarta;
@@ -158,7 +173,7 @@ No se vincula por coincidencia de email. Si instalaste una configuración antigu
 
 ## 6. Entra y cierra sesión
 
-Abre **`https://ventas.test/sso/login`**. Te lleva a Identidad y vuelve a Ventas como
+Abre **`https://app.test/sso/login`**. Te lleva a Identidad y vuelve a la aplicación cliente como
 su usuario local recién creado. Repite el login: debe conservar el mismo ID local y
 una sola vinculación. Para agregar otra aplicación, repite los pasos 3–5 con sus propias
 credenciales y URLs; creará su cuenta local al primer acceso.
@@ -194,7 +209,7 @@ conserva tu configuración de sesiones y no modifica APP_KEY ni DB. Comprueba es
 requisitos con los doctores. HTTP sólo para desarrollo con `--allow-http` en ambos
 instaladores; nunca en producción. No desactives la validación TLS.
 
-**Volver al Auth local de Ventas:** `SSO_CLIENT_ENABLED=false`, reconstruye configuración
+**Volver al Auth local del cliente:** `SSO_CLIENT_ENABLED=false`, reconstruye configuración
 y reinicia procesos persistentes. Exige login local nuevo. El paquete no proporciona
 login local a un cliente limpio: necesitarás el de tu aplicación si eliges ese modo.
 Una caída de Identidad no cambia el modo automáticamente.

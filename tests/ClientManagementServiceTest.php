@@ -27,7 +27,7 @@ final class ClientManagementServiceTest extends TestCase
 {
     private function create(bool $public = true, bool $firstParty = true): string
     {
-        return app(RegistersClients::class)->create(new ClientDefinition('Nominas ISR', 'https://one.test/callback',
+        return app(RegistersClients::class)->create(new ClientDefinition('Example client', 'https://one.test/callback',
             public: $public, firstParty: $firstParty, restrictUsers: false))->id;
     }
 
@@ -92,7 +92,7 @@ final class ClientManagementServiceTest extends TestCase
         DB::table('sso_client_users')->insert(['client_id' => $id, 'subject' => (string) $user->id]);
         config(['sso-server.backchannel_allowed_urls' => ['https://one.test/backchannel']]);
         $registry = app(ManagesClients::class);
-        $updated = $registry->update($id, new ClientChanges(name: 'ISR nuevo', redirectUri: 'https://one.test/new',
+        $updated = $registry->update($id, new ClientChanges(name: 'Updated client', redirectUri: 'https://one.test/new',
             firstParty: false, requirePkce: false, restrictUsers: true,
             backchannelLogoutUri: 'https://one.test/backchannel', postLogoutRedirectUri: 'https://one.test/done'));
         $this->assertFalse($updated->public);
@@ -106,7 +106,7 @@ final class ClientManagementServiceTest extends TestCase
         $cleared = $registry->update($id, new ClientChanges(backchannelLogoutUri: '', postLogoutRedirectUri: ''));
         $this->assertNull($cleared->backchannelLogoutUri);
         $this->assertSame([], $cleared->postLogoutRedirectUris);
-        $this->assertSame('ISR nuevo', $cleared->name);
+        $this->assertSame('Updated client', $cleared->name);
         $this->assertSame($attributes, $user->fresh()->getAttributes());
     }
 
@@ -155,7 +155,7 @@ final class ClientManagementServiceTest extends TestCase
         $id = $this->create();
         $token = $this->postJson('/oidc/token', $this->code($id))->assertOk()->json('access_token');
         Event::fake([AuditEvent::class]);
-        app(ManagesClients::class)->update($id, new ClientChanges(name: 'Nominas ISR'));
+        app(ManagesClients::class)->update($id, new ClientChanges(name: 'Example client'));
         $this->withToken($token)->getJson('/oidc/userinfo')->assertOk();
         Event::assertNotDispatched(AuditEvent::class);
     }
@@ -219,7 +219,7 @@ final class ClientManagementServiceTest extends TestCase
         } catch (\RuntimeException $error) {
             $this->assertSame('Host rollback', $error->getMessage());
         }
-        $this->assertSame('Nominas ISR', app(ManagesClients::class)->find($id)->name);
+        $this->assertSame('Example client', app(ManagesClients::class)->find($id)->name);
         $this->assertFalse(app(ManagesClients::class)->find($id)->revoked);
         $this->withToken($token)->getJson('/oidc/userinfo')->assertOk();
         Event::assertNotDispatched(AuditEvent::class);
@@ -250,7 +250,7 @@ final class ClientManagementServiceTest extends TestCase
             app(ManagesClients::class)->update($id, new ClientChanges(name: 'Must rollback'));
             $this->fail('Missing table accepted.');
         } catch (QueryException) {
-            $this->assertSame('Nominas ISR', app(ManagesClients::class)->find($id)->name);
+            $this->assertSame('Example client', app(ManagesClients::class)->find($id)->name);
         }
     }
 

@@ -1,40 +1,37 @@
-Laravel SSO Suite
-One identity. Multiple Laravel applications. Independent permissions.
-
-Open-source Single Sign-On solution for Laravel, providing centralized authentication through OAuth2/OpenID Connect, local user provisioning, application-specific authorization, and global session management.
-
 # Laravel SSO
 
-Bibliotecas para **extender aplicaciones Laravel anfitrionas** con funciones SSO.
-Tu proyecto conserva su Auth, modelos, CRUD, políticas y frontend. `server` y `client`
-identifican el papel que agregas a la aplicación, no aplicaciones independientes.
-Los [servicios públicos y el ejemplo para tu CRUD](docs/CLIENT-REGISTRATION-SERVICE.md)
-permiten crear, listar, editar y revocar clientes sin ejecutar Artisan desde un controlador.
+Paquetes para agregar **autenticación centralizada con OpenID Connect** a aplicaciones
+Laravel. Una aplicación actúa como servidor de identidad y las demás como clientes;
+cada cliente conserva sus usuarios locales, sus permisos y su base de datos.
+
+El proyecto anfitrión elige su frontend, Auth y administración. Los paquetes ofrecen
+servicios reutilizables y adaptadores HTTP/Artisan, sin exigir un starter kit, una
+biblioteca de permisos ni un panel administrativo. Funcionan con Blade, Vue, React e Inertia.
+
+**Estado experimental, pre-alpha.** Laravel 13, PHP 8.3–8.5 y Passport 13 en el servidor.
+El cliente no depende de Passport. Licencia MIT. Los nombres `laravel-sso/*` son
+provisionales y todavía no hay versiones publicadas en Packagist.
+
+## Empezar
 
 **Empieza aquí: [guía rápida — del servidor al cliente](docs/QUICKSTART.md).**
-Instalación con comandos Artisan, sin starter kit obligatorio y con una prueba final de login.
-También puedes ir directo a [instalar el servidor](docs/INSTALL-SERVER.md) o
-[instalar el cliente](docs/INSTALL-CLIENT.md).
+El recorrido prepara dos proyectos Laravel nuevos, registra una aplicación, crea una
+cuenta central y comprueba el primer login. Mientras no exista una versión publicada,
+la instalación utiliza un repositorio Composer `path` apuntando a una copia local.
 
-Para administrar todo desde Identidad —crear “Nóminas ISR”, sus cuentas y quién puede
-entrar— sigue [Sistemas, usuarios y recuperación central](docs/CENTRAL-ACCOUNTS.md).
-Incluye alta manual con Artisan, registro público opcional y recuperación por correo,
-con JSON y formularios opcionales. Las aplicaciones nuevas admiten sólo usuarios asignados.
+| Necesidad | Guía |
+| --- | --- |
+| Preparar el servidor de identidad | [Instalación del servidor](docs/INSTALL-SERVER.md) |
+| Conectar una aplicación cliente | [Instalación del cliente](docs/INSTALL-CLIENT.md) |
+| Crear cuentas y asignar acceso a aplicaciones | [Cuentas y acceso central](docs/CENTRAL-ACCOUNTS.md) |
+| Crear, listar, editar y revocar clientes desde un CRUD o Artisan | [Servicios de gestión de clientes](docs/CLIENT-REGISTRATION-SERVICE.md) |
+| Integrar un frontend o Auth propios | [Integración sin stack obligatorio](docs/STACK-AGNOSTIC.md) |
 
-**Enfoque principal: proyectos greenfield.** Un Laravel nuevo se prepara desde el inicio
-como servidor central; los demás proyectos nacen como clientes de ese servidor.
-La integración con aplicaciones existentes es compatibilidad adicional, no un requisito
-de adaptación universal. El frontend sigue siendo elección de cada proyecto.
-
-En el cliente, instalar y activar también requiere registrar la aplicación en el servidor,
-configurar sus credenciales. Con la configuración nueva, el primer login SSO válido
-crea y vincula la cuenta local automáticamente, incluso con `users` vacía, sin fábrica
-propia ni `sso:link-user`. Los siguientes logins reutilizan el vínculo sin cambiar la cuenta.
-Si un email ya pertenece a una cuenta sin vincular, se rechaza el alta; nunca se adopta por email.
-
-Monorepo **experimental, pre-alpha** de identidad centralizada para Laravel 13 y PHP 8.3+.
-Implementación OIDC original sobre la persistencia OAuth de Passport 13 y League OAuth2 Server.
-Licencia MIT. Nombres `laravel-sso/*` provisionales; **todavía no están publicados en Packagist**.
+El escenario principal son instalaciones nuevas (**greenfield**). En un cliente nuevo,
+el primer login SSO válido crea y vincula la cuenta local con el esquema Laravel
+convencional. Los siguientes logins reutilizan el vínculo sin sincronizar el perfil.
+Si el email ya pertenece a una cuenta local sin vincular, el acceso se rechaza: la
+vinculación de cuentas existentes requiere una verificación explícita del operador.
 
 Con SSO activo, el servidor autentica las cuentas centrales. Cada cliente conserva su
 usuario Eloquent y sus Gates/Policies; la vinculación `(iss, sub)` vive en tablas propias.
@@ -42,25 +39,27 @@ usuario Eloquent y sus Gates/Policies; la vinculación `(iss, sub)` vive en tabl
 el esquema de `users`, los usuarios existentes, sus contraseñas ni sus permisos. Consulta [integración de los dos modos](docs/INSTALL-CLIENT.md)
 y [resultados de la fase](docs/OPTIONAL-AUTH.md).
 El cliente no depende de Passport. No hay dependencias de frontend ni ACL obligatoria.
-El servidor funciona en un Laravel limpio: ofrece login opcional y backend JSON;
-si ya existe login del anfitrión, lo conserva. El cliente descubre el guard/modelo de Auth
+El servidor funciona en un Laravel limpio: ofrece login, registro y recuperación
+opcionales mediante formularios o JSON; el registro público está cerrado por defecto.
+Las aplicaciones nuevas exigen asignación explícita de cuentas centrales.
+Si ya existe login del anfitrión, el servidor lo conserva. El cliente descubre el guard/modelo de Auth
 e integra las rutas convencionales. Blade, Vue, React e Inertia pueden usar el mismo backend.
 [Guía detallada de stacks, proyectos nuevos y existentes](docs/STACK-AGNOSTIC.md) y
 [evidencia local de esta integración](docs/AGNOSTIC-VALIDATION.md).
 El [alta greenfield de primer login](docs/GREENFIELD-PROVISIONING.md) usa el modelo Laravel
 convencional, crea sólo cuentas nuevas y conserva las políticas explícitas de configuraciones anteriores.
 
-## Qué funciona y qué falta
+## Capacidades y estado
 
 Incluye Authorization Code + PKCE S256, consentimiento, discovery, JWKS con convivencia de
 claves, ID Tokens RS256, UserInfo, callback con state/nonce y aprovisionamiento configurable.
-El perfil Code admite GET/POST, nonce/state opcionales para RPs externos, query/form_post,
+El perfil Code admite GET/POST, nonce/state opcionales para clientes OIDC externos, query/form_post,
 prompts combinados, max_age, Basic y at_hash. Consulta [alcance de conformidad](docs/OIDC-CONFORMANCE.md)
 y [resultados reales](docs/OIDC-CONFORMANCE-RESULTS.md).
 Hay sesiones centrales con caducidad, comprobación remota con fallo cerrado, logout con
 confirmación, back-channel firmado y notificaciones durables con reintentos.
 
-La primera vertical está probada con tres aplicaciones y hosts independientes. No hay
+La integración está probada con tres aplicaciones y hosts independientes. No hay
 certificación OpenID, auditoría externa ni validación operativa para producción. Recordarme
 central, dispositivos, eventos de auditoría e instaladores/diagnósticos están implementados
 y probados, incluidas carreras en MySQL/PostgreSQL. El alcance y lo pendiente figuran en
@@ -126,7 +125,7 @@ repositorios Composer path. Los manifiestos de `examples/*` permiten instalacion
 aplicación; el laboratorio raíz reutiliza vendor sólo para facilitar las pruebas. Las bases,
 APP_KEY, sesiones y autorizaciones siguen siendo independientes.
 
-## Calidad
+## Calidad y documentación técnica
 
 ```sh
 composer validate --strict
@@ -136,21 +135,10 @@ composer analyse
 composer audit --locked
 ```
 
-[Guía de pruebas](docs/TESTING.md), [evidencia y pendientes](docs/ROADMAP.md),
-[matriz CI remota: seis trabajos aprobados con checkout actualizado](docs/CI-REMOTE.md),
-[compatibilidad ampliada: dependencias mínimas/últimas y cuatro perfiles SQL](docs/COMPATIBILITY.md),
-[concurrencia MySQL/PostgreSQL y retención](docs/DATABASE-CONCURRENCY.md),
-[Recordarme y dispositivos](docs/REMEMBER-DEVICES.md),
-[auditoría, instalación y diagnóstico](docs/AUDIT-OPERATIONS.md),
-[despliegues, navegadores cross-site y carga de 30 min](docs/DEPLOYMENT-VALIDATION.md),
-[preparación del piloto con OIDC repetido y ambos modos con cachés](docs/PILOT-PREPARATION.md),
-[cierre de Pint global y calidad en PHP 8.3/8.4/8.5](docs/FORMAT-QUALITY.md),
-[plan del piloto externo y revisión independiente](docs/EXTERNAL-PILOT-PLAN.md),
-[modelo de seguridad](docs/SECURITY-MODEL.md), [arquitectura](docs/ARCHITECTURE.md),
-[decisiones y fuentes](docs/DECISIONS.md), [Auth](docs/LARAVEL-AUTH.md),
-[ACL local](docs/LOCAL-ACL.md), [sesiones y logout](docs/SESSIONS.md),
-[despliegue](docs/DEPLOYMENT.md), [extensión](docs/EXTENDING.md) y
-[solución de problemas](docs/TROUBLESHOOTING.md).
+Consulta el [índice completo de documentación](docs/README.md), la
+[guía de pruebas](docs/TESTING.md) y el [roadmap con evidencias y pendientes](docs/ROADMAP.md).
+Los informes de CI, SQL, OIDC, navegadores y carga identifican las fuentes y fechas
+probadas; no acreditan automáticamente cambios posteriores.
 
 En Windows, si OpenSSL no encuentra su configuración, define `OPENSSL_CONF` con la ruta
 `extras/ssl/openssl.cnf` de tu PHP. Usa un binario PHP cuyas extensiones correspondan a su

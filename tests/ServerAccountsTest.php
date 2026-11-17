@@ -62,7 +62,7 @@ final class ServerAccountsTest extends TestCase
 
     private function application(bool $consent = false): Client
     {
-        $client = app(ClientRepository::class)->createAuthorizationCodeGrantClient('Nominas ISR', ['https://nominas.test/sso/callback'], true);
+        $client = app(ClientRepository::class)->createAuthorizationCodeGrantClient('Example client', ['https://app.test/sso/callback'], true);
         DB::table('sso_clients')->insert(['client_id' => $client->id, 'restrict_users' => true, 'auto_approve' => ! $consent]);
 
         return $client;
@@ -70,7 +70,7 @@ final class ServerAccountsTest extends TestCase
 
     private function authorization(GreenfieldUser $user, Client $client): string
     {
-        return '/oidc/authorize?'.http_build_query(['client_id' => $client->id, 'redirect_uri' => 'https://nominas.test/sso/callback',
+        return '/oidc/authorize?'.http_build_query(['client_id' => $client->id, 'redirect_uri' => 'https://app.test/sso/callback',
             'response_type' => 'code', 'scope' => 'openid profile email', 'state' => 'central-assignment', 'code_challenge_method' => 'S256',
             'code_challenge' => rtrim(strtr(base64_encode(hash('sha256', str_repeat('v', 64), true)), '+/', '-_'), '=')]);
     }
@@ -81,7 +81,7 @@ final class ServerAccountsTest extends TestCase
         parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $query);
 
         return ['grant_type' => 'authorization_code', 'client_id' => $client->id, 'client_secret' => $client->plainSecret,
-            'redirect_uri' => 'https://nominas.test/sso/callback', 'code' => $query['code'], 'code_verifier' => str_repeat('v', 64)];
+            'redirect_uri' => 'https://app.test/sso/callback', 'code' => $query['code'], 'code_verifier' => str_repeat('v', 64)];
     }
 
     private function resetNotification(string $email): CentralPasswordReset
@@ -261,7 +261,7 @@ final class ServerAccountsTest extends TestCase
 
     public function test_application_is_restricted_by_default_and_assignments_are_idempotent_without_user_updates(): void
     {
-        $this->assertSame(0, Artisan::call('sso:client', ['name' => 'Nominas ISR', 'redirect' => 'https://nominas.test/sso/callback']));
+        $this->assertSame(0, Artisan::call('sso:client', ['name' => 'Example client', 'redirect' => 'https://app.test/sso/callback']));
         $id = DB::table('sso_clients')->value('client_id');
         $this->assertTrue((bool) DB::table('sso_clients')->value('restrict_users'));
         $user = $this->account();

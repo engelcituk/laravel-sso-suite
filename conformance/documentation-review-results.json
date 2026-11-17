@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "phase": "documentation-and-generic-examples",
+  "checked_at_utc": "2026-11-17T19:20:43.7640940Z",
+  "status": "passed_local",
+  "base_commit": "55c84653d179439f0838ba800f68155c358e3894",
+  "source_state": "Local documentation and example-label changes; not a new remote CI run",
+  "scope": [
+    "Reviewed documentation navigation, examples, current contracts and historical evidence scope",
+    "Added a documentation index and aligned installation examples on generic applications and domains",
+    "Updated changelog, decisions, account/client administration and review-plan coverage",
+    "Replaced example labels and domains in three test classes and one HTTP fixture; no package runtime changes"
+  ],
+  "documentation_audit": {
+    "documents": 39,
+    "local_links": 287,
+    "json_examples": 2,
+    "fences_balanced": true,
+    "non_generic_example_references": 0,
+    "errors": []
+  },
+  "quality": {
+    "phpunit": {
+      "php": "8.3.36",
+      "tests": 56,
+      "assertions": 373,
+      "status": "passed",
+      "filter": "ClientRegistrationServiceTest|ClientManagementServiceTest|ServerAccountsTest"
+    },
+    "http": {
+      "checks": 53,
+      "status": "passed",
+      "independent_temporary_apps": true,
+      "private_log_mail_only": true,
+      "owned_servers_stopped": true
+    },
+    "pint": {
+      "scope": "global, fresh cache",
+      "status": "passed"
+    },
+    "git_whitespace": "passed"
+  },
+  "invariants": {
+    "package_runtime_unchanged": true,
+    "migration_definitions_unchanged": true,
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    },
+    "protected_original_files": 10,
+    "protected_originals_unchanged": true,
+    "existing_users_and_passwords_unchanged": true,
+    "historical_result_jsons_preserved": true,
+    "versions_published": false
+  },
+  "not_repeated": [
+    "Full PHPUnit matrix on PHP 8.3/8.4/8.5",
+    "SQL matrix",
+    "Larastan; package runtime and fixture types unchanged",
+    "Official OIDF campaign",
+    "Browser matrix",
+    "Load campaign",
+    "Remote CI",
+    "External pilot and independent review"
+  ],
+  "documents": [
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "0b9ae2f2c591ee3037672254923f09330e35d147e6665887da9a16297e7e3e4c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "88faba2c0516fc3ae7ec015c755a326af17ee17f9cf90051c8806c615b1ee09f"
+    },
+    {
+      "path": "README.md",
+      "sha256": "f928ea3910342cc6d5a0acde6b627c08d66213e8cf4a9ea95c2b386c2bcb5148"
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "3cf6950a979633e2837e4b3468214d18b06d5b1b2d23b37eb81129067a69d17f"
+    },
+    {
+      "path": "docs/AGNOSTIC-VALIDATION.md",
+      "sha256": "2428ec8bddfddaf53c5e84272a51463171b2b88e3c01b2046dbe5868454896d1"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "sha256": "779f47f651d3589ffb8b0499f2afe0c3bf26786a9686eb642dd31708d95cfa1c"
+    },
+    {
+      "path": "docs/AUDIT-OPERATIONS.md",
+      "sha256": "6a4826d9c0f1380bc2520432d0748af5df445666d8efb559a99f52b0f9fb63b5"
+    },
+    {
+      "path": "docs/CENTRAL-ACCOUNTS.md",
+      "sha256": "cfd617c133a28967f1e6de86e6c779ca8c1f930cf472fcda684151f1e5a06db1"
+    },
+    {
+      "path": "docs/CI-REMOTE.md",
+      "sha256": "3e2de18771e0141667668c8a8cbae9abf51f289376b28bbc807c093bc90ea744"
+    },
+    {
+      "path": "docs/CLIENT-REGISTRATION-SERVICE.md",
+      "sha256": "dd5d60a3bb88765db23e14f2f47d225020b02ddd48393b385d41c0b3b478167e"
+    },
+    {
+      "path": "docs/COMPATIBILITY.md",
+      "sha256": "0e782ce28074434cb623ceff5df4c81e78a3439b0b2699e2cf7c0428197cfbe4"
+    },
+    {
+      "path": "docs/DATABASE-CONCURRENCY.md",
+      "sha256": "b4f066e1c1a442d4276c5f73db999906f1477f106eb0329a75aefd28a2db73d1"
+    },
+    {
+      "path": "docs/DECISIONS.md",
+      "sha256": "fa8dd4e55c81129ed79b756bd317d80c92965e68f632047989980baab6dee6de"
+    },
+    {
+      "path": "docs/DEPLOYMENT-VALIDATION.md",
+      "sha256": "50b5e87fa459ad7bd2791a685e716e6c3ffc226cd39bf0b9cb89e6e0e8d02811"
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "sha256": "37d363175f2fd4f7de90d33ebd16f302c67d39ba90186c995bc3379c8c8fd1e3"
+    },
+    {
+      "path": "docs/EXTENDING.md",
+      "sha256": "46d402f7a022d37fb91b933aa0d7b0f8cf30463aa092a79652642124e179cbbe"
+    },
+    {
+      "path": "docs/EXTERNAL-PILOT-PLAN.md",
+      "sha256": "cb4d714027d592fd00afa17690efb47c9aab05f161e8a3469df93404fa90a4c0"
+    },
+    {
+      "path": "docs/FORMAT-QUALITY.md",
+      "sha256": "49dc6c36ca31ac9905d41c6a99cf6064b26261223fefd0f119e92a15984c34be"
+    },
+    {
+      "path": "docs/GREENFIELD-PROVISIONING.md",
+      "sha256": "acd982d44bc67cf224acb7e88c89036838e3b0aca5b6709e3ccc6169c710b3d1"
+    },
+    {
+      "path": "docs/INSTALL-CLIENT-REFERENCE.md",
+      "sha256": "6de3ab166cc6df4f4cf2fe413663a87a0f84a1363057469179884e91ea08e167"
+    },
+    {
+      "path": "docs/INSTALL-CLIENT.md",
+      "sha256": "4cee1561d823a1cb3163b3533f78a7f9e4629085fd6c92aade3d864991b5c657"
+    },
+    {
+      "path": "docs/INSTALL-SERVER-REFERENCE.md",
+      "sha256": "0a032f7cc72fa3d598b7cdb040cd7269a7c8ad0fe7ff6c5111db3fa1a5d4106b"
+    },
+    {
+      "path": "docs/INSTALL-SERVER.md",
+      "sha256": "2dea64188457e36ae13f430bb133eb6c851d5a13cf3e91a761e494526c4ea994"
+    },
+    {
+      "path": "docs/LARAVEL-AUTH.md",
+      "sha256": "4d8afb393f9cff182c6aa77570064337cbc092c8d43f3b43cff6533c411ee832"
+    },
+    {
+      "path": "docs/LOCAL-ACL.md",
+      "sha256": "ea8ba1bba5b6532706dde2d2fc3ab487e414dc6c83e6a5375c370b5c83dc8b58"
+    },
+    {
+      "path": "docs/OIDC-CONFORMANCE-RESULTS.md",
+      "sha256": "499e139a437d082b3e8e8a61478cb8f839def12c378584fb93f208b16ab1b1da"
+    },
+    {
+      "path": "docs/OIDC-CONFORMANCE.md",
+      "sha256": "de3de2bc4e0be66ee4c60ccabe01a7ba4cb3a1c9852ee9a3074270426b19115c"
+    },
+    {
+      "path": "docs/OIDF-WINDOWS-SETUP.md",
+      "sha256": "acc610082448327fd5f811d0e4c457fb60d7626ae8ef811367fa8c0761d401d5"
+    },
+    {
+      "path": "docs/OPTIONAL-AUTH.md",
+      "sha256": "46a432cfe8b6b2b63f08c6d0ee72cd123443fe55fe6c1c2c1fcf1d9114c5406b"
+    },
+    {
+      "path": "docs/PILOT-PREPARATION.md",
+      "sha256": "1c87d80b46b1226df965b24352174cd85abdcb0de6cd6a33c0f344518f8ac126"
+    },
+    {
+      "path": "docs/QUICKSTART.md",
+      "sha256": "7d3d2409a2be443220e4028aa588513d98a31942c5abe159d238058d38a532f2"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "44bd3b6212c2a1845e6676793a4c1b306b07df88ecc3706f322da312b4be0c2f"
+    },
+    {
+      "path": "docs/REMEMBER-DEVICES.md",
+      "sha256": "e3bc28e4ec8bc40e4b33bb2e1d996bb597d96e159efe15f6a23676619104e6a5"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "sha256": "92fca6240c14f0c707e1e2d667f3c904e7119439ec203bb6162340faa8b72f4b"
+    },
+    {
+      "path": "docs/SECURITY-MODEL.md",
+      "sha256": "204ba1d1c410b2a1d5369a2a1a46760d332f4a79d0c2aa6470354b5312809dd7"
+    },
+    {
+      "path": "docs/SESSIONS.md",
+      "sha256": "098a07d1df7f12f808ff5c02cabce1cafb83d25972010736c4d9b3bb10b1357c"
+    },
+    {
+      "path": "docs/STACK-AGNOSTIC.md",
+      "sha256": "d9b2b130c8cf06ad369dcc45809b04702ee5257e8b3a97461cc5ce43022697aa"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "sha256": "c45342818145f03d4b50d021eaedbfafc4ea91b038ad8a1d19dc36e8910450f3"
+    },
+    {
+      "path": "docs/TROUBLESHOOTING.md",
+      "sha256": "a510dbcc75b58ce81611d4e8e0ba6899bf30798aed651fa764f27f8ea7dbce4e"
+    }
+  ],
+  "example_sources": [
+    {
+      "path": "tests/ClientRegistrationServiceTest.php",
+      "sha256": "1587135ac3ff9169d86eaeb3499761a4264e3b400cbabf5da8449e07d3bb489f"
+    },
+    {
+      "path": "tests/ClientManagementServiceTest.php",
+      "sha256": "fbbeefde76d5962a4801530c0dbf9aa4be2d3fd5ef14ae074f868486482603e5"
+    },
+    {
+      "path": "tests/ServerAccountsTest.php",
+      "sha256": "ac3586a733d0d8e08efaac0dae892181c2ec2bcf225e0c436b36615a49b1ac24"
+    },
+    {
+      "path": "tools/agnostic-e2e.php",
+      "sha256": "24177d8530dfe2a71ec8c3be188b2e64f7dcd28fa09d0650c0d5e6c7b8068247"
+    }
+  ],
+  "evidence": [
+    {
+      "path": ".runtime/docs-review/audit-final.json",
+      "sha256": "2ff6c2b782f6fe0dc9e29c37de2fdbbf971585239733aefa5c022406b412c8c5"
+    },
+    {
+      "path": ".runtime/docs-review/tests.log",
+      "sha256": "76aee7fe9a4fc2134452d334204e6f25ed74f259e7727761326468ef361a8a36"
+    },
+    {
+      "path": ".runtime/docs-review/pint.json",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2"
+    },
+    {
+      "path": ".runtime/docs-review/invariants.json",
+      "sha256": "29bd192c503fe7e6ac0d1b1633163d2c3a9e34bef7e11bb84e79b18f60ab118d"
+    },
+    {
+      "path": ".runtime/agnostic-auth/live-20261117-191409-f16a52/result.json",
+      "sha256": "1515a2d9f874f035704a9c1c2cf822310119c0ae0e2378509590e028f9b45350"
+    }
+  ]
+}

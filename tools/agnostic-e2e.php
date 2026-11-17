@@ -272,7 +272,7 @@ PHP;
     $passwordSetup = bin2hex(random_bytes(20));
     $passwordReplacement = bin2hex(random_bytes(20));
     $assert($client->get($hosts['op'].'/sso/auth/register')->getStatusCode() === 404, 'public_registration_closed_by_default');
-    $invitation = fixtureArtisan($run.'/op', ['sso:user', $operatorEmail, '--name=Nominas operator', '--client='.$clientIds['fresh'], '--send-reset', '--no-interaction']);
+    $invitation = fixtureArtisan($run.'/op', ['sso:user', $operatorEmail, '--name=Example operator', '--client='.$clientIds['fresh'], '--send-reset', '--no-interaction']);
     preg_match('/SSO_SUBJECT=([^\r\n]+)/', $invitation, $subject);
     $assert(isset($subject[1]) && $subject[1] === '2', 'operator_creates_new_central_user_and_assigns_system_without_password_arguments');
     $latestReset = function () use ($run, $hosts): string {

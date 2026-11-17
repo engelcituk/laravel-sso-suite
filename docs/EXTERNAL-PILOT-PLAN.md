@@ -1,6 +1,6 @@
 # Plan del piloto externo y revisión independiente
 
-Fecha: 2026-11-17, Cancún. **Estado: plan preparado; ejecución y revisión pendientes.**
+Fecha: 2026-11-17, UTC−05:00. **Estado: plan preparado; ejecución y revisión pendientes.**
 Destino, operadores, revisor, ventanas y fecha de inicio están por asignar. Los tamaños,
 duraciones y umbrales indicados son una propuesta para concretar el piloto; no son
 resultados medidos ni garantías de capacidad. Se fijan antes de ejecutar, en G0.
@@ -12,8 +12,11 @@ anfitrión, navegadores comerciales y dispositivos físicos. La revisión indepe
 abarca servidor, cliente, contracts, persistencia, integración de Auth/ACL y operación.
 El resultado será una decisión documentada sobre ese destino y esa revisión del código.
 
-La base disponible es la [preparación local](PILOT-PREPARATION.md) y el
-[cierre de calidad](FORMAT-QUALITY.md). Sus informes conservan las huellas originales:
+La base disponible incluye la [preparación local](PILOT-PREPARATION.md), el
+[cierre de calidad](FORMAT-QUALITY.md) y la validación de
+[cuentas centrales](CENTRAL-ACCOUNTS.md), [alta greenfield](GREENFIELD-PROVISIONING.md)
+y [gestión pública de clientes](CLIENT-REGISTRATION-SERVICE.md).
+Sus informes conservan las huellas originales:
 las pruebas se deben reproducir sobre la instantánea que se entregue al revisor y se
 despliegue. Ningún resultado externo figura como ejecutado en este plan.
 
@@ -30,7 +33,8 @@ Restricciones de toda la campaña:
   que necesitan modificar credenciales se revisan estáticamente o en los fixtures
   efímeros de la suite, sin conexión a las bases del destino.
 - No publicar versiones, tags, releases, paquetes, imágenes ni resultados sensibles.
-  Tampoco enviar una solicitud de certificación o contactar revisores desde esta tarea.
+  La campaña no inicia un trámite de certificación; el encargo de revisión corresponde
+  al responsable designado en G0.
 
 La autenticación nativa puede tener listeners de último acceso, rehash automático o
 rotación de recaller que escriban en `users`. El operador debe identificar esos caminos
@@ -134,6 +138,11 @@ acordada en G0 y limita explícitamente el cierre; si un dispositivo forma parte
 destino declarado, su ausencia bloquea la aceptación de ese destino.
 Los resets de contraseña y la mutación de `is_active` se evalúan fuera del destino,
 mediante fixtures efímeros o revisión de la integración; no se ejecutan sobre sus cuentas.
+En ese espacio separado, el revisor debe repetir también el alta greenfield, el registro
+central y los contratos `RegistersClients`/`ManagesClients`: autorización del CRUD,
+lecturas sin secretos, validación, rollback, edición parcial, revocación y carreras
+con emisión. Debe conservar cuentas existentes y el acceso a otras aplicaciones.
+Esto valida las APIs actuales sin cambiar la restricción de cuentas del staging.
 
 P19 usa un fixture separado del revisor sobre el código candidato. Si los planes oficiales
 necesitan la excepción sin PKCE ya documentada para dos clientes confidenciales del
@@ -167,7 +176,7 @@ sus guardas `/app` y laboratorios desechables son deliberadas; adaptar un harnes
 | Revocación | Medir presupuesto `B = intervalo de caché + timeout HTTP + 2 s` de tolerancia instrumental; con strict/timeout 3 s, objetivo ≤ 5 s en procesos activos. Registrar carreras de solicitudes ya en curso; no prometer tiempo real bajo pausas de proceso |
 | Recuperación del OP | Salud y flujo autenticado recuperados en ≤ 120 s tras retirar el fallo, sin fallback local |
 | Drenaje tras pausa de worker | Cero pendientes de la cohorte de prueba en ≤ 120 s desde reanudación, con RP disponibles |
-| Fallos de entrega/reintentos | Entrega en el primer ciclo elegible tras recuperación, considerando `next_attempt_at`, reserva y capacidad pactada. No exigir drenaje inmediato si el backoff aún no vence; ninguna entrega descartada ni vencida sin alarma |
+| Fallos de entrega/reintentos | Entrega en el primer ciclo elegible tras recuperación, considerando `next_attempt`, reserva y capacidad pactada. No exigir drenaje inmediato si el backoff aún no vence; ninguna entrega descartada ni vencida sin alarma |
 | Recursos | Sin OOM, reinicios involuntarios, agotamiento de conexiones o crecimiento sostenido sin estabilización; presupuesto de CPU/RAM/DB y tendencia máxima fijados en G0 |
 
 Los 401/403/419/429/503 de negativos o fallos sólo son esperados cuando el caso y su
@@ -189,7 +198,7 @@ Cobertura de lectura y pruebas dirigidas:
 | Área | Foco de revisión |
 | --- | --- |
 | Protocolo y RP | P07/P08/P19, autenticación de cliente, errores, emisión/validación JWT, confianza en discovery/JWKS y rotación |
-| Integración del anfitrión | Rutas efectivas y cachés, listeners de Auth, guards, rehash/recaller, Gates/Policies, permisos de operadores de vínculos y revocación |
+| Integración del anfitrión | Rutas efectivas y cachés, listeners de Auth, guards, rehash/recaller, Gates/Policies, permisos de operadores de vínculos y gestión de clientes; registro, recuperación y alta greenfield en fixtures separados |
 | Persistencia | Restricciones/colaciones, propiedad del vínculo, aislamiento, reintentos, callbacks después de commit, reservas e idempotencia |
 | Superficie HTTP | CSRF, cookies, middleware, escape de vistas, límites de entrada, SSRF, proxies, fugas en logs y manejo de errores |
 | Operación y suministro | Instaladores/doctor, permisos de claves, secretos, lockfile/advisories, retención, despliegue y recuperación sin reabrir sesiones |
@@ -204,7 +213,7 @@ controles en la matriz; no declarar cumplimiento completo de un nivel sin evalua
 | --- | --- |
 | Acceso indebido, fuga de secretos o violación de las restricciones de cuentas/migraciones | Parada inmediata y bloqueo de cierre, cualquiera que sea la etiqueta de severidad |
 | Crítico/alto: toma de cuenta, cruce de identidad/ACL, replay explotable o revocación eludible | Cero abiertos; corregir y retest independiente antes de reanudar/cerrar |
-| Medio | Corregir; excepcionalmente, riesgo documentado con mitigación, responsable y fecha, aceptado por operador y revisor. No puede dispensar un criterio obligatorio ni una restricción del usuario |
+| Medio | Corregir; excepcionalmente, riesgo documentado con mitigación, responsable y fecha, aceptado por operador y revisor. No puede dispensar un criterio obligatorio ni una restricción de la campaña |
 | Bajo/informativo | Registrar, priorizar y asignar responsable; no ocultarlo en el resumen |
 
 Ante un bloqueo: detener generadores y acceso al staging, conservar evidencia privada,

@@ -1,5 +1,13 @@
 # Pruebas y evidencia
 
+La revisión editorial de los ejemplos conserva el comportamiento de los paquetes.
+Se verifican los 39 documentos Markdown, sus enlaces/anclas locales y ejemplos JSON.
+Los nombres y dominios genéricos de los fixtures pasan **56 pruebas / 373 aserciones**
+en PHP 8.3 y **53 controles HTTP**, además de Pint global con caché nueva.
+[Resumen de esta revisión](../conformance/documentation-review-results.json).
+No se repiten las matrices PHP/SQL, OIDF oficial, navegadores o carga para esos cambios
+de texto. Los informes siguientes conservan las fuentes y fechas de sus propias ejecuciones.
+
 La ampliación de [gestión de clientes](CLIENT-REGISTRATION-SERVICE.md) pasa **320 pruebas /
 1677 aserciones** en PHP 8.3/8.4/8.5. Añade **21 / 142** casos para listado, edición,
 revocación, CRUD con Gate, Artisan, secretos, rollback, conservación de cuentas y OIDC real.
@@ -175,7 +183,7 @@ y [JSON sin secretos](../conformance/deployment-results.json).
 Tras integrar la rama mediante fast-forward, GitHub Actions ejecutó la matriz en **main**,
 commit `7553a96`, Ubuntu 26.04.1: **seis trabajos aprobados**, run `43674756937`,
 2026-11-15 03:59:30–04:02:12 UTC (14 de noviembre en
-Cancún). Cada PHP 8.3.36/8.4.27/8.5.12 pasó 209 / 982 generales, 106 / 414 normativos,
+UTC−05:00). Cada PHP 8.3.36/8.4.27/8.5.12 pasó 209 / 982 generales, 106 / 414 normativos,
 Pint (137 archivos), Larastan, validate/install/audit y E2E. La consulta audit de esa
 ejecución no encontró avisos conocidos. MySQL 8.4.13 pasó 224 / 1055 y PostgreSQL 18.7
 224 / 1053; el trabajo de manifiestos también pasó.

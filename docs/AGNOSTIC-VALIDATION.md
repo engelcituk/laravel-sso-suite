@@ -6,8 +6,10 @@ resultados de esta página conservan el alcance y las huellas originales.
 
 2026-11-17. **El servidor funciona sin starter kit ni login previo; el cliente conserva
 Auth y el modelo del anfitrión.** Esta fase añade comportamiento y lo verifica en el
-workspace sobre `3ff3e589142bdf9cb00c26de2fb4a34da41c1874`. No se ha integrado, publicado
-ni ejecutado una nueva CI remota. [Resumen con hashes](../conformance/agnostic-auth-results.json).
+workspace sobre `3ff3e589142bdf9cb00c26de2fb4a34da41c1874`. En esa validación todavía no se
+habían integrado los cambios ni ejecutado una nueva CI remota. No se publicaron versiones.
+[Resumen con hashes](../conformance/agnostic-auth-results.json). Para el estado de la
+integración y sus ampliaciones consulta el [roadmap](ROADMAP.md).
 
 ## Cambios comprobados
 

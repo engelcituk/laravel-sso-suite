@@ -8,6 +8,8 @@ de interfaz/ACL al núcleo. Mantén independientes los paquetes cliente y servid
 Documenta cualquier API Bridge no garantizada y comprueba el intercambio real de códigos.
 No añadas claims, grants o metadatos discovery que no estén implementados y probados.
 No suprimas fallos de análisis con baseline. No uses fixtures con secretos de producción.
+Los ejemplos de documentación y pruebas deben usar aplicaciones, personas y dominios
+genéricos, sin datos de proyectos reales ni referencias a conversaciones de desarrollo.
 
 Las PR deben explicar problema, comportamiento resultante, validación y límites. Las fases
 se cierran sólo con evidencia. Sigue SemVer cuando exista la primera publicación; antes de

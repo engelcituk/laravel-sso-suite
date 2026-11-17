@@ -5,10 +5,10 @@ Este informe conserva la integración inicial en main. La matriz posterior de
 se integró y pasó en main. Corrige conflictos bajo PostgreSQL REPEATABLE READ.
 Ver [compatibilidad ampliada e integración](COMPATIBILITY.md).
 
-Verificación del 2026-11-14 en Cancún, **2026-11-15 03:59:30–04:02:12 UTC**.
+Verificación del 2026-11-14 en UTC−05:00, **2026-11-15 03:59:30–04:02:12 UTC**.
 El [run 43674756937, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43674756937)
 de **main** terminó con **seis trabajos aprobados y cero advertencias del runner**.
-Con autorización del usuario, `codex/ci-checkout-node24` se integró mediante fast-forward:
+La rama `codex/ci-checkout-node24` se integró mediante fast-forward:
 main avanzó de `7e5640c` a `7553a96`, sin conflictos ni reescritura de commits.
 Ese push activó una nueva matriz en main; se descargaron y revisaron sus seis logs.
 

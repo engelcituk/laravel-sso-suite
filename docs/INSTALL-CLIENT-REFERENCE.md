@@ -183,6 +183,6 @@ y columnas de propietario en `sso_local_sessions`) mediante un procedimiento de 
 controlado y respaldado, y vincula los usuarios existentes con `iss/sub` verificados.
 No ejecutes `migrate:fresh` sobre una aplicación con datos. Las antiguas columnas SSO de
 tu modelo pueden quedar sin uso; el paquete no las borra ni rellena contraseñas ausentes.
-Los ejemplos actualizados describen instalaciones nuevas; no se han reseteado tus bases.
+Los ejemplos describen instalaciones nuevas; una actualización conserva las bases existentes.
 
 [Contrato, resultados y límites del modo opcional](OPTIONAL-AUTH.md).
