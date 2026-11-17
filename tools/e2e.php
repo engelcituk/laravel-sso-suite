@@ -125,7 +125,9 @@ try {
         check(! in_array('sso_issuer', $columns, true) && ! in_array('sso_subject', $columns, true), 'RP user schema is coupled to SSO.');
         $stored = $db->prepare('SELECT password FROM users WHERE id IN (SELECT user_id FROM sso_identities WHERE issuer=? AND subject=?)');
         $stored->execute(['http://127.0.0.1:9100', $subject]);
-        check(! password_verify($password, (string) $stored->fetchColumn()), 'Central password was copied to a client.');
+        $storedPassword = (string) $stored->fetchColumn();
+        $stored->closeCursor();
+        check(! password_verify($password, $storedPassword), 'Central password was copied to a client.');
     }
     $remembered = $jar->getCookieByName('sso_remember');
     check($remembered !== null && $remembered->getHttpOnly() && $remembered->getDomain() === '127.0.0.1', 'Host-only remembered cookie missing.');
