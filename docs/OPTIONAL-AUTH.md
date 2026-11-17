@@ -1,8 +1,9 @@
 # SSO opcional y Auth local
 
-Implementado en `codex/optional-client-auth`, sin integrar en main ni publicar versiones.
-La subida de esta rama y la ejecución de CI fueron autorizadas expresamente. Main
-permanece en `848b35cce1eaaa7a20afbd246c9b263a81cbde3b`.
+Integrado en **main** desde `codex/optional-client-auth` mediante fast-forward autorizado,
+de `848b35cce1eaaa7a20afbd246c9b263a81cbde3b` a
+`249ca73178df67c1804cfd1c0ef5e1ca298d547e`, sin conflictos ni reescribir commits.
+Se conserva la rama de origen. No se publicaron tags, releases ni versiones.
 
 ## Comportamiento
 
@@ -34,11 +35,20 @@ según el despliegue. [Instalación y ejemplos completos](INSTALL-CLIENT.md).
 
 ## Resultados ejecutados
 
-[Run 43991616405](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43991616405),
-commit `b3851411fcb8862f09bcc5ce7d752a60d552d413`, **14/14 trabajos aprobados**.
-UTC 2026-11-17 00:56:05–00:57:59; 16 de noviembre 19:56:05–19:57:59 en Cancún.
-Los timestamps se conservan tal como los informa GitHub. El informe se incorpora en
-un commit posterior de documentación, que activa su propia CI.
+[Run 44007989216 de main](https://github.com/engelcituk/laravel-sso-suite/actions/runs/44007989216),
+commit `249ca73178df67c1804cfd1c0ef5e1ca298d547e`, **14/14 trabajos aprobados**.
+UTC 2026-11-17 03:07:58–03:10:47; 16 de noviembre 22:07:58–22:10:47 en Cancún.
+Los catorce logs de esta ejecución se revisaron por separado. No aparecieron fallos ni
+advertencias del runner y no hicieron falta correcciones adicionales para la integración.
+Los timestamps se conservan tal como los informa GitHub. La actualización de este informe
+es posterior al commit probado y activa otra CI en main.
+
+Antes de integrar pasaron los runs de rama
+[43991616405](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43991616405)
+(`b385141`, corrección) y
+[43993055348](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43993055348)
+(`249ca73`, documentación), ambos 14/14. Esas ejecuciones conservan su alcance histórico;
+la tabla siguiente corresponde a la nueva ejecución en main.
 
 | Evaluación remota | Resultado real |
 | --- | --- |
@@ -104,5 +114,6 @@ Las fábricas y listeners son código del anfitrión; controla sus privilegios y
 
 No se repitieron la suite oficial OIDF, los navegadores cross-site ni la campaña de carga
 de 30 minutos para este cambio. Sus informes históricos conservan sus commits/huellas.
-No hay certificación ni evaluación externa. La siguiente acción posible es revisar e
-integrar esta rama con autorización y repetir CI en main; esta fase no la integra.
+No hay certificación ni evaluación externa. La integración en main no cambia ese alcance.
+La siguiente fase posible es un piloto en un entorno concreto de destino y una revisión
+independiente; publicar versiones sigue requiriendo autorización expresa.

@@ -9,23 +9,25 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | 1 fundamento | base local y CI remota verificadas | compatibilidad ampliada integrada en main, 14/14: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
-| 4 identidad local | modo opcional implementado y validado en rama | SSO_CLIENT_ENABLED, tablas propias sin tocar users/passwords, 18 casos nuevos y CI 14/14; aún no integrado en main |
+| 4 identidad local | modo opcional integrado y verificado en main | SSO_CLIENT_ENABLED, tablas propias sin tocar users/passwords, 18 casos nuevos y CI de integración 14/14 |
 | 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
 | 6 instalación | despliegues y operación local verificados | Nginx/FPM/MySQL y Apache/PHP/PostgreSQL optimizados, 60 controles de navegador y campaña de 30 min; otros entornos/piloto externo fuera de alcance |
 | 7 publicación | pendiente | calidad local y matriz remota aprobadas; faltan auditoría/certificación externa y autorización para publicar versiones |
 
 ## Resultados ejecutados
 
-- **Modo SSO/Auth local en `codex/optional-client-auth`**: run `43991616405`, commit
-  `b385141`, **14/14 trabajos aprobados**, UTC 2026-11-17 00:56:05–00:57:59
-  (16 de noviembre 19:56:05–19:57:59 en Cancún). Nueve perfiles PHP/dependencias:
+- **Modo SSO/Auth local en main**: run `44007989216`, commit
+  `249ca73`, **14/14 trabajos aprobados**, UTC 2026-11-17 03:07:58–03:10:47
+  (16 de noviembre 22:07:58–22:10:47 en Cancún). Nueve perfiles PHP/dependencias:
   **230 / 1076** generales y **106 / 414** normativos, E2E real y audit aprobados.
   Cuatro perfiles SQL: **246 / 1152** MySQL y **246 / 1150** PostgreSQL, ambos aislamientos.
   Pint (147 archivos), Larastan y manifiestos aprobados; cero advertencias del runner.
   Se corrigieron la lectura de propietario bajo MySQL REPEATABLE READ y un cursor SQLite
   del E2E que bloqueaba el back-channel. Se conservan los intentos fallidos.
-  Una migración por paquete; cliente con tres tablas propias. Main sigue en `848b35c`.
-  Sólo se subió la rama autorizada, sin merge ni versiones. [Contrato y evidencia](OPTIONAL-AUTH.md).
+  Una migración por paquete; cliente con tres tablas propias. Integración autorizada de
+  `codex/optional-client-auth` por fast-forward, de `848b35c` a `249ca73`, sin conflictos.
+  Se conservan la rama y sus runs previos 14/14; no se alteraron bases locales ni se
+  publicaron versiones. [Contrato y evidencia](OPTIONAL-AUTH.md).
 - Compatibilidad ampliada en **main**: **14/14 trabajos aprobados** en `3f55235`, run `43680036096`,
   UTC 2026-11-15 05:12:00–05:14:44 (00:12:00–00:14:44 en Cancún).
   Nueve combinaciones PHP/dependencias: **212 / 994** generales y **106 / 414** normativos
@@ -139,9 +141,9 @@ de los cinco planes OIDC y sus evidencias históricas. La compatibilidad ampliad
 atendida e integrada en main, con su matriz remota aprobada. El destino y retención de auditoría se configuran
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
-El modo opcional también queda implementado y probado en su rama, con guías actualizadas.
-La siguiente acción posible es revisar e integrar `codex/optional-client-auth` en main
-cuando se autorice, repitiendo su CI. Las bases existentes requieren adaptar sólo el esquema
+El modo opcional queda integrado en main mediante fast-forward autorizado y conserva
+sus guías y evidencias de pruebas. La siguiente fase posible es un piloto externo con
+un destino concreto y revisión independiente. Las bases existentes requieren adaptar sólo el esquema
 propio mediante un procedimiento controlado; la migración inicial consolidada no se
 reaplica sola. No se modificaron tus bases de ejemplos ni se eliminaron credenciales.
 

@@ -1,7 +1,7 @@
 # Pruebas y evidencia
 
-Estado del modo opcional: [run 43991616405](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43991616405),
-`b385141`, rama `codex/optional-client-auth`, **14/14 trabajos aprobados**. Por cada uno
+Estado del modo opcional: [run 44007989216](https://github.com/engelcituk/laravel-sso-suite/actions/runs/44007989216),
+`249ca73`, integrado en **main** por fast-forward autorizado, **14/14 trabajos aprobados**. Por cada uno
 de los nueve perfiles PHP 8.3/8.4/8.5 × locked/lowest/latest: **230 pruebas / 1076 aserciones**,
 **106 / 414** normativas y E2E real aprobados. MySQL: **246 / 1152** por aislamiento;
 PostgreSQL: **246 / 1150**, READ COMMITTED y REPEATABLE READ. Pint (147 archivos) y Larastan
