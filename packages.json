@@ -15,15 +15,15 @@
                     }
                 },
                 "version": "0.1.x-dev",
-                "time": "2026-11-17T19:22:15+00:00",
+                "time": "2026-11-17T20:05:59+00:00",
                 "dist": {
                     "type": "zip",
-                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/contracts.zip",
-                    "reference": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
-                    "shasum": "4868360adb174a171ce3ae1603986ac0fbb5ee08"
+                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/a82ed7c6d79a33f608ba0afbef67f2dbd6260388/dist/1a9c293f27bab978f0c6935da3fcb21e30499908/contracts.zip",
+                    "reference": "1a9c293f27bab978f0c6935da3fcb21e30499908",
+                    "shasum": "7960952f8d457741ec0d6a4a91049d55f238e1a8"
                 },
                 "support": {
-                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/fba4d6fa7446e0e52adcd92048b603a02f5357f7/packages/contracts"
+                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/1a9c293f27bab978f0c6935da3fcb21e30499908/packages/contracts"
                 }
             }
         },
@@ -57,15 +57,15 @@
                     }
                 },
                 "version": "0.1.x-dev",
-                "time": "2026-11-17T19:22:15+00:00",
+                "time": "2026-11-17T20:05:59+00:00",
                 "dist": {
                     "type": "zip",
-                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/server.zip",
-                    "reference": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
-                    "shasum": "f0ccb2ec356cc5647be5d80b83877fbe781218c0"
+                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/a82ed7c6d79a33f608ba0afbef67f2dbd6260388/dist/1a9c293f27bab978f0c6935da3fcb21e30499908/server.zip",
+                    "reference": "1a9c293f27bab978f0c6935da3fcb21e30499908",
+                    "shasum": "df2358e320391535517da6ee2091db15e1fc12b9"
                 },
                 "support": {
-                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/fba4d6fa7446e0e52adcd92048b603a02f5357f7/packages/server"
+                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/1a9c293f27bab978f0c6935da3fcb21e30499908/packages/server"
                 }
             }
         },
@@ -98,15 +98,15 @@
                     }
                 },
                 "version": "0.1.x-dev",
-                "time": "2026-11-17T19:22:15+00:00",
+                "time": "2026-11-17T20:05:59+00:00",
                 "dist": {
                     "type": "zip",
-                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08/dist/fba4d6fa7446e0e52adcd92048b603a02f5357f7/client.zip",
-                    "reference": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
-                    "shasum": "769ca88038466d012ebe057fb2fc5053aaacc36d"
+                    "url": "https://raw.githubusercontent.com/engelcituk/laravel-sso-suite/a82ed7c6d79a33f608ba0afbef67f2dbd6260388/dist/1a9c293f27bab978f0c6935da3fcb21e30499908/client.zip",
+                    "reference": "1a9c293f27bab978f0c6935da3fcb21e30499908",
+                    "shasum": "ac2b7866caa842c7a8891893d0375f9febb47e49"
                 },
                 "support": {
-                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/fba4d6fa7446e0e52adcd92048b603a02f5357f7/packages/client"
+                    "source": "https://github.com/engelcituk/laravel-sso-suite/tree/1a9c293f27bab978f0c6935da3fcb21e30499908/packages/client"
                 }
             }
         }

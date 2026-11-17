@@ -1,6 +1,6 @@
 # Laravel SSO Composer distribution
 
-Development packages from source commit `fba4d6fa7446e0e52adcd92048b603a02f5357f7`. No tags or releases.
+Development packages from source commit `1a9c293f27bab978f0c6935da3fcb21e30499908`. No tags or releases.
 
 Configure your Laravel host:
 
@@ -20,4 +20,4 @@ Client:
 composer require laravel-sso/client:0.1.x-dev laravel-sso/contracts:0.1.x-dev --prefer-dist
 ```
 
-Archives are pinned to commit `f7a0636b3c73575cf82e5efd9b2f0a25f74bcb08`; keep composer.lock in your application.
+Archives are pinned to commit `a82ed7c6d79a33f608ba0afbef67f2dbd6260388`; keep composer.lock in your application.
