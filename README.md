@@ -5,10 +5,21 @@ Open-source Single Sign-On solution for Laravel, providing centralized authentic
 
 # Laravel SSO
 
+Bibliotecas para **extender aplicaciones Laravel anfitrionas** con funciones SSO.
+Tu proyecto conserva su Auth, modelos, CRUD, políticas y frontend. `server` y `client`
+identifican el papel que agregas a la aplicación, no aplicaciones independientes.
+Los [servicios públicos y el ejemplo para tu CRUD](docs/CLIENT-REGISTRATION-SERVICE.md)
+permiten crear, listar, editar y revocar clientes sin ejecutar Artisan desde un controlador.
+
 **Empieza aquí: [guía rápida — del servidor al cliente](docs/QUICKSTART.md).**
 Instalación con comandos Artisan, sin starter kit obligatorio y con una prueba final de login.
 También puedes ir directo a [instalar el servidor](docs/INSTALL-SERVER.md) o
 [instalar el cliente](docs/INSTALL-CLIENT.md).
+
+Para administrar todo desde Identidad —crear “Nóminas ISR”, sus cuentas y quién puede
+entrar— sigue [Sistemas, usuarios y recuperación central](docs/CENTRAL-ACCOUNTS.md).
+Incluye alta manual con Artisan, registro público opcional y recuperación por correo,
+con JSON y formularios opcionales. Las aplicaciones nuevas admiten sólo usuarios asignados.
 
 **Enfoque principal: proyectos greenfield.** Un Laravel nuevo se prepara desde el inicio
 como servidor central; los demás proyectos nacen como clientes de ese servidor.
@@ -16,9 +27,10 @@ La integración con aplicaciones existentes es compatibilidad adicional, no un r
 de adaptación universal. El frontend sigue siendo elección de cada proyecto.
 
 En el cliente, instalar y activar también requiere registrar la aplicación en el servidor,
-configurar sus credenciales y resolver su cuenta local. El flujo predeterminado usa una
-cuenta creada por el proyecto y un vínculo explícito; el alta automática requiere una
-fábrica del anfitrión. Una DB vacía no obtiene usuarios automáticamente al activar SSO.
+configurar sus credenciales. Con la configuración nueva, el primer login SSO válido
+crea y vincula la cuenta local automáticamente, incluso con `users` vacía, sin fábrica
+propia ni `sso:link-user`. Los siguientes logins reutilizan el vínculo sin cambiar la cuenta.
+Si un email ya pertenece a una cuenta sin vincular, se rechaza el alta; nunca se adopta por email.
 
 Monorepo **experimental, pre-alpha** de identidad centralizada para Laravel 13 y PHP 8.3+.
 Implementación OIDC original sobre la persistencia OAuth de Passport 13 y League OAuth2 Server.
@@ -27,7 +39,7 @@ Licencia MIT. Nombres `laravel-sso/*` provisionales; **todavía no están public
 Con SSO activo, el servidor autentica las cuentas centrales. Cada cliente conserva su
 usuario Eloquent y sus Gates/Policies; la vinculación `(iss, sub)` vive en tablas propias.
 `SSO_CLIENT_ENABLED=false` permite continuar con Auth local. El paquete no modifica
-`users`, sus contraseñas ni sus permisos. Consulta [integración de los dos modos](docs/INSTALL-CLIENT.md)
+el esquema de `users`, los usuarios existentes, sus contraseñas ni sus permisos. Consulta [integración de los dos modos](docs/INSTALL-CLIENT.md)
 y [resultados de la fase](docs/OPTIONAL-AUTH.md).
 El cliente no depende de Passport. No hay dependencias de frontend ni ACL obligatoria.
 El servidor funciona en un Laravel limpio: ofrece login opcional y backend JSON;
@@ -35,6 +47,8 @@ si ya existe login del anfitrión, lo conserva. El cliente descubre el guard/mod
 e integra las rutas convencionales. Blade, Vue, React e Inertia pueden usar el mismo backend.
 [Guía detallada de stacks, proyectos nuevos y existentes](docs/STACK-AGNOSTIC.md) y
 [evidencia local de esta integración](docs/AGNOSTIC-VALIDATION.md).
+El [alta greenfield de primer login](docs/GREENFIELD-PROVISIONING.md) usa el modelo Laravel
+convencional, crea sólo cuentas nuevas y conserva las políticas explícitas de configuraciones anteriores.
 
 ## Qué funciona y qué falta
 

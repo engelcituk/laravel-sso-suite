@@ -5,9 +5,12 @@ sin starter kit, Blade, Vue, React o Inertia. El paquete no instala un frontend.
 
 El recorrido principal parte de **dos proyectos Laravel nuevos**: Identidad nace como
 servidor central y Ventas como cliente. Las notas para proyectos existentes son opcionales.
-Esta guía usa cuentas creadas por cada proyecto y vinculación explícita: instalar/activar
-el cliente no crea una cuenta local en una DB vacía. Los pasos 3 y 5 son necesarios
-para autorizar la aplicación y resolver la identidad, además de instalar el paquete.
+Los paquetes agregan capacidades a esos proyectos; su CRUD y frontend siguen siendo
+tuyos. Puedes [crear sistemas desde tus controladores](CLIENT-REGISTRATION-SERVICE.md)
+con el mismo servicio que usa Artisan, sin instalar un panel administrativo.
+La cuenta central la administra Identidad. **Ventas puede comenzar con `users` vacía:**
+el primer login SSO válido crea y vincula automáticamente su cuenta local. No necesitas
+una fábrica propia ni ejecutar `sso:link-user` para una persona nueva.
 
 | Dónde ejecutas los comandos | Qué instalas | URL de ejemplo |
 | --- | --- | --- |
@@ -18,7 +21,8 @@ Requisitos: Laravel 13, PHP 8.3+, Composer 2, DB y Auth con proveedor Eloquent y
 SessionGuard. En una instalación limpia, prepara primero su `.env`, APP_KEY y tablas
 base como en cualquier Laravel. **No necesitas instalar un starter kit ni agregar
 columnas a `users`.** Cada aplicación conserva su DB, APP_KEY y cookie independientes.
-Las cuentas las administra tu aplicación; el paquete no crea usuarios automáticamente.
+Identidad necesita cuentas centrales con email válido; puedes crearlas con `sso:user`.
+El cliente usa el esquema Laravel convencional: `name`, `email` único y `password`.
 
 El paquete sigue siendo experimental y no está publicado en Packagist. Para usarlo
 ahora, configura Composer con tu copia del repositorio. No hace falta publicar una versión.
@@ -62,8 +66,9 @@ Aparecerá el formulario opcional del paquete, que valida las cuentas existentes
 Laravel central. No exige `is_active`. Si ya hay una ruta `login`, utiliza esa ruta y
 su política, incluido su MFA. No reemplaza sus controladores.
 
-Si tu DB nueva está vacía, todavía debes dar de alta las personas mediante el proceso
-propio de tu aplicación. Instalar SSO no inventa cuentas ni contraseñas.
+Si tu DB nueva está vacía, el paso 3 permite crear las personas desde el servidor.
+No se crean cuentas demo al instalar. Conserva las migraciones base de Laravel, incluida
+`password_reset_tokens`, para utilizar la recuperación central de contraseña.
 
 ## 3. Registra Ventas — todavía en Identidad
 
@@ -74,6 +79,24 @@ php artisan sso:client "Ventas" https://ventas.test/sso/callback --first-party -
 Guarda el **SSO_CLIENT_ID** y **SSO_CLIENT_SECRET** que imprime. El secreto se muestra
 una vez y pertenece al backend de Ventas. `--first-party` omite consentimiento porque
 es una aplicación tuya. `--trust-backchannel` autoriza exactamente ese destino de logout.
+
+Las aplicaciones nuevas sólo permiten cuentas centrales asignadas. Para crear y asignar
+una persona desde Identidad, sustituye `ID_DE_VENTAS` por el `SSO_CLIENT_ID` anterior:
+
+```sh
+php artisan sso:user persona@example.test --name="Persona de Ventas" --client=ID_DE_VENTAS
+```
+
+Pide una contraseña inicial en un prompt oculto. También puedes añadir `--send-reset`
+para enviar un enlace de establecimiento de contraseña si ya configuraste correo.
+Si la cuenta central ya existe con ID 7, asígnala sin volver a crearla:
+
+```sh
+php artisan sso:client-user ID_DE_VENTAS 7
+```
+
+El registro público queda cerrado por defecto. Login y recuperación están en
+`/sso/auth/login` y `/sso/auth/forgot-password`. [Flujo completo, correo y JSON](CENTRAL-ACCOUNTS.md).
 
 ## 4. Instala el cliente — en Ventas
 
@@ -113,24 +136,32 @@ En `config/sso-client.php`, cambia únicamente el destino si deseas ir a ese pan
 'after_login' => '/panel',
 ```
 
-## 5. Vincula la misma persona — en Ventas
-
-Ejemplo: **7** es su ID central y **42** es su ID local en Ventas. Ambos usuarios deben
-existir; verifica que son la misma persona. No se enlazan automáticamente por email.
+## 5. Comprueba el cliente — en Ventas
 
 ```sh
-php artisan sso:link-user 42 7
 php artisan sso:doctor
 ```
 
-El vínculo queda en `sso_identities`; no cambia `users`, contraseña, ID, perfil ni permisos.
-Si personalizas el identificador central, usa su `getAuthIdentifier()` como segundo argumento.
+La configuración nueva usa `provision=greenfield`. Puedes dejar `users` vacía: el callback
+creará una cuenta local y el vínculo `(issuer, subject)` juntos, después de validar OIDC.
+No necesitas crearla antes ni asignar permisos para que exista. Sus permisos los decide Ventas.
+
+Se guarda sólo nombre, email y verificación de email cuando el servidor envía `true`.
+La columna `password` estándar recibe un hash de un valor aleatorio que se descarta;
+no se copia la contraseña central ni se entrega una contraseña local. Las cuentas y
+contraseñas existentes no se modifican. Un login posterior no sincroniza el perfil.
+
+**Si el correo ya existe sin vínculo**, el login se rechaza. Sólo después de verificar
+que es la misma persona puedes usar `sso:link-user ID_LOCAL SUJETO_CENTRAL`.
+No se vincula por coincidencia de email. Si instalaste una configuración antigua con
+`restricted`, se conserva: selecciona explícitamente `greenfield` para este flujo.
 
 ## 6. Entra y cierra sesión
 
 Abre **`https://ventas.test/sso/login`**. Te lleva a Identidad y vuelve a Ventas como
-el usuario local 42. Para agregar otra aplicación, repite los pasos 3–5 con sus propias
-credenciales, URLs y vínculo.
+su usuario local recién creado. Repite el login: debe conservar el mismo ID local y
+una sola vinculación. Para agregar otra aplicación, repite los pasos 3–5 con sus propias
+credenciales y URLs; creará su cuenta local al primer acceso.
 
 Blade:
 
@@ -178,7 +209,8 @@ cachés de configuración y rutas; reconstruye `route:cache` al terminar la inst
 | --- | --- |
 | 404 en `/sso/login` | Flag cliente activo y configuración actualizada |
 | Cuenta central rechazada | Credenciales del servidor; si configuraste `active_column`, debe existir y ser verdadera |
-| Identity has not been linked | Vínculo local, issuer y sujeto central del paso 5 |
+| Identity has not been linked | Configuración antigua en restricted; elegir greenfield para altas nuevas o vincular una cuenta existente verificada |
+| Primer login rechazado en greenfield | Email central válido, esquema convencional con email único y ausencia de una cuenta local con ese email sin vincular |
 | Ruta de login personalizada sigue abierta | Configura `local_auth_routes`/`local_auth_paths` o usa `sso.local` |
 | Error de URL permitida tras actualizar | Una configuración antigua se conserva; compara sus claves con la configuración nueva |
 | 419 | CSRF y cookies de la aplicación que recibe el POST |

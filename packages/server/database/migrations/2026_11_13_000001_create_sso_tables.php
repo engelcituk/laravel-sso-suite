@@ -12,8 +12,17 @@ return new class extends Migration
             $table->uuid('client_id')->primary();
             $table->boolean('auto_approve')->default(false);
             $table->boolean('require_pkce')->default(true);
+            $table->boolean('restrict_users')->default(false);
             $table->text('post_logout_redirect_uris')->nullable();
             $table->text('backchannel_logout_uri')->nullable();
+        });
+        Schema::create('sso_client_users', function (Blueprint $table): void {
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                $table->collation('utf8mb4_bin');
+            }
+            $table->uuid('client_id');
+            $table->string('subject');
+            $table->primary(['client_id', 'subject']);
         });
         Schema::create('sso_sessions', function (Blueprint $table): void {
             if (Schema::getConnection()->getDriverName() === 'mysql') {
@@ -85,6 +94,7 @@ return new class extends Migration
         Schema::dropIfExists('sso_token_sessions');
         Schema::dropIfExists('sso_auth_contexts');
         Schema::dropIfExists('sso_sessions');
+        Schema::dropIfExists('sso_client_users');
         Schema::dropIfExists('sso_clients');
     }
 };

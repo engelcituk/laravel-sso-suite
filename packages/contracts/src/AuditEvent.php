@@ -8,10 +8,10 @@ namespace LaravelSso\Contracts;
 final readonly class AuditEvent implements \JsonSerializable
 {
     public const NAMES = [
-        'server' => ['auth.failed', 'auth.login', 'auth.password_reset', 'device.registered', 'device.revoked', 'device.renamed',
+        'server' => ['auth.failed', 'auth.login', 'auth.password_reset', 'auth.registered', 'client.user_granted', 'client.user_revoked', 'device.registered', 'device.revoked', 'device.renamed',
             'password.confirmed', 'password.rejected', 'password.required', 'remember.restored', 'remember.replayed', 'remember.expired',
             'session.created', 'session.revoked', 'code.issued', 'authorization.rejected', 'consent.approved', 'consent.denied',
-            'token.issued', 'token.rejected', 'token.replayed', 'logout.delivered', 'logout.retry', 'client.registered', 'keys.created'],
+            'token.issued', 'token.rejected', 'token.replayed', 'logout.delivered', 'logout.retry', 'client.registered', 'client.updated', 'client.revoked', 'keys.created'],
         'client' => ['identity.linked', 'identity.provisioned', 'identity.rejected', 'login.completed', 'login.rejected', 'logout.local',
             'logout.received', 'logout.duplicate', 'logout.rejected', 'session.denied'],
     ];

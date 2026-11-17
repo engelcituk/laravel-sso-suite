@@ -81,7 +81,7 @@ final class IdentityLinks
         });
     }
 
-    /** The factory belongs to the host; the package never inserts or updates its users. */
+    /** The selected factory creates a new owner atomically; established owners are never updated. */
     public function resolve(Identity $identity, ?callable $factory): Model&Authenticatable
     {
         return Transactions::run(function () use ($identity, $factory): Model&Authenticatable {

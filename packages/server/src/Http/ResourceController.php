@@ -6,6 +6,7 @@ namespace LaravelSso\Server\Http;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use LaravelSso\Server\ClientUsers;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\Protocol\BearerFailure;
 use LaravelSso\Server\Protocol\ClaimsRequest;
@@ -26,7 +27,7 @@ final class ResourceController
         }
         $binding = DB::table('sso_token_sessions')->where('token_id', $validated->getAttribute('oauth_access_token_id'))->first();
         $session = $binding ? $sessions->valid($binding->sid, true) : null;
-        if ($session === null) {
+        if ($session === null || ! app(ClientUsers::class)->allows($binding->client_id, $session->subject)) {
             throw new BearerFailure;
         }
         $user = $sessions->activeUser($session->subject);
@@ -48,6 +49,10 @@ final class ResourceController
         $validated = $this->validate($server, $request);
         $binding = DB::table('sso_token_sessions')->where('token_id', $validated->getAttribute('oauth_access_token_id'))->first();
         $session = $binding ? $sessions->valid($binding->sid, true) : null;
+
+        if ($session && ! app(ClientUsers::class)->allows($binding->client_id, $session->subject)) {
+            $session = null;
+        }
 
         return response()->json(['active' => $session !== null, 'sid' => $session?->sid, 'sub' => $session?->subject])
             ->header('Cache-Control', 'no-store');

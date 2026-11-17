@@ -18,9 +18,9 @@ return [
     'integrate_auth' => true,
     'local_auth_routes' => ['login', 'login.*', 'logout', 'register', 'register.*', 'password.*', 'two-factor.login', 'two-factor.login.*', 'verification.*'],
     'local_auth_paths' => ['login', 'logout', 'register', 'forgot-password', 'reset-password', 'reset-password/*', 'two-factor-challenge', 'email/verify', 'email/verify/*', 'email/verification-notification', 'user/confirm-password'],
-    'provision' => 'restricted', // automatic: create identities without privileges
+    'provision' => env('SSO_CLIENT_PROVISION', 'greenfield'), // greenfield: built-in new accounts; restricted: operator links; automatic: custom factory.
     // Prefer a cacheable invokable class name: __invoke(Identity): Authenticatable.
-    // Host-owned factory; never receives tokens/passwords. A callable is also supported.
+    // Used only by automatic mode; never receives tokens/passwords. A callable is also supported.
     'create_user' => null,
     'local_login_url' => '/login',
     'allowed' => null, // optional callable(Authenticatable, Identity): bool

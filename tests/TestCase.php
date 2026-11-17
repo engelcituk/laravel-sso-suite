@@ -55,6 +55,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('sso-client.client_id', '00000000-0000-4000-8000-000000000001');
         $app['config']->set('sso-client.guard', 'local');
         $app['config']->set('sso-client.user_model', LocalUser::class);
+        $app['config']->set('sso-client.provision', 'restricted'); // Existing-account laboratory; greenfield tests exercise the new default separately.
         $app['config']->set('sso-client.create_user', static fn (Identity $identity) => LocalUser::create(
             array_filter(array_intersect_key($identity->attributes, array_flip(['name', 'email'])), is_string(...))
             + ['password' => bcrypt('fixture-local-password')]));

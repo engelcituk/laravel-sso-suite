@@ -1,5 +1,55 @@
 # Pruebas y evidencia
 
+La ampliación de [gestión de clientes](CLIENT-REGISTRATION-SERVICE.md) pasa **320 pruebas /
+1677 aserciones** en PHP 8.3/8.4/8.5. Añade **21 / 142** casos para listado, edición,
+revocación, CRUD con Gate, Artisan, secretos, rollback, conservación de cuentas y OIDC real.
+En cada uno de los cuatro perfiles SQL pasan **29 / 180**: esos 21 casos, cuatro carreras
+nuevas (editar/revocar antes o después del canje) y cuatro regresiones de replay,
+retirada de asignación y revocación global. La barrera del replay ahora se coloca antes
+de entrar al canje, porque la emisión se serializa por aplicación con su administración.
+No se presenta este filtro como toda la matriz SQL histórica.
+También pasan **106 / 414** OIDC propias, **53 controles HTTP**, Larastan nivel 5 sin
+baseline, Pint global con caché nueva, siete manifiestos/plataforma/auditoría Composer y
+tres doctores. Los diez originales protegidos y las dos migraciones conservan hashes;
+la fuente del contenedor SQL coincide y sus servicios quedan detenidos.
+[Resultados y hashes](../conformance/client-management-service-results.json).
+
+Los intentos iniciales conservados detectaron errores en los tests: se esperaba 200 en
+`/oidc/session` con un token revocado (corresponde 401), se reutilizó una cabecera Bearer
+en `/oidc/token`, se creó otro sujeto en un helper y se comparó `last_seen` después de
+un UserInfo legítimo. Se corrigieron esas expectativas y el aislamiento del test.
+Larastan exigió usar el modelo Passport en `ModelNotFoundException` y acceder a sus
+atributos con `getAttribute`; el resultado final no añade ignores ni baseline.
+No se repitieron campañas OIDF oficiales, navegador cross-site ni carga prolongada.
+
+La extracción posterior de [creación de clientes](CLIENT-REGISTRATION-SERVICE.md)
+añade 18 casos para el contrato público, su adaptador Artisan, un controlador anfitrión
+con Gate, secretos, validación y transacciones sin cambios de usuarios/entorno.
+[Evidencia de esa extracción](../conformance/client-registration-service-results.json).
+Pasaron **299 / 1535** por PHP 8.3/8.4/8.5, **106 / 414** OIDC propias,
+los **18 / 101** nuevos en cuatro perfiles SQL y **53 controles HTTP**. Larastan,
+Pint global, Composer y tres doctores aprobaron; migraciones y originales intactos
+respecto al inicio de esta extracción. Las campañas anteriores conservan su alcance.
+
+La fase posterior de [sistemas y cuentas centrales](CENTRAL-ACCOUNTS.md) añade 17 casos
+generales para registro, invitación, asignaciones y recuperación, además de dos carreras
+SQL: consumo único del token de recuperación y retirada durante la emisión OAuth.
+Conserva el fallo inicial PostgreSQL RR y su corrección mediante serialización de la
+inscripción. El E2E amplía el recorrido con correo en log privado, sin envíos externos.
+Pasaron **281 / 1434** por PHP 8.3/8.4/8.5, **106 / 414** OIDC propias, **53 controles HTTP**
+y **2 / 9** por cada uno de los cuatro perfiles SQL. Larastan, Pint global, Composer
+y los doctores también aprobaron. No equivale a repetir las campañas históricas completas.
+[Resultados actuales con hashes](../conformance/central-accounts-results.json).
+
+Alta greenfield posterior: **264 / 1300** en PHP 8.3/8.4/8.5, grupo OIDC propio
+**106 / 414**, Pint global y Larastan aprobados. Añade doce casos de primer login,
+colisiones, validación previa y conservación de cuentas; el E2E pasa **37 controles**
+con un cliente sin usuarios ni vínculos previos. Dos carreras SQL nuevas pasan en
+MySQL/PostgreSQL con READ COMMITTED y REPEATABLE READ (**2 / 7** por perfil).
+[Contrato, intentos y alcance](GREENFIELD-PROVISIONING.md),
+[JSON de esta fase](../conformance/greenfield-client-results.json). Las ejecuciones que
+siguen conservan sus fuentes originales y describen las fases anteriores.
+
 Integración agnóstica del 2026-11-17: **252 / 1209** generales en PHP 8.3/8.4/8.5,
 **106 / 414** propias de OIDC, Pint global con caché nueva, Larastan y controles Composer
 aprobados. Añade 22 casos y `tools/agnostic-e2e.php`: **32 controles HTTP** en servidor

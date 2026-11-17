@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Passport\Passport;
 use LaravelSso\Server\Audit;
+use LaravelSso\Server\ClientLocks;
 use LaravelSso\Server\OidcServer;
 use LaravelSso\Server\Protocol\ClaimsRequest;
 use LaravelSso\Server\Protocol\Parameters;
@@ -86,15 +87,21 @@ final class ProtocolController
             return $this->invalidClient();
         }
         $client = Passport::client()->newQuery()->whereKey($body['client_id'])->where('revoked', false)->first();
-        if (! $client || ! DB::table('sso_clients')->where('client_id', $body['client_id'])->exists()
+        $registration = DB::table('sso_clients')->where('client_id', $body['client_id'])->first();
+        if (! $client || ! $registration
             || ($client->confidential() && ($body['client_secret'] ?? '') === '')) {
             return $this->invalidClient();
         }
         $psr = $psr->withParsedBody($body);
         $request->attributes->set('sso.authenticated_client', $body['client_id']);
         try {
-            $response = Transactions::run(function () use ($request, $server, $psr) {
+            $response = Transactions::run(function () use ($request, $server, $psr, $registration) {
                 $request->attributes->remove('sso.token_context');
+                ClientLocks::acquire($registration->client_id);
+                $active = Passport::client()->newQuery()->whereKey($registration->client_id)->lockForUpdate()->first();
+                if (! $active || $active->getAttribute('revoked')) {
+                    throw OAuthServerException::invalidClient($psr);
+                }
 
                 return $server->make()->respondToAccessTokenRequest($psr, new PsrResponse);
             });

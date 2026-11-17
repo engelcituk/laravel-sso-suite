@@ -3,6 +3,8 @@
 **Integración actual:** las rutas convencionales de Auth en `web` se integran ahora
 automáticamente. Las instrucciones manuales y resultados de CI de esta página describen
 la fase original. Usa [la guía actual](INSTALL-CLIENT.md) y [sus nuevas evidencias](AGNOSTIC-VALIDATION.md).
+La plantilla nueva del cliente incorpora además [alta greenfield al primer login](GREENFIELD-PROVISIONING.md),
+con creación de cuentas nuevas; las garantías sobre cuentas existentes se mantienen.
 
 La [preparación posterior del piloto](PILOT-PREPARATION.md) repite la validación operativa
 del modo opcional. Sus resultados locales son independientes de la integración y CI

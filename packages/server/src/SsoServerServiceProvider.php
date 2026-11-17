@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use LaravelSso\Server\Http\AccountController;
 use LaravelSso\Server\Http\AuthenticationController;
 use LaravelSso\Server\Http\CentralDeviceSession;
 use LaravelSso\Server\Http\CodeAuthorizationController;
@@ -36,12 +37,14 @@ final class SsoServerServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/sso-server.php', 'sso-server');
+        $this->app->bind(Contracts\RegistersClients::class, Clients::class);
+        $this->app->bind(Contracts\ManagesClients::class, Clients::class);
     }
 
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([Console\InstallCommand::class, Console\DoctorCommand::class, Console\KeysCommand::class, Console\RegisterClientCommand::class, Console\DeliverLogoutCommand::class, Console\PruneStateCommand::class]);
+            $this->commands([Console\InstallCommand::class, Console\DoctorCommand::class, Console\KeysCommand::class, Console\RegisterClientCommand::class, Console\ListClientsCommand::class, Console\UpdateClientCommand::class, Console\RevokeClientCommand::class, Console\CreateUserCommand::class, Console\AssignUserCommand::class, Console\DeliverLogoutCommand::class, Console\PruneStateCommand::class]);
         }
         $this->publishes([__DIR__.'/../config/sso-server.php' => config_path('sso-server.php')], 'sso-server-config');
         $this->publishesMigrations([__DIR__.'/../database/migrations' => database_path('migrations')], 'sso-server-migrations');
@@ -148,6 +151,12 @@ final class SsoServerServiceProvider extends ServiceProvider
             Route::get('/login', [AuthenticationController::class, 'form'])->name('login');
             Route::post('/login', [AuthenticationController::class, 'login'])->middleware('throttle:5,1,sso-login')->name('authenticate');
             Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+            Route::get('/register', [AccountController::class, 'registrationForm'])->name('registration');
+            Route::post('/register', [AccountController::class, 'register'])->middleware('throttle:3,1,sso-register')->name('register');
+            Route::get('/forgot-password', [AccountController::class, 'forgotForm'])->name('forgot');
+            Route::post('/forgot-password', [AccountController::class, 'forgot'])->middleware('throttle:5,1,sso-recovery')->name('email');
+            Route::get('/reset-password/{token}', [AccountController::class, 'resetForm'])->where('token', '[a-f0-9]{64}')->name('reset-form');
+            Route::post('/reset-password', [AccountController::class, 'reset'])->middleware('throttle:5,1,sso-reset')->name('reset');
         });
         Route::middleware(['web', 'throttle:30,1,sso-devices'])->prefix(config('sso-server.devices_path'))->name('sso-server.devices.')->group(function (): void {
             Route::get('/', [DeviceController::class, 'index'])->name('index');

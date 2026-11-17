@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Passport;
 use LaravelSso\Server\Audit;
+use LaravelSso\Server\ClientLocks;
+use LaravelSso\Server\ClientUsers;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\Login;
 use LaravelSso\Server\OidcServer;
@@ -24,6 +26,7 @@ use LaravelSso\Server\Protocol\IdTokenHint;
 use LaravelSso\Server\Protocol\InvalidRequest;
 use LaravelSso\Server\Protocol\Parameters;
 use LaravelSso\Server\Protocol\RedirectUri;
+use LaravelSso\Server\Transactions;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -105,7 +108,8 @@ final class CodeAuthorizationController
         if (! $claims->permits($selection, (string) $user->getAuthIdentifier())) {
             return $this->error($input, in_array('none', $prompts, true) ? 'login_required' : 'access_denied');
         }
-        if (! $sessions->activeUser((string) $user->getAuthIdentifier())) {
+        if (! $sessions->activeUser((string) $user->getAuthIdentifier())
+            || ! app(ClientUsers::class)->allows($input['client_id'], (string) $user->getAuthIdentifier())) {
             return $this->error($input, 'access_denied');
         }
         $session = $sessions->establish($request, $user);
@@ -153,6 +157,9 @@ final class CodeAuthorizationController
         if (! $client || ! DB::table('sso_clients')->where('client_id', $client->getKey())->exists()) {
             return $this->error($pending['input'], 'unauthorized_client');
         }
+        if (! app(ClientUsers::class)->allows((string) $client->getKey(), (string) $user->getAuthIdentifier())) {
+            return $this->error($pending['input'], 'access_denied');
+        }
         if ($input['approve'] === 'switch') {
             return $this->login($request, $pending['input'], $guard);
         }
@@ -165,24 +172,39 @@ final class CodeAuthorizationController
         $authorization = unserialize($pending['authorization']);
         app(Audit::class)->record('consent.approved', ['client' => $pending['input']['client_id'], 'sid' => $session->sid]);
 
-        return $this->complete($request, $authorization, $pending['context'], $pending['input'], $factory);
+        return $this->complete($request, $authorization, $pending['context'], $pending['input'], $factory, consented: true);
     }
 
     /** @param array{nonce: ?string, sid: string} $context
      * @param  array<string, string>  $input
      */
-    private function complete(Request $request, AuthorizationRequestInterface $authorization, array $context, array $input, OidcServer $factory): Response
+    private function complete(Request $request, AuthorizationRequestInterface $authorization, array $context, array $input, OidcServer $factory, bool $consented = false): Response
     {
-        $request->attributes->set('sso.authorization', $context);
-        $authorization->setAuthorizationApproved(true);
-        $response = $factory->make()->completeAuthorizationRequest($authorization, new PsrResponse);
-        parse_str(parse_url($response->getHeaderLine('Location'), PHP_URL_QUERY), $query);
-        $parameters = ['code' => $query['code']];
-        if (isset($input['state'])) {
-            $parameters['state'] = $input['state'];
-        }
+        return Transactions::run(function () use ($request, $authorization, $context, $input, $factory, $consented): Response {
+            $registration = ClientLocks::acquire($input['client_id']);
+            $client = Passport::client()->newQuery()->whereKey($input['client_id'])->lockForUpdate()->first();
+            // Pending consent must never redirect to a callback removed by the operator.
+            if (! $client || $client->getAttribute('revoked') || ! in_array($input['redirect_uri'], $client->getAttribute('redirect_uris'), true)) {
+                return response()->json(['error' => 'invalid_request'], 400)->header('Cache-Control', 'no-store');
+            }
+            if (! $registration->auto_approve && ! $consented) {
+                return $this->error($input, 'consent_required');
+            }
+            if (! app(ClientUsers::class)->allows($input['client_id'], $authorization->getUser()->getIdentifier())
+                || app(AuthorizationInput::class)->error($input, ! $client->confidential() || (bool) $registration->require_pkce)) {
+                return $this->error($input, 'access_denied');
+            }
+            $request->attributes->set('sso.authorization', $context);
+            $authorization->setAuthorizationApproved(true);
+            $response = $factory->make()->completeAuthorizationRequest($authorization, new PsrResponse);
+            parse_str(parse_url($response->getHeaderLine('Location'), PHP_URL_QUERY), $query);
+            $parameters = ['code' => $query['code']];
+            if (isset($input['state'])) {
+                $parameters['state'] = $input['state'];
+            }
 
-        return app(AuthorizationResponse::class)->send($input['redirect_uri'], $parameters, $input['response_mode'] ?? 'query');
+            return app(AuthorizationResponse::class)->send($input['redirect_uri'], $parameters, $input['response_mode'] ?? 'query');
+        });
     }
 
     /** @param array<string, string> $input */

@@ -17,11 +17,16 @@ final class EloquentProvisioner implements ProvisionsUsers
         if (! config('sso-client.enabled')) {
             throw new ProtocolException('Central authentication is disabled.');
         }
-        $factory = config('sso-client.provision') === 'automatic' ? config('sso-client.create_user') : null;
+        $mode = config('sso-client.provision');
+        if (! in_array($mode, ['greenfield', 'restricted', 'automatic'], true)) {
+            throw new ProtocolException('Select greenfield, restricted or automatic provisioning.');
+        }
+        $factory = $mode === 'greenfield' ? app(GreenfieldUserFactory::class)
+            : ($mode === 'automatic' ? config('sso-client.create_user') : null);
         if (is_string($factory) && class_exists($factory)) {
             $factory = app($factory);
         }
-        if (config('sso-client.provision') === 'automatic' && ! is_callable($factory)) {
+        if ($mode === 'automatic' && ! is_callable($factory)) {
             throw new ProtocolException('Automatic provisioning requires a host-owned user factory.');
         }
         try {

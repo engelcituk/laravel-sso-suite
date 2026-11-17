@@ -7,6 +7,7 @@ namespace LaravelSso\Server\Bridge;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Psr7\Utils;
 use Illuminate\Support\Facades\DB;
+use LaravelSso\Server\ClientUsers;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\Protocol\ClaimsRequest;
 use LaravelSso\Server\SigningKeys;
@@ -35,7 +36,8 @@ final class IdTokenResponse extends AbstractResponseType
         $context = request()->attributes->get('sso.token_context');
         $sessions = app(GlobalSessions::class);
         $session = $context ? $sessions->valid($context->sid) : null;
-        if (! $session || $session->subject !== $accessToken->getUserIdentifier()) {
+        if (! $session || $session->subject !== $accessToken->getUserIdentifier()
+            || ! app(ClientUsers::class)->allows($accessToken->getClient()->getIdentifier(), $session->subject, lock: true)) {
             throw OAuthServerException::invalidGrant('Missing or invalid OIDC session binding.');
         }
         $scopes = array_map(static fn ($scope) => $scope->getIdentifier(), $accessToken->getScopes());

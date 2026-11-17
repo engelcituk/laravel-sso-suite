@@ -3,7 +3,7 @@
 La fase agrega `LaravelSso\Contracts\AuditEvent` y comandos Artisan en ambos paquetes.
 La fase original no agregó tablas ni migraciones: servidor conserva su única definición
 inicial y cliente la suya. El modo opcional posterior añade `sso_identities` dentro de
-esa migración cliente, sin tocar users. El catálogo actual suma 35 nombres. Contracts
+esa migración cliente, sin tocar users. El catálogo actual suma 40 nombres. Contracts
 continúa sin Laravel/Passport. [Resultados posteriores y CI](OPTIONAL-AUTH.md).
 
 ## Eventos de seguridad
@@ -15,7 +15,7 @@ Ambos paquetes despachan el mismo DTO inmutable mediante el dispatcher de Larave
 
 | Componente | Eventos |
 | --- | --- |
-| Servidor, autenticación | `auth.failed`, `auth.login`, `auth.password_reset` |
+| Servidor, autenticación | `auth.failed`, `auth.login`, `auth.password_reset`, `auth.registered` |
 | Servidor, dispositivos | `device.registered`, `device.revoked`, `device.renamed` |
 | Servidor, confirmación | `password.required`, `password.rejected`, `password.confirmed` |
 | Servidor, Recordarme | `remember.restored`, `remember.replayed`, `remember.expired` |
@@ -23,7 +23,7 @@ Ambos paquetes despachan el mismo DTO inmutable mediante el dispatcher de Larave
 | Servidor, autorización | `code.issued`, `authorization.rejected`, `consent.approved`, `consent.denied` |
 | Servidor, tokens | `token.issued`, `token.rejected`, `token.replayed` |
 | Servidor, entrega logout | `logout.retry`, `logout.delivered` |
-| Servidor, operación | `client.registered`, `keys.created` |
+| Servidor, operación | `client.registered`, `client.updated`, `client.revoked`, `client.user_granted`, `client.user_revoked`, `keys.created` |
 | Cliente, identidad | `identity.linked`, `identity.provisioned`, `identity.rejected` |
 | Cliente, login/sesión | `login.completed`, `login.rejected`, `session.denied` |
 | Cliente, logout | `logout.local`, `logout.received`, `logout.duplicate`, `logout.rejected` |
@@ -102,6 +102,12 @@ Este límite es distinto de la corrección transaccional que verifican las prueb
 
 ## Instalar sin duplicar archivos
 
+La creación de sistemas no depende del instalador ni de consola: el contrato público
+`RegistersClients` comparte validación/persistencia con `sso:client`, emite
+`client.registered` después de commit y no modifica `.env`. La opción explícita
+`--trust-backchannel` sigue siendo responsabilidad del adaptador CLI.
+[Servicio, resultado y ejemplo para tu CRUD](CLIENT-REGISTRATION-SERVICE.md).
+
 ```sh
 # En la aplicación OP, después de composer require
 php artisan sso:install-server
@@ -137,6 +143,14 @@ Las preguntas del cliente ocultan el secreto; no hay opción CLI para exponerlo 
 historial. [Flujo completo](STACK-AGNOSTIC.md).
 
 ## Diagnósticos reproducibles
+
+El servidor comprueba también el esquema de asignaciones y, al usar la autenticación
+incluida, el modelo convencional y broker de recuperación. No envía correo ni acredita
+entrega SMTP. [Comandos de sistemas/usuarios y recuperación](CENTRAL-ACCOUNTS.md).
+
+En modo `greenfield`, el doctor añade `greenfield_model`: comprueba el esquema
+convencional y el índice único de email sin crear cuentas ni modificar tablas.
+El [alta de primer login](GREENFIELD-PROVISIONING.md) es independiente del diagnóstico.
 
 ```sh
 php artisan sso:doctor-server

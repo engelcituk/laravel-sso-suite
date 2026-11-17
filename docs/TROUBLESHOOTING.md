@@ -4,7 +4,7 @@
 | --- | --- |
 | invalid_sso_transaction | issuer exacto, estado/nonce, expiración, cookie SameSite y secreto/callback registrados |
 | Untrusted OIDC endpoint | allowed_urls debe contener la URL exacta; no se siguen redirects |
-| Acceso denegado al primer login | restricted necesita sso:link-user aprobado; automatic necesita create_user del anfitrión y no asigna roles |
+| Acceso denegado al primer login | greenfield requiere email válido, esquema convencional/email único y ausencia de colisión; restricted necesita vínculo aprobado; automatic necesita create_user |
 | /sso/login devuelve 404 | comprobar SSO_CLIENT_ENABLED y reconstruir config cache; desactivado es el comportamiento esperado |
 | Login nativo redirige o responde 403 | sso.local bloquea credenciales locales cuando SSO está activo; revisar la política elegida |
 | Sesión pierde acceso tras cambiar el flag | esperado: autenticar de nuevo en el modo seleccionado; no se promueve una sesión de otro origen |
@@ -12,6 +12,9 @@
 | Logout local pero global pendiente | OP accesible, confirmación central, worker y sso_logout_deliveries |
 | Vuelve a pedir login cada pocos minutos | access token corto; redirección al OP debe recuperar sesión central |
 | is_active ausente | no se exige esa columna; revisar una configuración antigua de active_column y conservar o cambiar explícitamente su política, sin agregar campos obligatorios |
+| Cuenta central válida recibe access_denied | asignar el usuario al sistema con sso:client-user; first-party no omite la asignación |
+| Recuperación no llega por correo | revisar el mailer Laravel; log sólo escribe en logs privados; el doctor comprueba broker/tabla y no entrega SMTP |
+| Registro central devuelve 404 | closed es el predeterminado; abrirlo explícitamente o usar sso:user; con login/MFA del anfitrión se conservan sus flujos |
 | POST /sso/auth/login devuelve 404 | en auto con login del anfitrión es esperado: conserva su MFA; usar el login existente o elegir explícitamente el backend package |
 | Login propio sigue abierto en el cliente | añadir su nombre/path personalizado a la configuración o aplicar sso.local; revisar otros guards/middleware |
 | Table already exists al publicar | no repetir publicación con timestamps nuevos; revisar duplicados antes de migrar |

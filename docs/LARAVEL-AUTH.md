@@ -15,8 +15,10 @@ Interpreta siempre `sub` junto con `iss`; no busques cuentas por email.
 El modelo puede ser tu `User` convencional con password y remember_token. La vinculación
 no cambia su perfil, hash, recaller, permisos ni ID; las relaciones históricas siguen
 apuntando al mismo usuario. El paquete no crea, elimina ni altera la tabla del anfitrión.
-Para altas automáticas se exige una fábrica explícita del anfitrión; para usuarios ya
-existentes basta una vinculación aprobada mediante `sso:link-user`.
+Las instalaciones nuevas usan alta greenfield automática con la fábrica incluida;
+`automatic` permite una fábrica propia para otro esquema. Para usuarios ya existentes
+se admite una vinculación aprobada mediante `sso:link-user`; una coincidencia de email
+por sí sola rechaza el alta. [Contrato del primer login](GREENFIELD-PROVISIONING.md).
 
 El cliente descubre guard/modelo desde Auth e integra rutas convencionales del grupo
 `web`: login/registro/reset/logout y recursos con `auth` del guard seleccionado.

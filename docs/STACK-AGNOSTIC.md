@@ -6,16 +6,18 @@ Fortify, un starter kit, Vue, React, Inertia, Livewire ni un paquete de permisos
 y vínculos.** Para ejecutar los pasos en orden usa la [guía rápida](QUICKSTART.md).
 
 La prioridad es greenfield: un servidor central y proyectos cliente concebidos así
-desde el inicio. El soporte para proyectos existentes es adicional. Esta prioridad
-no cambia la política actual de cuentas: el cliente usa un vínculo explícito por
-defecto; las altas automáticas requieren una fábrica del proyecto.
+desde el inicio. El soporte para proyectos existentes es adicional. La configuración
+usa `provision=greenfield` en instalaciones nuevas: crea y vincula una cuenta local al
+primer login validado. Las cuentas existentes se conservan; los esquemas personalizados
+pueden seleccionar una fábrica del proyecto.
 
 ## Qué ocurre al entrar
 
 1. Ventas envía al navegador a `/sso/login`.
 2. El cliente lo redirige a Identidad mediante Authorization Code + PKCE.
 3. Identidad usa el login del proyecto o su formulario opcional. Sólo Identidad recibe la contraseña central.
-4. El callback de Ventas valida el resultado y busca el vínculo `(issuer, subject)`.
+4. El callback de Ventas valida el resultado y resuelve `(issuer, subject)`; si es nuevo,
+   crea y vincula la cuenta local automáticamente en modo greenfield.
 5. Laravel Auth entra como la cuenta local vinculada. Los permisos siguen siendo los de Ventas.
 
 Ejemplo: sujeto central 7 → Ventas 42 → Contabilidad 18. No necesitan el mismo ID,
@@ -27,7 +29,7 @@ El cliente no recibe ni guarda la contraseña central.
 | Responsabilidad del proyecto | Responsabilidad del paquete |
 | --- | --- |
 | Laravel instalado, APP_KEY, DB y tablas base | Configuración SSO y una migración propia por paquete |
-| Cuentas y política de altas/recuperación | Vínculo explícito entre identidad central y cuenta local |
+| Operar las cuentas centrales, correo y políticas de acceso | Comandos de alta/asignación, registro público opcional, recuperación central y alta local greenfield |
 | Frontend, navegación y recursos protegidos | Rutas SSO, callback, validadores y control de sesiones |
 | TLS, cookies, procesos y scheduler de Laravel | Registro de tareas de logout/limpieza |
 | Roles, permisos, Gates y Policies | Autenticar al modelo local sin cambiar su ACL |
@@ -35,8 +37,9 @@ El cliente no recibe ni guarda la contraseña central.
 
 En un Laravel limpio puedes instalar el servidor sin implementar primero una pantalla
 de login: hay una opcional. En un cliente limpio puedes utilizar sólo `/sso/login` y
-rutas `auth`. **Todavía necesitas cuentas**; no se siembran usuarios demo ni se inventan
-contraseñas. En este flujo se usa `provision=restricted` y cuentas existentes.
+rutas `auth`. **Todavía necesitas cuentas centrales**; no se siembran usuarios demo ni se inventan
+contraseñas centrales. El cliente greenfield sí crea su cuenta local al primer login,
+sin fábrica propia; no necesitas crearla previamente. [Contrato de alta](GREENFIELD-PROVISIONING.md).
 
 ## Servidor limpio y servidor existente
 
@@ -66,8 +69,9 @@ al validar sesiones. Una columna configurada inexistente o falsa rechaza la cuen
 No cambies esta política en una instalación existente sin revisar su intención.
 
 El backend de contraseña opcional valida las credenciales sin rehash ni escritura de
-atributos de `users`, regenera la sesión, usa CSRF y limita intentos. No incorpora MFA,
-registro ni recuperación. Si necesitas esas políticas, usa tu autenticación del anfitrión.
+atributos de `users`, regenera la sesión, usa CSRF y limita intentos. Incluye registro
+central cerrado/abierto y recuperación por correo; no incorpora MFA. Si ya usas una
+autenticación del anfitrión, conserva sus flujos/políticas. [Contrato de cuentas](CENTRAL-ACCOUNTS.md).
 El `remember` del paquete utiliza sus propias credenciales por dispositivo.
 
 ## Frontend propio en el servidor
@@ -159,8 +163,8 @@ de tu aplicación. Puedes seguir usando las vistas incluidas sin instalar un sta
 ## Cliente nuevo: lo mínimo
 
 1. Instala/configura con `sso:install-client --configure --migrate`.
-2. Vincula una cuenta local y una central mediante `sso:link-user`.
-3. Crea una ruta `web` protegida con `auth` y abre `/sso/login`.
+2. Conserva el modo predeterminado `greenfield`; la cuenta central debe tener email válido.
+3. Crea una ruta `web` protegida con `auth` y abre `/sso/login`: se crea y vincula la cuenta local.
 
 No necesitas login local para usar SSO. No necesitas cambiar User, agregar traits,
 modificar `bootstrap/app.php` ni implementar el callback. El paquete descubre el modelo

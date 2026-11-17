@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use LaravelSso\Client\GreenfieldUserFactory;
 use LaravelSso\Client\Provider;
 use LaravelSso\Client\TrustedHttp;
 use LaravelSso\Contracts\DiagnosticReport;
@@ -77,11 +78,18 @@ final class DoctorCommand extends Command
             return is_string(config('sso-client.client_id')) && config('sso-client.client_id') !== ''
                 && $parts && filter_var($uri, FILTER_VALIDATE_URL) && ! isset($parts['user']) && ! isset($parts['pass']) && ! isset($parts['fragment'])
                 && (($parts['scheme'] ?? '') === 'https' || (config('sso-client.allow_http') && ! app()->environment('production') && ($parts['scheme'] ?? '') === 'http'))
-                && in_array(config('sso-client.provision'), ['restricted', 'automatic'], true)
+                && in_array(config('sso-client.provision'), ['greenfield', 'restricted', 'automatic'], true)
                 && (config('sso-client.provision') !== 'automatic' || is_callable($factory))
                 && in_array('openid', config('sso-client.scopes'), true)
                 && min(array_map(static fn ($key) => (int) config('sso-client.'.$key), ['transaction_ttl', 'local_session_ttl', 'max_token_age', 'receipt_retention', 'timeout'])) > 0;
         });
+        if (config('sso-client.provision') === 'greenfield') {
+            $report->check('greenfield_model', 'Use the conventional Laravel user schema with unique email, or select a custom factory.', function (): bool {
+                app(GreenfieldUserFactory::class)->model();
+
+                return true;
+            });
+        }
         $report->check('trusted_urls', 'Trust discovery and session status URLs explicitly; HTTPS required outside development.', function () use ($http): bool {
             $issuer = config('sso-client.issuer');
             if (! is_string($issuer) || $issuer === '' || str_ends_with($issuer, '/')) {

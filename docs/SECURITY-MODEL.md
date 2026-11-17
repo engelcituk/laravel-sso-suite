@@ -83,12 +83,29 @@ del anfitrión y no debe exponerse sin el middleware al usar SSO.
 
 La vinculación manual exige un operador autorizado y un iss/sub verificado. Un mismo
 email no demuestra identidad; una vinculación existente no cambia de propietario.
-La fábrica automática es código confiable del anfitrión: elige atributos permitidos y
+En greenfield la fábrica incluida crea una cuenta nueva sólo después de validar OIDC:
+nombre/email/verificación y un hash de un valor aleatorio descartado para el NOT NULL
+nativo. Nunca copia contraseñas o privilegios centrales. Requiere email único y rechaza
+colisiones, incluidas diferencias de mayúsculas, sin vincular ni modificar al dueño.
+Alta y vínculo usan una transacción; denegar la política revierte ambos. Los siguientes
+logins sólo leen el propietario establecido. [Contrato y evidencia](GREENFIELD-PROVISIONING.md).
+La fábrica personalizada de `automatic` es código confiable del anfitrión: elige atributos permitidos y
 campos obligatorios, nunca recibe la contraseña central. El paquete no escribe atributos
 del usuario existente. Una cuenta nueva necesita un proceso local de establecimiento
 de contraseña si luego se desea usar Auth local. [Pruebas y límites](OPTIONAL-AUTH.md).
 
 ## Validación externa pendiente
+
+Las aplicaciones nuevas registradas por CLI exigen asignación explícita de usuarios
+centrales. Revocar una asignación invalida sólo sus tokens de esa aplicación; no borra
+cuentas ni modifica el acceso a otros sistemas. El bloqueo de la inscripción serializa
+emisión y retirada, con escritura de la política existente para que PostgreSQL RR
+reintente un snapshot anterior al token. El registro público opt-in no concede asignaciones.
+La recuperación usa tokens con hash, expiración, throttle y locks para consumo de un uso;
+su URL se deriva del issuer configurado. Cambia sólo la contraseña/recaller del objetivo
+y revoca sus dispositivos/sesiones/tokens. No autentica automáticamente ni altera
+contraseñas cliente. Los endpoints alternativos se cierran al delegar en el login del
+anfitrión. [Contrato, correo y límites](CENTRAL-ACCOUNTS.md).
 
 La integración agnóstica incorpora un backend de contraseña central opcional con CSRF,
 sesión regenerada y limitación de intentos. Valida sin rehash ni escritura en users.

@@ -1,5 +1,9 @@
 # Integración agnóstica: validación local
 
+Esta ejecución es histórica. El [cierre posterior de alta greenfield](GREENFIELD-PROVISIONING.md)
+cambia la política predeterminada y repite las pruebas sobre sus propias fuentes; los
+resultados de esta página conservan el alcance y las huellas originales.
+
 2026-11-17. **El servidor funciona sin starter kit ni login previo; el cliente conserva
 Auth y el modelo del anfitrión.** Esta fase añade comportamiento y lo verifica en el
 workspace sobre `3ff3e589142bdf9cb00c26de2fb4a34da41c1874`. No se ha integrado, publicado

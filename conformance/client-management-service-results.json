@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "phase": "public-client-management-service",
+  "checked_at_utc": "2026-11-17T18:24:27.4594341Z",
+  "status": "passed_local",
+  "base_commit": "e271aa0f31f3f3353ddf9f8de95df226ff64b9fd",
+  "source_state": "Uncommitted workspace including preceding changes; not remote CI",
+  "source_fingerprint": {
+    "checked_at_utc": "2026-11-17T13:24:27-05:00",
+    "source_sha256": "9c98e5d588150de3a4937af2060bbf38c6359b58e9a1ebca6c9b6daad0bdd985",
+    "file_count": 141,
+    "deployment_source_sha256": "03c437dac979f70f8a8dc9aef06072cfbe4198fc9816cec7baf420fb29ffce2c",
+    "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    }
+  },
+  "changed_source": [
+    {
+      "path": "packages/server/src/Clients.php",
+      "sha256": "7fd0e40108d2cabedfabcf59c56369e43fd46116622f90ed45b6f03b93f74130"
+    },
+    {
+      "path": "packages/server/src/Contracts/ManagesClients.php",
+      "sha256": "cbfd6e9b17746180deb1465592003987dca5998a9e32bb10de3d1d043921a7e8"
+    },
+    {
+      "path": "packages/server/src/ClientChanges.php",
+      "sha256": "f8139e1f458eaeb8fc2483a0360600249c0ef7deb064767d42064b7b59db9100"
+    },
+    {
+      "path": "packages/server/src/ClientDetails.php",
+      "sha256": "73b1008a72de88168b6446857a5b3e83c1c7291845c8d725b575b479e9ac254b"
+    },
+    {
+      "path": "packages/server/src/ClientLocks.php",
+      "sha256": "76e8936cfb9b7fd6f21d698af3100212a85770293f333f78ebfc07f0b96065d9"
+    },
+    {
+      "path": "packages/server/src/Console/ListClientsCommand.php",
+      "sha256": "a60d4c7e250135f3ee8568f9fb4199ee52a0b615bcb6b92104576feb79b3981f"
+    },
+    {
+      "path": "packages/server/src/Console/UpdateClientCommand.php",
+      "sha256": "d480b21e1bf5d00d0cdbca0aa3b6c305eda708b32a6ab850cec7c8e04d666f86"
+    },
+    {
+      "path": "packages/server/src/Console/RevokeClientCommand.php",
+      "sha256": "b0d3a65e06873a732d18a4449697600edab950b714590bc20fc5ef1d0a74c546"
+    },
+    {
+      "path": "packages/server/src/SsoServerServiceProvider.php",
+      "sha256": "2d3b228cf9d1a23182f1b1383fe2568dd26140b81708aabbc4797edd2fd1b81c"
+    },
+    {
+      "path": "packages/server/src/Http/CodeAuthorizationController.php",
+      "sha256": "2cbb306ffc69531063169cbf09f110db8e4348a7a7bf92201611075b201d708c"
+    },
+    {
+      "path": "packages/server/src/Http/ProtocolController.php",
+      "sha256": "771f632f24620a29072a198dfda33a4acaa9ac3a64fa33c8b26d2c2722bb0d7a"
+    },
+    {
+      "path": "packages/contracts/src/AuditEvent.php",
+      "sha256": "079f36fb1562a85de3e9790ebacc7e436ce1c9d7cfb70693b95f17e4aa6772f8"
+    },
+    {
+      "path": "tests/ClientManagementServiceTest.php",
+      "sha256": "3bf4c72e6e2428a1cf07017c85b1de31cee32f58a4641a5ba068015df8fcc6ce"
+    },
+    {
+      "path": "tests/Database/ConcurrencyTest.php",
+      "sha256": "73fc1dff6ef3c1c940713bb3353b716928660183c14063fa5a8a59dfef1e1f66"
+    }
+  ],
+  "public_api": {
+    "contract": "LaravelSso\\Server\\Contracts\\ManagesClients",
+    "implementation": "LaravelSso\\Server\\Clients",
+    "input": "LaravelSso\\Server\\ClientChanges",
+    "read_model": "LaravelSso\\Server\\ClientDetails",
+    "operations": [
+      "listing",
+      "find",
+      "update",
+      "revoke"
+    ],
+    "artisan": [
+      "sso:clients",
+      "sso:client-update",
+      "sso:client-revoke"
+    ],
+    "authorization": "Host Gates/Policies; no package administrative endpoints",
+    "edit": "Partial; ID/type/secret unchanged; effective edit invalidates application codes/access/refresh tokens; no-op retains them",
+    "revoke": "Permanent and idempotent; retains registration/assignments; invalidates only this application; no back-channel HTTP",
+    "concurrency": "Registration row lock and tuple write shared with code/token issuance; fresh client/policy checks; complete outer transaction retry required"
+  },
+  "quality": {
+    "phpunit": [
+      {
+        "php": "8.3.36",
+        "tests": 320,
+        "assertions": 1677,
+        "status": "passed",
+        "evidence": {
+          "path": ".runtime/client-management/php83-final.log",
+          "sha256": "fcc881fde57ca533508567240e9f8d3d574ea39c50aa7e4f68301cc282dc23d4"
+        }
+      },
+      {
+        "php": "8.4.27",
+        "tests": 320,
+        "assertions": 1677,
+        "status": "passed",
+        "evidence": {
+          "path": ".runtime/client-management/php84-final.log",
+          "sha256": "5b99f0e3af769800c89d7600382096d40cc295a99b76984d3f58b577667d20a3"
+        }
+      },
+      {
+        "php": "8.5.12",
+        "tests": 320,
+        "assertions": 1677,
+        "status": "passed",
+        "evidence": {
+          "path": ".runtime/client-management/php85-final.log",
+          "sha256": "e6db3e49753258b4c5951a51aa5f2f4d24862c080c0f2a14954f52f7c8736e43"
+        }
+      }
+    ],
+    "new_cases": 21,
+    "new_assertions": 142,
+    "targeted_evidence": {
+      "path": ".runtime/client-management/targeted-final.log",
+      "sha256": "ee569ca666fd5c8ece494a00cc7b0d50115a54321a1e875b91121ca8d6c18f88"
+    },
+    "own_oidc_group": {
+      "tests": 106,
+      "assertions": 414,
+      "official_oidf": false,
+      "status": "passed",
+      "evidence": {
+        "path": ".runtime/client-management/conformance.log",
+        "sha256": "275d187e53763e9e5cc23e8e5d2b55f6f76d41b3d9a73716860dca8e85048264"
+      }
+    },
+    "larastan": {
+      "level": 5,
+      "baseline": false,
+      "status": "passed",
+      "evidence": {
+        "path": ".runtime/client-management/larastan-final.log",
+        "sha256": "defcb42a6d51edd235e504dfecd5b661193fbc15723e011cc2f9d1a612b9770f"
+      }
+    },
+    "pint": {
+      "scope": "global, fresh cache",
+      "status": "passed",
+      "evidence": {
+        "path": ".runtime/client-management/pint-global-final.log",
+        "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2"
+      }
+    },
+    "composer": {
+      "strict_manifests": 7,
+      "platform": "passed",
+      "locked_audit": "passed",
+      "advisories": 0,
+      "abandoned": 0,
+      "audit_evidence": {
+        "path": ".runtime/client-management/audit.json",
+        "sha256": "851e471fba40aa9f3097e61faea3df7fb5583a200d95e5dd571aabfc22cc75d7"
+      },
+      "platform_evidence": {
+        "path": ".runtime/client-management/platform.log",
+        "sha256": "73278b9ea91ebda3cdbb77d421800efb189ec1f01fd3796b437e84413a7f08da"
+      },
+      "manifest_evidence": [
+        {
+          "path": ".runtime/client-management/composer-examples-app-one.log",
+          "sha256": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05"
+        },
+        {
+          "path": ".runtime/client-management/composer-examples-app-two.log",
+          "sha256": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05"
+        },
+        {
+          "path": ".runtime/client-management/composer-examples-identity-server.log",
+          "sha256": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05"
+        },
+        {
+          "path": ".runtime/client-management/composer-packages-client.log",
+          "sha256": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05"
+        },
+        {
+          "path": ".runtime/client-management/composer-packages-contracts.log",
+          "sha256": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05"
+        },
+        {
+          "path": ".runtime/client-management/composer-packages-server.log",
+          "sha256": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05"
+        },
+        {
+          "path": ".runtime/client-management/composer-root.log",
+          "sha256": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05"
+        }
+      ]
+    },
+    "doctors": [
+      {
+        "host": "server",
+        "checks": 12,
+        "status": "passed",
+        "offline": true,
+        "evidence": {
+          "path": ".runtime/client-management/doctor-server.json",
+          "sha256": "9c7d8054a2863f69ed6634cb736c7ce23f24bded34d5cb90da34b2da34b9110b"
+        }
+      },
+      {
+        "host": "fresh",
+        "checks": 7,
+        "status": "passed",
+        "offline": true,
+        "evidence": {
+          "path": ".runtime/client-management/doctor-fresh.json",
+          "sha256": "e861253fa0251fb0e36529ee3c9e94d5b7d3af8215a6280ffec0ce03f6ac3422"
+        }
+      },
+      {
+        "host": "existing",
+        "checks": 6,
+        "status": "passed",
+        "offline": true,
+        "evidence": {
+          "path": ".runtime/client-management/doctor-existing.json",
+          "sha256": "a2881e2d59583023ca6d52828a21ada4645c43301d0f41fbf4d3a2e12e486221"
+        }
+      }
+    ]
+  },
+  "sql": {
+    "scope": "21 management service cases, four new update/revoke exchange races, four existing replay/assignment/global-revocation regressions; not full historical matrix",
+    "profiles": [
+      {
+        "engine": "mysql:8.4",
+        "isolation": "READ COMMITTED",
+        "tests": 29,
+        "assertions": 180,
+        "status": "passed",
+        "evidence": {
+          "path": ".runtime/database-lab/results/client-management-final-rc-20261117-182233-mysql.junit.xml",
+          "sha256": "ce648f06167f52bccc9c2e2155dd1a9a905a052c5cc046cc40a0e97c1a3f9e48"
+        }
+      },
+      {
+        "engine": "postgres:18",
+        "isolation": "READ COMMITTED",
+        "tests": 29,
+        "assertions": 180,
+        "status": "passed",
+        "evidence": {
+          "path": ".runtime/database-lab/results/client-management-final-rc-20261117-182233-pgsql.junit.xml",
+          "sha256": "65f8ece8a55a3a2df9d2b7597a204d7c8175fd4cb5335a456773c7db674ecfc7"
+        }
+      },
+      {
+        "engine": "mysql:8.4",
+        "isolation": "REPEATABLE READ",
+        "tests": 29,
+        "assertions": 180,
+        "status": "passed",
+        "evidence": {
+          "path": ".runtime/database-lab/results/client-management-final-rr-20261117-182255-mysql.junit.xml",
+          "sha256": "ad292a810e233e23dc1d98796031c84178f16e69d87a7219399528d103251061"
+        }
+      },
+      {
+        "engine": "postgres:18",
+        "isolation": "REPEATABLE READ",
+        "tests": 29,
+        "assertions": 180,
+        "status": "passed",
+        "evidence": {
+          "path": ".runtime/database-lab/results/client-management-final-rr-20261117-182255-pgsql.junit.xml",
+          "sha256": "0cf2dce6dea7d0773cabbdc1f9855c905eb56098a29c0f5bd3b1415f563d8d7c"
+        }
+      }
+    ],
+    "source_sha256": "a2dc73741b66ad27391c3851080bcff63c79082a5056bfd364a180b8a769afe7",
+    "source_matches_workspace": true,
+    "owned_services_stopped": true,
+    "stop_evidence": {
+      "path": ".runtime/client-management/sql-stop-final.log",
+      "sha256": "9752e6f1ecc25a28f855c52c092f516fc28e8b3e9cc95fcdcdde98192c902a26"
+    },
+    "images": [
+      {
+        "path": ".runtime/database-lab/results/client-management-final-rc-20261117-182233-images.json",
+        "sha256": "cb7ec8a879165289511ac8cf23593f3ba73d71c25b13466c1558581d66527931"
+      },
+      {
+        "path": ".runtime/database-lab/results/client-management-final-rr-20261117-182255-images.json",
+        "sha256": "cb7ec8a879165289511ac8cf23593f3ba73d71c25b13466c1558581d66527931"
+      }
+    ]
+  },
+  "http": {
+    "checks": 53,
+    "status": "passed",
+    "scope": "Independent Laravel OP, fresh greenfield RP, existing RP; actual Code/PKCE, both authentication modes, accounts/recovery; management API has real OIDC integration in the new test suite",
+    "private_mail_log_only": true,
+    "owned_servers_stopped": true,
+    "evidence": {
+      "path": ".runtime/agnostic-auth/live-20261117-181342-23d2e2/result.json",
+      "sha256": "b4b1ce037e6c3a03cd51d54c8354ac1bddceb0c886f5153cc5b69ccd72870fb2"
+    }
+  },
+  "invariants": {
+    "protected_original_files": 10,
+    "protected_original_hashes_unchanged": true,
+    "existing_users_and_passwords_unchanged": true,
+    "initial_migration_hashes_unchanged": true,
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    },
+    "added_migrations": 0,
+    "published_versions": false,
+    "commit_push_or_tag": false
+  },
+  "retained_attempts": [
+    ".runtime/client-management/initial-tests.log",
+    ".runtime/client-management/targeted-tests.log",
+    ".runtime/client-management/php83-tests.log",
+    ".runtime/client-management/larastan.log"
+  ],
+  "not_repeated": [
+    "Official OIDF campaign/certification",
+    "Cross-site browser matrix",
+    "30-minute load",
+    "External pilot",
+    "Independent external review",
+    "Remote CI"
+  ],
+  "notes": [
+    "Initial test fixture/expectation issues corrected; initial static analysis model/attribute errors corrected without ignores or baseline.",
+    "Pagination links retain status and page size; the final suite and four SQL profiles include this regression assertion.",
+    "Revocation cannot erase an already received browser JWT/cookie. Strict RP checks deny the next request; cached/custom local sessions follow their own policy."
+  ]
+}

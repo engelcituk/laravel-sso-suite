@@ -1,5 +1,8 @@
 # Instalar el cliente en tu aplicación
 
+`laravel-sso/client` agrega integración SSO a tu aplicación Laravel; conserva su código,
+modelo, Auth y frontend. El paquete no es una aplicación cliente independiente.
+
 **Parte de un proyecto Laravel nuevo que utilizará el servidor central desde el inicio.** Conserva tu modelo,
 usuarios, contraseñas, frontend y permisos. El login central inicia una sesión Laravel
 con el usuario local vinculado; tus Gates, Policies y Spatie Permission siguen decidiendo
@@ -7,13 +10,16 @@ qué puede hacer en esa aplicación.
 
 Greenfield es la prioridad; las notas para aplicaciones existentes son adicionales.
 Instalar y activar requiere primero un servidor operativo, registrar este cliente y
-configurar la conexión. Además, el flujo predeterminado necesita una cuenta local y su
-vínculo: no crea usuarios automáticamente en una DB vacía. El paso 4 explica esa parte.
+configurar la conexión. El primer login SSO válido crea y vincula la cuenta local
+automáticamente; puedes comenzar con `users` vacía. No necesitas una fábrica propia.
 
 ## 1. Prepara la conexión
 
 Primero [instala el servidor y registra esta aplicación](INSTALL-SERVER.md).
 Necesitas el issuer, ID, secreto y callback exactos. Ejemplo:
+
+La persona también debe estar asignada a esa aplicación en el servidor central mediante
+`sso:client-user` o al crearla con `sso:user --client=...`.
 
 | Dato | Valor |
 | --- | --- |
@@ -40,7 +46,7 @@ Sin `--configure`, únicamente copia archivos faltantes y no activa SSO.
 El paquete descubre guard/modelo desde Auth y deriva los endpoints exactos desde el
 issuer configurado. La única migración crea `sso_identities`, `sso_local_sessions` y
 `sso_logout_receipts`; `--migrate` ejecuta sólo esa migración, sin las pendientes del proyecto.
-No modifica `users`, sus hashes, remember_token, IDs ni ACL.
+No modifica el esquema de `users` ni las filas, hashes, remember_token, IDs o ACL existentes.
 
 Para desarrollo HTTP agrega `--allow-http` tanto aquí como en el servidor. Se rechaza
 en producción. No uses esa opción para resolver un certificado inválido.
@@ -73,24 +79,40 @@ Si tu auth usa rutas/nombres personalizados, middleware propios, varios guards o
 fuera de `web`, debes indicar su integración. [Ejemplos y límites](STACK-AGNOSTIC.md#rutas-personalizadas-y-otros-guards).
 El paquete no adivina guards API ni sustituye tu autorización.
 
-## 4. Vincula las cuentas existentes
-
-Comprueba que la cuenta local y la central representan a la misma persona. Si su ID en
-Ventas es 42 y su identificador central es 7:
+## 4. Comprueba el primer login greenfield
 
 ```sh
-php artisan sso:link-user 42 7
 php artisan sso:doctor
 ```
 
-No se vincula por email. El par `(issuer, subject)` queda en tablas propias y no puede
-reclamarse para otra cuenta. Es idempotente para el mismo dueño. Conserva
-`'provision' => 'restricted'`, el valor predeterminado, si no quieres altas automáticas.
+Abre `/sso/login` y autentícate en el servidor central. La configuración nueva usa
+`provision=greenfield`: crea un usuario local y su vínculo `(issuer, subject)` en una
+transacción, después de validar la respuesta OIDC. Repetir el login devuelve el mismo
+usuario sin actualizar nombre, email, contraseña, verificación ni permisos.
 
-En una instalación nueva necesitas una cuenta local creada por el proceso de tu aplicación.
-Si más adelante eliges altas automáticas, la fábrica pertenece al anfitrión y es una
-integración explícita [fuera del flujo de conservación de usuarios](INSTALL-CLIENT-REFERENCE.md#vincular-usuarios-sin-cambiar-sus-datos).
-No cambies el modelo a uno especial ni compartas la contraseña central.
+El modelo Laravel convencional debe tener `name`, `email` con índice único y su columna
+de contraseña. Se requiere un email válido del servidor central. Si falta `name`, se usa
+el email como nombre. El email nuevo se guarda en minúsculas; sólo `email_verified=true`
+booleano marca la verificación. No se copian roles, IDs ni contraseñas de los claims.
+
+La columna `password` NOT NULL de Laravel recibe **sólo al crear la cuenta** un hash de
+un valor aleatorio que se descarta. No se entrega una contraseña local ni se copia la
+central. Si quieres Auth local después, tu aplicación debe ofrecer un proceso de
+establecimiento de contraseña. No se alteran contraseñas de cuentas existentes.
+
+Un correo que ya exista en una cuenta sin vínculo **rechaza el alta**. No se adopta ni
+actualiza esa cuenta, aunque el servidor marque su email como verificado. Si verificas
+que son la misma persona, puedes vincularla explícitamente:
+
+```sh
+php artisan sso:link-user 42 7
+```
+
+Usa `restricted` si sólo permites cuentas vinculadas por un operador; para un esquema
+personalizado usa `automatic` con una fábrica propia. Las configuraciones anteriores
+se conservan: un array que ya fija `restricted` no cambia de política al actualizar.
+La plantilla nueva lee `SSO_CLIENT_PROVISION`, con `greenfield` por defecto.
+[Contrato, errores y actualización](GREENFIELD-PROVISIONING.md).
 
 ## 5. Usa el login/logout desde tu frontend
 

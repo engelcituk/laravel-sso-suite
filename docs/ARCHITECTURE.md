@@ -7,13 +7,24 @@ Tres paquetes Composer independientes: `laravel-sso/server`, `laravel-sso/client
 pueden renombrar los manifiestos y namespaces conjuntamente (no en tiempo de ejecución).
 El cliente no depende de Passport ni del servidor. Redis es opcional.
 
+Cada paquete extiende un proyecto anfitrión, no reemplaza su aplicación. Los servicios
+públicos se componen desde sus propios controladores, jobs o consola. `RegistersClients`
+expone la creación transaccional compartida por `Clients` y el adaptador `sso:client`;
+la UI, administración y autorización pertenecen al anfitrión. La operación no activa
+el protocolo ni modifica su configuración. [Contrato público](CLIENT-REGISTRATION-SERVICE.md).
+`ManagesClients` comparte consulta, edición y revocación con los tres adaptadores Artisan.
+Los cambios y la emisión de códigos/tokens se serializan mediante la fila propia del
+cliente. Cada edición efectiva invalida sus códigos/tokens; la revocación es definitiva.
+No se revoca la sesión central ni se alteran las cuentas o las otras aplicaciones.
+
 ## Identidad y autorización
 
 El OP conserva credenciales y autentica mediante el guard Laravel de la aplicación anfitriona.
 El RP conserva el usuario Eloquent del anfitrión, con sus credenciales locales y ACL.
 La tabla propia `sso_identities` vincula `(issuer, subject)` con la clase concreta del
 modelo y su clave local, mediante un índice único sensible a mayúsculas. No se agregan
-columnas ni se modifican datos en `users`. Nunca se vincula por email. La solicitud
+columnas ni se modifican filas existentes en `users`. Greenfield inserta sólo cuentas
+nuevas con una lista acotada de campos. Nunca se vincula por email. La solicitud
 posterior de modo opcional sustituye la decisión inicial de modelos sin credenciales.
 
 Con `SSO_CLIENT_ENABLED=false`, los middleware integrados utilizan Auth local sin
@@ -22,12 +33,21 @@ Los cambios de modo exigen autenticación nueva. Se integran automáticamente ru
 convencionales `web` de Auth del guard seleccionado. Rutas personalizadas requieren
 patrones o `sso.local` / `auth` + `sso.session` explícitos. Las rutas
 del cliente siempre se registran y se habilitan en ejecución mediante `sso.enabled`.
-Las altas automáticas requieren una fábrica explícita del anfitrión; la vinculación
-manual conserva usuarios existentes. [Contrato y evidencia](OPTIONAL-AUTH.md).
+Las altas greenfield usan una fábrica incluida; `automatic` permite una fábrica propia
+para otros esquemas y `restricted` sólo admite vínculos explícitos. Las cuentas existentes
+se conservan. [Contrato actual](GREENFIELD-PROVISIONING.md), [fase histórica](OPTIONAL-AUTH.md).
 
 El servidor ofrece login mínimo/JSON opcionales para Laravel sin starter kit y conserva
 el login del anfitrión cuando existe. No obliga a agregar columnas a users ni dependencia
 de frontend. [Flujos nuevos/existentes y límites](STACK-AGNOSTIC.md).
+
+La administración central incluye creación de sistemas, altas de cuentas y asignaciones
+en `sso_client_users`, sin roles remotos ni cambios de esquema en users. Los sistemas
+nuevos registrados por CLI exigen asignación; la autorización, consentimiento, emisión
+de tokens y UserInfo/estado comprueban esa política. El registro público está cerrado
+por defecto y no asigna aplicaciones. La recuperación usa el broker de contraseña
+Laravel del mismo modelo/conexión y revoca las sesiones del objetivo.
+[Contrato de administración](CENTRAL-ACCOUNTS.md).
 
 ## Primera vertical
 

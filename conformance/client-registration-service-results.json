@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "phase": "public-client-registration-service",
+  "checked_at_utc": "2026-11-17T17:55:33.7647609Z",
+  "status": "passed_local",
+  "base_commit": "e271aa0f31f3f3353ddf9f8de95df226ff64b9fd",
+  "source_state": "Uncommitted workspace including preceding changes; not remote CI",
+  "source_fingerprint": {
+    "checked_at_utc": "2026-11-17T17:55:33.0000000Z",
+    "source_sha256": "77292c0126ce049f95fb8f1a9b7e59c6b45527db08c758157746871fe45d3df3",
+    "file_count": 134,
+    "deployment_source_sha256": "3efbf4ba1e74189d8a8dcdf3314e3cb91b13632dafab728799d01eef40ab680d",
+    "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    }
+  },
+  "changed_php_sha256": {
+    "packages/client/config/sso-client.php": "b67003b88a0aac479e66cc8ef89dd0233fc0e39afd3c6c741cc902cac8f22aa3",
+    "packages/client/src/Console/DoctorCommand.php": "9b56cb25cc427c3f98da86804add09e257204ba669104a9d68e06f84e5300e43",
+    "packages/client/src/Console/InstallCommand.php": "2bb05802843279526f35bb313605998ea96ec8b1e2f09f89b9fe27c9e3cf5523",
+    "packages/client/src/EloquentProvisioner.php": "227789ac120ad8ee8e7a3b5dcb2ba9be8551fd5ce961ebc08c3df67d1bfaa120",
+    "packages/client/src/GreenfieldUserFactory.php": "441d6cfc74056c62271fad7187e1184a54141b42dce42e43238cc39b700906ef",
+    "packages/client/src/IdentityLinks.php": "7aa582dcb288c9b8f7b8a0c1ec80751a08c0e9e021730944983abd452028f7fd",
+    "packages/contracts/src/AuditEvent.php": "227fa1a0b4561bc26fc741fb146d8d8cd2bb39b11c690b91941f376175f2d06f",
+    "packages/server/config/sso-server.php": "f620fdb2c6ee440cbe74da1b8a28f06a631be7b89a46eaafcc092a3a51c28716",
+    "packages/server/database/migrations/2026_11_13_000001_create_sso_tables.php": "b2caeee0e336bb66a8a9aef04cf26ad63629209ca7c3cc30784a53546ded483b",
+    "packages/server/resources/views/account.blade.php": "830b34b63823d942967a43f430b176802c936194db757c9e2d85e72dd9ce1410",
+    "packages/server/resources/views/login.blade.php": "ca312c13e17178de3fa37fb5f0f15df60aaceda3a11a3a017e12dd088cae22a1",
+    "packages/server/src/Accounts.php": "ab92761e6a07172e1a9dabeac53bccb086ddf3f303e31aa9d44a5dedbd2e53f2",
+    "packages/server/src/Bridge/IdTokenResponse.php": "b428e8caa00cce33c13779b132787197aac1674f7526e42d6cddc1228025eab4",
+    "packages/server/src/ClientDefinition.php": "622a3b924e98ff475caa7eff1279d6f61cbde39b61599a4a5913ba5950061efd",
+    "packages/server/src/Clients.php": "3071aa7ff61f6d8597c71d3b939572a2ce2aa16db3f5ba3b291fc669cefd9d9b",
+    "packages/server/src/ClientUsers.php": "83be751dbabf010c477655e3f1c5b1057f52390d9a16f6a114b51bfc51837df3",
+    "packages/server/src/Console/AssignUserCommand.php": "297399e228b0b5e9cf053c2f2a1cb9e9a3a4a91e7c0db545deaa5186896cb238",
+    "packages/server/src/Console/CreateUserCommand.php": "371dfb27b6f724b115dc618fa123425dfa58d692a6ef4b04b856b01b9855bb85",
+    "packages/server/src/Console/DoctorCommand.php": "7b48aa390ecc643c7ee10ce11143ea8e513380ed5b7aa83cad80e742a11931c3",
+    "packages/server/src/Console/RegisterClientCommand.php": "b925bbb8065d93f6a494c2ec4281333c1cdb946db972db4a0142cff2c2ed6580",
+    "packages/server/src/Contracts/RegistersClients.php": "c1aa9dc95a592c42e04ca007da31fe85a8735b6380af76b4b7a521ba2c631c2f",
+    "packages/server/src/CreatedClient.php": "15e1035a8999600f77cefbe0dd37e09a66c53b056d1ceea3e7268dc36c370ddf",
+    "packages/server/src/Http/AccountController.php": "c8c57fab22074b5a671fe2475e9929257ee0e3962a72cd877fe8af3c91127079",
+    "packages/server/src/Http/AuthenticationController.php": "ca9b5789c08237bd604a3340bd9a0eba1dd18dbe0f99f9c074c23a9fdb335860",
+    "packages/server/src/Http/CodeAuthorizationController.php": "a13e6889feabd3506e2e254ddb67d5effed0d0dbaf458897119cd70d57671ade",
+    "packages/server/src/Http/ProtocolController.php": "0d0cc9dca03534f4ed6bf62b21f78385c2b7d3a24b213f5d0d91d7256539701e",
+    "packages/server/src/Http/ResourceController.php": "2dccb475a78a8b13dc07da30370f8e17bdf036791de15f181e334145ff44c3cc",
+    "packages/server/src/Notifications/CentralPasswordReset.php": "75b79eb7072c399129bb69d5addb56a5188b8982ead58e678bfd15f3f071111c",
+    "packages/server/src/PasswordRecovery.php": "b67248bea791bd45e53ce998beb00e3b93537ecc47a6561405ee26e666df1cd5",
+    "packages/server/src/SsoServerServiceProvider.php": "8eb6f9387790c42df10b4ed0c8c5d177155061e7380a22606b29cc28b2631f89",
+    "tests/ClientRegistrationServiceTest.php": "202f7c7d9a174abf7133baf303b246c71d952728fc21ea12e0e7427ae500f2b9",
+    "tests/Database/ConcurrencyTest.php": "0282977042d89c472c53b241a43645d3c2af888f3a97420403568c9e8e3f7b52",
+    "tests/Fixtures/GreenfieldUser.php": "07b1f330890796ff4b017796b591a9bf96f3b2036bf7bb32b84862a904e0ae63",
+    "tests/GreenfieldClientTest.php": "fdc86e6f409689d209109662bf86dafc497fa23d57afcdffcf71eed2819dbb78",
+    "tests/MigrationTest.php": "32ff020a59fa20fc47c5f711a2e6c717f638edbcdc77ad83d1d45fd848532106",
+    "tests/ServerAccountsTest.php": "eee3f06ebef51b1f2e50d6e5d874642bd926fa68792f0f557457890a507cae0b",
+    "tests/TestCase.php": "d0da3c0383e723488cb6c8014477a5b7a94b0e7862b6c655388033cf06ef40e5",
+    "tools/agnostic-e2e.php": "dfed0e8bbee18340364636b701aae9c5fc0ed88fcabfa6ac45af2e88f390a7cd"
+  },
+  "public_api": {
+    "contract": "LaravelSso\\Server\\Contracts\\RegistersClients",
+    "implementation": "LaravelSso\\Server\\Clients",
+    "input": "LaravelSso\\Server\\ClientDefinition",
+    "result": "LaravelSso\\Server\\CreatedClient",
+    "shared_adapters": [
+      "Host application code/controllers",
+      "sso:client"
+    ],
+    "validation": "HTTPS, name, PKCE, exact configured outbound trust",
+    "creation": "OAuth and SSO metadata in one default-connection transaction; audit after commit",
+    "service_writes_environment": false,
+    "service_enables_protocol": false,
+    "service_changes_users": false,
+    "service_changes_passwords": false,
+    "secret": "Explicit accessor on creation result, excluded from JSON/debug/PHP serialization",
+    "host_owned": [
+      "Administrative CRUD",
+      "Authorization",
+      "Frontend",
+      "Durable outbound trust settings"
+    ]
+  },
+  "quality": {
+    "phpunit": [
+      {
+        "php": "8.3.36",
+        "tests": 299,
+        "assertions": 1535,
+        "status": "passed",
+        "log": ".runtime/client-registration-service/php83-tests.log"
+      },
+      {
+        "php": "8.4.27",
+        "tests": 299,
+        "assertions": 1535,
+        "status": "passed",
+        "log": ".runtime/client-registration-service/php84-tests.log"
+      },
+      {
+        "php": "8.5.12",
+        "tests": 299,
+        "assertions": 1535,
+        "status": "passed",
+        "log": ".runtime/client-registration-service/php85-tests.log"
+      }
+    ],
+    "new_cases": 18,
+    "new_assertions": 101,
+    "own_oidc_group": {
+      "tests": 106,
+      "assertions": 414,
+      "official_oidf": false,
+      "status": "passed"
+    },
+    "larastan": {
+      "level": 5,
+      "baseline": false,
+      "status": "passed"
+    },
+    "pint": {
+      "scope": "global, fresh cache",
+      "status": "passed"
+    },
+    "composer": {
+      "strict_manifests": 7,
+      "platform": "passed",
+      "locked_audit": "passed",
+      "advisories": 0,
+      "abandoned": 0
+    },
+    "doctors": [
+      {
+        "host": "server",
+        "checks": 12,
+        "status": "passed",
+        "offline": true
+      },
+      {
+        "host": "fresh",
+        "checks": 7,
+        "status": "passed",
+        "offline": true
+      },
+      {
+        "host": "existing",
+        "checks": 6,
+        "status": "passed",
+        "offline": true
+      }
+    ]
+  },
+  "http_regression": {
+    "report": ".runtime/agnostic-auth/live-20261117-174703-a12bd8/result.json",
+    "started_at_utc": "2026-11-17T17:47:04.0000000Z",
+    "finished_at_utc": "2026-11-17T17:48:10.0000000Z",
+    "status": "passed",
+    "count": 53,
+    "checks": [
+      "op_operational_schedule_discovered_without_console_routes",
+      "fresh_operational_schedule_discovered_without_console_routes",
+      "existing_operational_schedule_discovered_without_console_routes",
+      "op_real_http_ready",
+      "op_config_and_routes_cached",
+      "fresh_real_http_ready",
+      "fresh_config_and_routes_cached",
+      "existing_real_http_ready",
+      "existing_config_and_routes_cached",
+      "fresh_server_has_optional_login_without_host_login_or_active_column",
+      "existing_auth_route_redirects_to_central_fallback_automatically",
+      "real_csrf_rejects_missing_token",
+      "headless_login_accepts_standard_existing_user",
+      "real_code_pkce_exchange_completes_existing_client",
+      "greenfield_client_has_no_users_before_first_login",
+      "fresh_client_without_native_login_reuses_central_session",
+      "first_sso_login_creates_local_account_without_operator_link",
+      "new_local_account_does_not_copy_central_password_or_recaller",
+      "first_sso_login_links_validated_issuer_subject",
+      "second_sso_login_preserves_local_account_profile_and_hash",
+      "fresh_local_id_and_independent_acl",
+      "existing_local_id_and_independent_acl",
+      "switch_to_local_rejects_old_sso_session_with_cached_routes",
+      "host_native_login_still_works_when_disabled",
+      "switch_to_sso_rejects_old_native_session",
+      "native_credentials_blocked_by_discovered_route",
+      "sso_returns_without_second_central_password",
+      "central_json_logout",
+      "fresh_strict_revocation_after_logout",
+      "existing_strict_revocation_after_logout",
+      "op_existing_users_credentials_schema_acl_unchanged",
+      "op_host_pending_migration_not_executed",
+      "backchannel_outbox_drained",
+      "greenfield_only_adds_one_user_without_schema_acl_or_later_credential_changes",
+      "fresh_host_pending_migration_not_executed",
+      "existing_existing_users_credentials_schema_acl_unchanged",
+      "existing_host_pending_migration_not_executed",
+      "public_registration_closed_by_default",
+      "operator_creates_new_central_user_and_assigns_system_without_password_arguments",
+      "one_use_mail_invitation_sets_only_new_central_account_password",
+      "operator_created_account_authenticates_at_central_server",
+      "assigned_new_central_user_creates_client_account_on_first_sso_login",
+      "recovery_response_does_not_disclose_account_existence",
+      "native_broker_recovery_completes_over_real_http",
+      "recovery_token_cannot_be_replayed",
+      "central_recovery_revokes_existing_client_access",
+      "central_recovery_never_changes_client_password_or_profile",
+      "old_central_password_rejected_after_recovery",
+      "new_central_password_authenticates_after_recovery",
+      "optional_stack_independent_registration_creates_new_account",
+      "public_registration_cannot_self_assign_an_application",
+      "central_registration_and_recovery_preserve_preexisting_account",
+      "descending_administration_preserves_all_prior_client_accounts_and_acl"
+    ],
+    "scope": "Disposable standard Laravel hosts, HTTP loopback development only; Laravel config/route caches enabled, PHP OPcache disabled",
+    "mail": "Private log only; no external email",
+    "owned_servers_stopped": true
+  },
+  "sql_integration": {
+    "profiles": [
+      {
+        "engine": "mysql",
+        "isolation": "READ COMMITTED",
+        "tests": 18,
+        "assertions": 101,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/client-registry-service-20261117-174547-mysql.junit.xml",
+        "scope": "Only the new ClientRegistrationServiceTest integration cases"
+      },
+      {
+        "engine": "pgsql",
+        "isolation": "READ COMMITTED",
+        "tests": 18,
+        "assertions": 101,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/client-registry-service-20261117-174547-pgsql.junit.xml",
+        "scope": "Only the new ClientRegistrationServiceTest integration cases"
+      },
+      {
+        "engine": "mysql",
+        "isolation": "REPEATABLE READ",
+        "tests": 18,
+        "assertions": 101,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/client-registry-service-20261117-174556-mysql.junit.xml",
+        "scope": "Only the new ClientRegistrationServiceTest integration cases"
+      },
+      {
+        "engine": "pgsql",
+        "isolation": "REPEATABLE READ",
+        "tests": 18,
+        "assertions": 101,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/client-registry-service-20261117-174556-pgsql.junit.xml",
+        "scope": "Only the new ClientRegistrationServiceTest integration cases"
+      }
+    ],
+    "workspace_and_container_sha256": "5e49108ced999964681bd47153fc0ecddf4fccdb5b2c9a3f8f5c31ea84f6006a",
+    "source_match": true,
+    "laboratory_stopped": true
+  },
+  "preservation": {
+    "protected_original_files": 10,
+    "all_unchanged": true,
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    },
+    "migration_definitions_changed_during_this_extraction": false,
+    "users_or_passwords_changed_by_extraction": false,
+    "versions_published": false
+  },
+  "attempts": [
+    {
+      "path": ".runtime/client-registration-service/initial-tests.log",
+      "status": "failed",
+      "cause": "Artisan contract mock captured a mutable definition by value; fixed reference capture in test."
+    },
+    {
+      "path": ".runtime/client-registration-service/targeted-tests.log",
+      "status": "failed",
+      "cause": "Test consumed Artisan output twice; captured output once. No service logic change required."
+    },
+    {
+      "path": ".runtime/client-registration-service/targeted-verified.log",
+      "status": "passed",
+      "tests": 18,
+      "assertions": 101
+    }
+  ],
+  "limits": [
+    "This public contract covers creation, not a complete client management CRUD or admin panel.",
+    "SQL profiles repeat only the 18 new service tests, not the entire historical SQL matrix or concurrency campaigns.",
+    "HTTP loopback Laravel fixtures use config/route caches with development PHP OPcache disabled.",
+    "Official OIDF, cross-site browsers, frontend bundles and 30-minute load not repeated; historical reports retain their own fingerprints.",
+    "No remote CI, external pilot, independent review or publication executed."
+  ],
+  "evidence_sha256": {
+    ".runtime/client-registration-service/audit.json": "e99397fcc4e69df9bd0935f43a8483e38c4625ae5145caeda3daa5993713f6e4",
+    ".runtime/client-registration-service/composer-examples-app-one.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/client-registration-service/composer-examples-app-two.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/client-registration-service/composer-examples-identity-server.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/client-registration-service/composer-packages-client.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/client-registration-service/composer-packages-contracts.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/client-registration-service/composer-packages-server.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/client-registration-service/composer-root.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/client-registration-service/conformance.log": "5bb1f2033898d7bf260329bcc4b81acd4f810863d828c4c0d11afef08eb1fa3a",
+    ".runtime/client-registration-service/doctor-existing.json": "ae5af2eefb89756901e2a157e19e066ac2ea8e13a717e7a8e3e5b86e8327ff49",
+    ".runtime/client-registration-service/doctor-fresh.json": "59149e5d6294dce0825e679fd20e5e016b0e8c21c8e488eeed5cad1b4b4c481d",
+    ".runtime/client-registration-service/doctor-server.json": "e88ba01d10523b2a5f887c76bde6b38a18be7ed3244c07c2c5c97c3e8ea0b37b",
+    ".runtime/client-registration-service/http.log": "4967aa724a2c631d6173e0cd4f531af5500abc4bb389313fe9220a1d24eb252a",
+    ".runtime/client-registration-service/initial-tests.log": "8cc7cbb25c5c937e51de0014b26914314f5da1f9a4a6acd94e2f80b3567ddff3",
+    ".runtime/client-registration-service/larastan.log": "4a135e6d82553b601bb694fe203a2019e534d18fe2fb71f4d13a5e0a99c7106b",
+    ".runtime/client-registration-service/migrations-before.json": "40f5ea0bfe32b005cc240280ab2d0dda43684395b2322e7a2087e8059e3d4e01",
+    ".runtime/client-registration-service/php83-tests.log": "74a518d7d6a90ce94398f66e2a905418e0ad0c7fda5ba5c30973f693d2d20782",
+    ".runtime/client-registration-service/php84-tests.log": "4125b89d19ddb21f8549ea28908800cd5566a93a83c5ac00b9e698fabb0503c8",
+    ".runtime/client-registration-service/php85-tests.log": "0b4237ba7eb314d046d9927e85b81d8d0dcdb2793c72e2b8728569f2382fb9ed",
+    ".runtime/client-registration-service/pint-files.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/client-registration-service/pint-global.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/client-registration-service/pint-tests.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/client-registration-service/platform.log": "73278b9ea91ebda3cdbb77d421800efb189ec1f01fd3796b437e84413a7f08da",
+    ".runtime/client-registration-service/protected-before.json": "1b8eb14a9fa8e5544ea69e70432c1848a8683bc77010ace5d88fb2e5fa66e285",
+    ".runtime/client-registration-service/source-fingerprint.json": "61b08bff37e27a95f0c37b2edb0a1a90d9c6fe7da1474792971fba30ce6f847c",
+    ".runtime/client-registration-service/sql-container-fingerprint.txt": "44c0d8df6b47497ca5493b2a6efb75f588efac52645e20fa42564b232440aca7",
+    ".runtime/client-registration-service/sql-host-fingerprint.txt": "0bd3b5423b4afd1255303a90649e83657aad63ec57926304b54a86f22e71b1d2",
+    ".runtime/client-registration-service/sql-READ-COMMITTED.log": "b3414c33b1058a5f81a0e41e5a8c80ab9d516a75424a299c9ea3b1e1d762451f",
+    ".runtime/client-registration-service/sql-REPEATABLE-READ.log": "27aacdc51521e7e0fbb10a4e50306b74f53b28b6afe67654b6bcc858c8fe88d6",
+    ".runtime/client-registration-service/sql-start.log": "b24295f7c653c0b313776a30ab66c3c7a1368172cd940a344459f2c923749824",
+    ".runtime/client-registration-service/sql-stop.log": "9752e6f1ecc25a28f855c52c092f516fc28e8b3e9cc95fcdcdde98192c902a26",
+    ".runtime/client-registration-service/targeted-tests.log": "e7cdf092530a7d71b9144233b284c4c44e6e0f81fb285ed6fbe18ddd10ecf2f6",
+    ".runtime/client-registration-service/targeted-verified.log": "d58a496432d6154d45934f22cbac6fc0384eb6ace5cebe92cb1da6e96e3b485b",
+    ".runtime/agnostic-auth/live-20261117-174703-a12bd8/result.json": "4a4b98f024c3d91054158c964644531cb1c26572293d3a155e39484ad086dc0d",
+    ".runtime/database-lab/results/client-registry-service-20261117-174547-images.json": "a94c2a37381adb2bc4c772816c93de5269bdffb44188d21397889aadc7b1600e",
+    ".runtime/database-lab/results/client-registry-service-20261117-174547-mysql.junit.xml": "9f2d35a62dbf1e4c9898bce1c2bc038ec3ab19384575658eb40912374ab0a9d3",
+    ".runtime/database-lab/results/client-registry-service-20261117-174547-mysql.log": "6eb10f43a7ccdfa6267dfc2c7cb9acb81721d63293c8099a02449b1c2aaf257e",
+    ".runtime/database-lab/results/client-registry-service-20261117-174547-pgsql.junit.xml": "873aee5e2392a8005591eacaa368c9505f0ac40a9d1de9699bf37f8b2bb914b0",
+    ".runtime/database-lab/results/client-registry-service-20261117-174547-pgsql.log": "03306a68edd78c9ba5d5553967a910bf32a0681b706c41754e2343ff651ee816",
+    ".runtime/database-lab/results/client-registry-service-20261117-174556-images.json": "a94c2a37381adb2bc4c772816c93de5269bdffb44188d21397889aadc7b1600e",
+    ".runtime/database-lab/results/client-registry-service-20261117-174556-mysql.junit.xml": "0327dcac72db39fc7553371266e0b3e51dd562d47948bfc8f8d7bcc90fd83747",
+    ".runtime/database-lab/results/client-registry-service-20261117-174556-mysql.log": "86f685b8949bee1178453d203c15e69e446822a1a557eb735e31d15fc954e3a8",
+    ".runtime/database-lab/results/client-registry-service-20261117-174556-pgsql.junit.xml": "d1779ed8b948a062772514aa86fe3000fbb25caa2e36b58818d9c039b5fb7d54",
+    ".runtime/database-lab/results/client-registry-service-20261117-174556-pgsql.log": "6ec9f323b5c0f92795abcef34b4920f6fcba4d0833aa9714e0d6304e787a423e"
+  }
+}

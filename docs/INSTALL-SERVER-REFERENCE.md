@@ -4,6 +4,10 @@ Para instalarlo paso a paso, usa [Instalar el servidor](INSTALL-SERVER.md) o la
 [guía rápida completa](QUICKSTART.md). Esta página amplía opciones y comportamiento.
 El instalador con `--migrate` ejecuta sólo las migraciones propias/Passport descritas
 abajo. No ejecuta pendientes ajenos. [Integración agnóstica y contratos JSON](STACK-AGNOSTIC.md).
+La creación también se expone mediante `RegistersClients`/`Clients`, sin consola ni
+escritura de entorno. [Contrato y ejemplos para CRUD](CLIENT-REGISTRATION-SERVICE.md).
+`ManagesClients` añade consulta paginada, edición parcial y revocación por aplicación;
+Artisan expone `sso:clients`, `sso:client-update` y `sso:client-revoke` con la misma lógica.
 
 ## Bases ya instaladas
 
@@ -33,9 +37,10 @@ php artisan sso:install-server --configure --migrate --keys
 migración publicada. El publisher genérico de Laravel cambia timestamps al repetirlo;
 prefiere el instalador. Opciones y diagnóstico en [auditoría y operaciones](AUDIT-OPERATIONS.md).
 Si Passport ya está instalado conserva sus migraciones y claves existentes.
-El paquete contiene una única migración, `create_sso_tables.php`, que crea las siete tablas
+El paquete contiene una única migración, `create_sso_tables.php`, que crea las ocho tablas
 con su esquema final: política PKCE, nonce opcional, contexto de claims, enlace código/token
-y entregas de logout, dispositivos y credenciales Recordarme. No hay migraciones incrementales en esta versión en desarrollo.
+y entregas de logout, dispositivos, credenciales Recordarme y asignaciones `sso_client_users`.
+`sso_clients.restrict_users` selecciona acceso por asignación. No hay migraciones incrementales en esta versión en desarrollo.
 Los ejemplos sincronizan su copia de esa definición sin cambiar el timestamp ni duplicarla.
 Si conservas copias de las migraciones incrementales de un checkout anterior, retíralas
 del directorio de migraciones y actualiza la copia de `create_sso_tables.php`.
@@ -53,8 +58,9 @@ Configura el guard en `sso-server.guard` y su proveedor Eloquent. El modelo cent
 su columna de contraseña. `active_column` es opcional, con valor predeterminado `null`;
 si seleccionas una columna booleana existente, se exige que sea verdadera. No se agrega
 ninguna columna a users. Los atributos de perfil, como `name`, `email`
-y `email_verified_at`, se omiten cuando no existen. Altas y recuperación son responsabilidad
-de tu aplicación central. El modo `auto` utiliza la ruta `login` del anfitrión si existe;
+y `email_verified_at`, se omiten cuando no existen. El paquete incluye altas manuales,
+registro abierto opt-in y recuperación mediante el broker Laravel para el modelo convencional.
+[Flujo de sistemas, cuentas y JSON](CENTRAL-ACCOUNTS.md). El modo `auto` utiliza la ruta `login` del anfitrión si existe;
 si no hay login ni login_url, habilita el formulario/backend opcional `/sso/auth/login`.
 El backend valida sin rehash ni escritura de atributos de users. Si existe login/MFA del
 anfitrión, su POST de contraseña queda cerrado. `authentication=package` es una elección

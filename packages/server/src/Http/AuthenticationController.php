@@ -27,8 +27,11 @@ final class AuthenticationController
 
     public function session(Request $request): Response
     {
+        $available = app(Login::class)->usesPackageAuthentication();
+
         return response()->json(['authenticated' => $this->guard()->check(), 'csrf_token' => $request->session()->token(),
-            'password_login_available' => app(Login::class)->usesPackageAuthentication()])->header('Cache-Control', 'no-store');
+            'password_login_available' => $available, 'registration_available' => $available && config('sso-server.registration') === 'open',
+            'password_reset_available' => $available && (bool) config('sso-server.password_reset')])->header('Cache-Control', 'no-store');
     }
 
     public function form(Request $request): Response

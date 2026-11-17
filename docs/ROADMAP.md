@@ -6,23 +6,102 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 **Prioridad de producto: greenfield.** Preparar un Laravel nuevo como servidor central
 y conectar proyectos que nacen como clientes es el alcance principal. La compatibilidad
 con aplicaciones existentes es adicional; no se exige adaptar universalmente su Auth.
-El servidor limpio y el cliente nuevo tienen evidencia HTTP. El cliente aún requiere
-registro/configuración y resolución de su usuario local: vínculo explícito por defecto,
-o fábrica propia para altas automáticas. No se declara cerrado un flujo de DB vacía
-que sólo necesite instalar y activar sin ninguna política de cuentas.
+El servidor limpio y el cliente nuevo tienen evidencia HTTP. Tras registrar/configurar
+la aplicación, el modo predeterminado `greenfield` crea y vincula la cuenta local en
+el primer login validado, incluso con `users` vacía. No exige fábrica propia ni vínculo
+manual para personas nuevas. Las cuentas existentes se conservan y no se adoptan por email.
+[Contrato y evidencia de este cierre](GREENFIELD-PROVISIONING.md).
+La administración descendente añade sistemas con usuarios asignados, alta manual
+central y recuperación de contraseña, con registro público opcional y sin stack impuesto.
+[Guía del flujo Nóminas ISR](CENTRAL-ACCOUNTS.md).
+La creación de clientes se extrae a `RegistersClients`/`Clients`: tu aplicación puede
+componerla desde su propio CRUD, sin ejecutar Artisan, activar el protocolo ni adoptar
+un backend administrativo del paquete. [Contrato público](CLIENT-REGISTRATION-SERVICE.md).
+`ManagesClients` completa listado, consulta, edición y revocación desde ese CRUD y
+Artisan, sin convertir al paquete en una aplicación administrativa.
 
 | Fase | Estado real | Evidencia / cierre pendiente |
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
 | 1 fundamento | base local y CI remota verificadas | compatibilidad ampliada integrada en main, 14/14: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
-| 2 servidor | integración sin starter kit verificada localmente | login opcional/JSON, login del anfitrión prioritario y columna activa opcional; grupo Code propio aprobado; resultados OIDF oficiales anteriores conservan su alcance |
+| 2 servidor | gestión de clientes, cuentas y asignaciones verificada localmente | servicios públicos para CRUD y Artisan; alta, consulta, edición y revocación por sistema; registro/recuperación y concurrencia SQL; fuentes/campañas OIDF oficiales anteriores separadas |
 | 3 cliente | integración agnóstica y modos verificados localmente | guard/modelo descubiertos, rutas Auth convencionales, JSON/Inertia y E2E con cliente nuevo/existente; navegadores/SQL de fases anteriores no repetidos para este ajuste |
-| 4 identidad local | modo opcional integrado y verificado en main | SSO_CLIENT_ENABLED, tablas propias sin tocar users/passwords, 18 casos nuevos y CI de integración 14/14 |
+| 4 identidad local | alta greenfield verificada localmente; modo opcional previo en main | primer login crea/vincula sólo cuentas nuevas, sin actualizar existentes; 12 casos nuevos, E2E de DB vacía y dos carreras en cuatro perfiles SQL |
 | 5 sesiones | funcionalidades y recuperación locales verificadas | Recordarme, dispositivos, revocación y retención; carga actual con caída OP de 60 s y pausa de worker de 120 s, colas 0/0 al cierre; evaluación externa pendiente |
 | 6 instalación | instaladores y guía agnóstica verificados localmente | comandos configuran SSO, migraciones acotadas, claves y tareas; 32 controles HTTP en tres Laravel; piloto externo pendiente y campañas previas separadas |
 | 7 publicación | pendiente | cierre local de calidad aprobado: Pint global sin hallazgos, PHPUnit en PHP 8.3/8.4/8.5, Larastan y Composer; CI previa histórica; faltan auditoría/certificación externa y autorización para publicar |
 
 ## Resultados ejecutados
+
+- **Gestión pública de clientes, 2026-11-17**: `ManagesClients`, `ClientChanges` y
+  `ClientDetails` agregan listado paginado sin secretos, consulta, edición parcial y
+  revocación definitiva/idempotente a `Clients`. `sso:clients`, `sso:client-update` y
+  `sso:client-revoke` usan el mismo contrato que el CRUD anfitrión. El ID, tipo y secreto
+  se conservan. Una edición efectiva invalida códigos/access/refresh tokens de ese
+  sistema; guardar sin cambios los conserva. Revocar bloquea nuevos flujos, conserva
+  asignaciones/cuentas y no cierra sesiones centrales ni afecta otras aplicaciones.
+  La emisión y los cambios se serializan por cliente, incluso con acceso abierto;
+  un consentimiento pendiente no envía códigos a un callback retirado.
+  Calidad: **320 pruebas / 1677 aserciones** por PHP 8.3/8.4/8.5, **21 / 142** casos
+  de la API nueva y **106 / 414** OIDC propias. **29 / 180** por cada perfil MySQL/PostgreSQL
+  READ COMMITTED/REPEATABLE READ: 21 casos de servicio, cuatro carreras nuevas y cuatro
+  regresiones concurrentes. **53 controles HTTP**, Larastan nivel 5 sin baseline,
+  Pint global con caché nueva, siete manifiestos Composer, plataforma/auditoría y tres
+  doctores aprobados. Fuentes SQL coincidentes y laboratorio detenido. Los diez archivos
+  originales protegidos y ambas migraciones conservan sus hashes; no se agregan migraciones,
+  se cambian usuarios/contraseñas existentes ni se publican versiones.
+  [Guía de CRUD y Artisan](CLIENT-REGISTRATION-SERVICE.md),
+  [evidencias verificables](../conformance/client-management-service-results.json).
+  No se repitieron OIDF oficial, navegadores cross-site ni carga de 30 minutos para este
+  cambio; el piloto externo y la revisión independiente conservan su estado previo.
+
+- **Servicio público de creación de clientes, 2026-11-17**: `ClientDefinition`,
+  `RegistersClients` y `CreatedClient` separan la operación del adaptador Artisan.
+  Validaciones HTTPS/PKCE/allowlist y persistencia OAuth/SSO transaccional compartidas;
+  auditoría después de commit y secreto accesible sólo explícitamente desde el resultado.
+  El servicio no escribe entorno, cambia usuarios o activa SSO. El anfitrión conserva
+  sus controladores, permisos y frontend; se prueba su uso con Gate incluso con el
+  protocolo desactivado. La opción CLI de confiar back-channel permanece en su adaptador.
+  Calidad: **299 / 1535** por PHP 8.3/8.4/8.5; **18 / 101** nuevos en MySQL/PostgreSQL
+  con ambos aislamientos; **106 / 414** OIDC propias y **53 controles HTTP**, Larastan,
+  Pint global, Composer y doctores aprobados. Fuentes SQL coincidentes y laboratorio detenido.
+  Sin cambios de migraciones en esta extracción ni publicación de versiones.
+  [Guía para CRUD y Artisan](CLIENT-REGISTRATION-SERVICE.md),
+  [resultados de esta extracción](../conformance/client-registration-service-results.json).
+
+- **Sistemas, cuentas centrales y recuperación, 2026-11-17**: `sso:client` restringe
+  sistemas nuevos a cuentas asignadas; `sso:user --client=...` crea y asigna, con prompt
+  oculto o invitación por correo; `sso:client-user` asigna/retira sin sincronizar usuarios.
+  Registro público cerrado por defecto, formularios opcionales y contrato JSON. Broker
+  Laravel del guard central, tokens con hash/caducidad/throttle/consumo único; recuperación
+  sólo del objetivo, sin autologin y con revocación de sesiones/tokens. La inscripción
+  y retirada de acceso se comprueban en autorización, consentimiento, emisión y recursos.
+  La carrera PostgreSQL RR detectó un snapshot previo al token: se corrigió serializando
+  mediante la fila de inscripción; se conservó el fallo y se repitieron cuatro perfiles SQL.
+  Calidad final: **281 / 1434** por PHP 8.3/8.4/8.5, **106 / 414** OIDC propias,
+  **53 controles HTTP**, **2 / 9** por cada perfil SQL, Larastan, Pint global,
+  Composer y tres doctores aprobados, con fuentes SQL coincidentes y laboratorio detenido.
+  Se mantiene una migración por paquete: la definición inicial del servidor añade
+  `restrict_users` y `sso_client_users` (ocho tablas), sin cambios de esquema en users ni
+  aplicación a las bases originales. Sin versiones publicadas ni nueva CI remota.
+  [Guía, alcance y reproducción](CENTRAL-ACCOUNTS.md),
+  [evidencia de esta fase](../conformance/central-accounts-results.json).
+
+- **Cierre de alta greenfield al primer login, 2026-11-17**: `provision=greenfield`
+  predeterminado en la plantilla nueva. El callback validado crea cuenta y vínculo sin
+  fábrica del anfitrión ni `sso:link-user`; los logins posteriores conservan todos sus
+  atributos. Email ya existente sin vínculo rechaza el alta, nunca adopta la cuenta.
+  Sólo cuentas nuevas reciben un hash de un valor aleatorio descartado para la columna
+  NOT NULL; no se copian credenciales ni se cambian passwords existentes. Se conservan
+  los modos explícitos `restricted` y `automatic`. **264 / 1300** generales en PHP
+  8.3/8.4/8.5, **106 / 414** OIDC propias, Pint global, Larastan y doctores aprobados.
+  E2E: **37 controles**, cliente con `users` vacía y cliente previo conservado. Dos
+  carreras, **2 / 7** por perfil MySQL/PostgreSQL en READ COMMITTED y REPEATABLE READ;
+  fuentes coincidentes en contenedor/workspace e intento fallido del harness conservado.
+  Una migración por paquete, sin alterar definiciones, usuarios existentes ni secretos
+  originales. Sin CI remota ni publicación. Las campañas OIDF/navegadores/carga anteriores
+  no se repiten para este ajuste. [Contrato y reproducción](GREENFIELD-PROVISIONING.md),
+  [evidencia con hashes](../conformance/greenfield-client-results.json).
 
 - **Integración agnóstica, workspace sobre `3ff3e589`, 2026-11-17**: servidor Laravel
   sin starter kit, sin login previo ni `is_active`; backend/vista opcional y JSON.
@@ -196,7 +275,7 @@ sí se repitieron en la preparación actual del piloto; no equivalen a evaluaci�
 ## Próxima fase
 
 **Para usarlo ya en desarrollo:** integra una aplicación propia con la
-[guía rápida](QUICKSTART.md), verifica los vínculos de cuentas y prueba sus rutas y
+[guía rápida](QUICKSTART.md), comprueba el alta/vínculo al primer login y prueba sus rutas y
 permisos. No hace falta contratar un revisor para instalar el paquete experimental.
 La adaptación agnóstica solicitada queda implementada y verificada en el workspace;
 su siguiente comprobación práctica es el entorno y frontend concretos del anfitrión.

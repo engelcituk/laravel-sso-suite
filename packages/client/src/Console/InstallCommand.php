@@ -55,7 +55,8 @@ final class InstallCommand extends Command
                 return self::FAILURE;
             }
         }
-        $this->line('SessionGuard and user model are discovered from Laravel Auth. Conventional web auth routes are integrated; custom routes use sso.local / sso.session. Link existing accounts with sso:link-user, then run sso:doctor.');
+        $this->line('SessionGuard and user model are discovered from Laravel Auth. Conventional web auth routes are integrated; custom routes use sso.local / sso.session.');
+        $this->line('New configuration uses greenfield provisioning: the first SSO login creates and links a new local account. Existing configuration is preserved; use sso:link-user only for verified existing accounts. Run sso:doctor.');
 
         return self::SUCCESS;
     }

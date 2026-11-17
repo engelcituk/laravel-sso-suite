@@ -2,8 +2,8 @@
 
 Para instalarlo paso a paso, usa [Instalar el cliente](INSTALL-CLIENT.md) o la
 [guía rápida completa](QUICKSTART.md). Las fábricas de usuarios de esta referencia son
-una opción avanzada; la guía rápida usa vínculos explícitos y `provision=restricted`
-para conservar las cuentas existentes. `--migrate` ejecuta sólo la migración cliente.
+una opción avanzada; la guía rápida usa `provision=greenfield` con altas y vínculos
+automáticos sólo de cuentas nuevas. Las existentes se conservan. `--migrate` ejecuta sólo la migración cliente.
 [Integración automática y contratos por stack](STACK-AGNOSTIC.md).
 
 El cliente extiende Laravel Auth. Conserva tu modelo, tabla `users`, contraseñas,
@@ -94,7 +94,12 @@ Puedes fijar `max_age` (segundos, incluido 0); no se acepta desde el visitante.
 
 ## Vincular usuarios sin cambiar sus datos
 
-Por defecto `provision=restricted`: un operador vincula una cuenta local existente con
+La plantilla nueva usa `provision=greenfield`: una fábrica incluida crea y vincula la
+cuenta al primer login SSO validado, sin código del anfitrión. Requiere el esquema Laravel
+convencional con email único; una colisión de email se rechaza, nunca se adopta otra cuenta.
+[Contrato y pruebas](GREENFIELD-PROVISIONING.md). Las configuraciones existentes se conservan.
+
+Con `provision=restricted`, un operador vincula una cuenta local existente con
 el `iss/sub` verificado del OP. No se buscan coincidencias por correo ni se reasignan
 identidades ya vinculadas a otro propietario.
 
@@ -108,7 +113,7 @@ sensible a mayúsculas `(issuer, subject)`. Conserva la clase concreta del model
 como texto (hasta 191 bytes); no exige morph map ni columnas en `users`. El modelo debe
 usar la misma conexión que las tablas SSO para mantener atomicidad.
 
-Para altas automáticas, configura `provision=automatic` y una fábrica propia en
+Para altas con un modelo/esquema personalizado, configura `provision=automatic` y una fábrica propia en
 `create_user`. Preferir una clase invocable permite usar `config:cache`:
 
 ```php

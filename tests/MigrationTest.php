@@ -12,7 +12,7 @@ final class MigrationTest extends TestCase
         $files = glob(__DIR__.'/../packages/server/database/migrations/*.php');
         $this->assertCount(1, $files);
         $migration = require $files[0];
-        $tables = ['sso_clients', 'sso_sessions', 'sso_auth_contexts', 'sso_token_sessions', 'sso_logout_deliveries', 'sso_devices', 'sso_remember_tokens'];
+        $tables = ['sso_clients', 'sso_client_users', 'sso_sessions', 'sso_auth_contexts', 'sso_token_sessions', 'sso_logout_deliveries', 'sso_devices', 'sso_remember_tokens'];
 
         $migration->down();
         foreach ($tables as $table) {
@@ -25,6 +25,8 @@ final class MigrationTest extends TestCase
 
         DB::table('sso_clients')->insert(['client_id' => '00000000-0000-4000-8000-000000000001']);
         $this->assertSame(1, (int) DB::table('sso_clients')->value('require_pkce'));
+        $this->assertSame(0, (int) DB::table('sso_clients')->value('restrict_users'));
+        $this->assertTrue(Schema::hasIndex('sso_client_users', ['client_id', 'subject'], 'primary'));
         DB::table('sso_auth_contexts')->insert(['code_id' => 'code-one', 'sid' => 'session-one']);
         $context = DB::table('sso_auth_contexts')->first();
         $this->assertNull($context->nonce);

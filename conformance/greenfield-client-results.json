@@ -1,0 +1,310 @@
+{
+  "schema_version": 1,
+  "phase": "greenfield-client-first-login",
+  "checked_at_utc": "2026-11-17T16:24:13.2881647Z",
+  "status": "passed_local",
+  "base_commit": "e271aa0f31f3f3353ddf9f8de95df226ff64b9fd",
+  "source_state": "Uncommitted workspace including preceding agnostic changes; not remote CI",
+  "source_fingerprint": {
+    "checked_at_utc": "2026-11-17T16:24:12.0000000Z",
+    "source_sha256": "0ea7e337c20902b585fc2e38559b3a38a7973d1b3646c6eaf94aede4f7f695fc",
+    "file_count": 122,
+    "deployment_source_sha256": "d0b773bdcc315e534fab8464756747b5716e82dd551f58e59aca2ae38bc102bd",
+    "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    }
+  },
+  "changed_php_sha256": {
+    "packages/client/config/sso-client.php": "b67003b88a0aac479e66cc8ef89dd0233fc0e39afd3c6c741cc902cac8f22aa3",
+    "packages/client/src/Console/DoctorCommand.php": "9b56cb25cc427c3f98da86804add09e257204ba669104a9d68e06f84e5300e43",
+    "packages/client/src/Console/InstallCommand.php": "2bb05802843279526f35bb313605998ea96ec8b1e2f09f89b9fe27c9e3cf5523",
+    "packages/client/src/EloquentProvisioner.php": "227789ac120ad8ee8e7a3b5dcb2ba9be8551fd5ce961ebc08c3df67d1bfaa120",
+    "packages/client/src/GreenfieldUserFactory.php": "441d6cfc74056c62271fad7187e1184a54141b42dce42e43238cc39b700906ef",
+    "packages/client/src/IdentityLinks.php": "7aa582dcb288c9b8f7b8a0c1ec80751a08c0e9e021730944983abd452028f7fd",
+    "tests/Database/ConcurrencyTest.php": "13bc6eb1d4a014b0454c1d2c31791ae8c3ba6deac9bf7e2f3197ad0207197dbc",
+    "tests/Fixtures/GreenfieldUser.php": "07b1f330890796ff4b017796b591a9bf96f3b2036bf7bb32b84862a904e0ae63",
+    "tests/GreenfieldClientTest.php": "fdc86e6f409689d209109662bf86dafc497fa23d57afcdffcf71eed2819dbb78",
+    "tests/TestCase.php": "d0da3c0383e723488cb6c8014477a5b7a94b0e7862b6c655388033cf06ef40e5",
+    "tools/agnostic-e2e.php": "1f8685c9facb37c34dc417e5afaaaf31df40991b03f7d9856cc14ecf8c065751"
+  },
+  "behavior": {
+    "new_configuration_default": "greenfield",
+    "automatic_new_account_and_link": true,
+    "existing_rows_updated": false,
+    "existing_passwords_changed": false,
+    "central_password_received_by_client": false,
+    "new_password_column": "Hash of random 256-bit value discarded immediately, only during INSERT",
+    "email_collision": "Reject; never adopt account by email",
+    "profile_sync": false,
+    "old_explicit_policies_preserved": true
+  },
+  "quality": {
+    "phpunit": [
+      {
+        "php": "8.3.36",
+        "tests": 264,
+        "assertions": 1300,
+        "status": "passed",
+        "log": ".runtime/greenfield-client/php83-tests.log"
+      },
+      {
+        "php": "8.4.27",
+        "tests": 264,
+        "assertions": 1300,
+        "status": "passed",
+        "log": ".runtime/greenfield-client/php84-tests.log"
+      },
+      {
+        "php": "8.5.12",
+        "tests": 264,
+        "assertions": 1300,
+        "status": "passed",
+        "log": ".runtime/greenfield-client/php85-tests.log"
+      }
+    ],
+    "new_general_cases": 12,
+    "own_oidc_group": {
+      "tests": 106,
+      "assertions": 414,
+      "official_oidf": false,
+      "status": "passed"
+    },
+    "larastan": {
+      "level": 5,
+      "baseline": false,
+      "status": "passed"
+    },
+    "pint": {
+      "scope": "global, fresh cache",
+      "status": "passed"
+    },
+    "composer": {
+      "strict_manifests": 7,
+      "platform": "passed",
+      "locked_audit": "passed",
+      "advisories": 0,
+      "abandoned": 0
+    },
+    "installed_host_doctors": [
+      {
+        "host": "server",
+        "status": "passed",
+        "checks": 10,
+        "offline": true
+      },
+      {
+        "host": "fresh",
+        "status": "passed",
+        "checks": 7,
+        "offline": true
+      },
+      {
+        "host": "existing",
+        "status": "passed",
+        "checks": 6,
+        "offline": true
+      }
+    ]
+  },
+  "http_e2e": {
+    "report": ".runtime/agnostic-auth/live-20261117-161043-3e7104/result.json",
+    "started_at_utc": "2026-11-17T16:10:44.0000000Z",
+    "finished_at_utc": "2026-11-17T16:11:37.0000000Z",
+    "status": "passed",
+    "checks": [
+      "op_operational_schedule_discovered_without_console_routes",
+      "fresh_operational_schedule_discovered_without_console_routes",
+      "existing_operational_schedule_discovered_without_console_routes",
+      "op_real_http_ready",
+      "op_config_and_routes_cached",
+      "fresh_real_http_ready",
+      "fresh_config_and_routes_cached",
+      "existing_real_http_ready",
+      "existing_config_and_routes_cached",
+      "fresh_server_has_optional_login_without_host_login_or_active_column",
+      "existing_auth_route_redirects_to_central_fallback_automatically",
+      "real_csrf_rejects_missing_token",
+      "headless_login_accepts_standard_existing_user",
+      "real_code_pkce_exchange_completes_existing_client",
+      "greenfield_client_has_no_users_before_first_login",
+      "fresh_client_without_native_login_reuses_central_session",
+      "first_sso_login_creates_local_account_without_operator_link",
+      "new_local_account_does_not_copy_central_password_or_recaller",
+      "first_sso_login_links_validated_issuer_subject",
+      "second_sso_login_preserves_local_account_profile_and_hash",
+      "fresh_local_id_and_independent_acl",
+      "existing_local_id_and_independent_acl",
+      "switch_to_local_rejects_old_sso_session_with_cached_routes",
+      "host_native_login_still_works_when_disabled",
+      "switch_to_sso_rejects_old_native_session",
+      "native_credentials_blocked_by_discovered_route",
+      "sso_returns_without_second_central_password",
+      "central_json_logout",
+      "fresh_strict_revocation_after_logout",
+      "existing_strict_revocation_after_logout",
+      "op_existing_users_credentials_schema_acl_unchanged",
+      "op_host_pending_migration_not_executed",
+      "backchannel_outbox_drained",
+      "greenfield_only_adds_one_user_without_schema_acl_or_later_credential_changes",
+      "fresh_host_pending_migration_not_executed",
+      "existing_existing_users_credentials_schema_acl_unchanged",
+      "existing_host_pending_migration_not_executed"
+    ],
+    "count": 37,
+    "fresh_initial_users": 0,
+    "new_accounts": 1,
+    "operator_link_command_for_fresh": false,
+    "host_factory_for_fresh": false,
+    "existing_users_changed": false,
+    "owned_servers_stopped": true,
+    "scope": "Disposable standard Laravel hosts, HTTP loopback development only; Laravel config/route caches enabled, PHP OPcache disabled"
+  },
+  "sql_concurrency": {
+    "profiles": [
+      {
+        "engine": "mysql",
+        "isolation": "READ COMMITTED",
+        "php": "8.3.36",
+        "tests": 2,
+        "assertions": 7,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/greenfield-verified-20261117-161509-mysql.junit.xml",
+        "scope": "Only the two new greenfield concurrency cases, not the full SQL suite"
+      },
+      {
+        "engine": "pgsql",
+        "isolation": "READ COMMITTED",
+        "php": "8.3.36",
+        "tests": 2,
+        "assertions": 7,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/greenfield-verified-20261117-161509-pgsql.junit.xml",
+        "scope": "Only the two new greenfield concurrency cases, not the full SQL suite"
+      },
+      {
+        "engine": "mysql",
+        "isolation": "REPEATABLE READ",
+        "php": "8.3.36",
+        "tests": 2,
+        "assertions": 7,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/greenfield-verified-20261117-161514-mysql.junit.xml",
+        "scope": "Only the two new greenfield concurrency cases, not the full SQL suite"
+      },
+      {
+        "engine": "pgsql",
+        "isolation": "REPEATABLE READ",
+        "php": "8.3.36",
+        "tests": 2,
+        "assertions": 7,
+        "status": "passed",
+        "junit": ".runtime/database-lab/results/greenfield-verified-20261117-161514-pgsql.junit.xml",
+        "scope": "Only the two new greenfield concurrency cases, not the full SQL suite"
+      }
+    ],
+    "processes_same_identity": 8,
+    "processes_competing_subjects": 2,
+    "workspace_and_container_source_sha256": "506df7ac23dbd8c54cc2c1a00bebe004d6e1955b87c2609aa78d4e63205a093d",
+    "source_match": true,
+    "laboratory_services_stopped": true
+  },
+  "preservation": {
+    "protected_original_files": 10,
+    "all_unchanged": true,
+    "migration_files": {
+      "server": 1,
+      "client": 1,
+      "contracts": 0
+    },
+    "migration_definitions_changed": false,
+    "dependency_manifests_or_lock_changed": false,
+    "versions_published": false
+  },
+  "attempts": [
+    {
+      "path": ".runtime/greenfield-client/initial-tests.log",
+      "status": "failed",
+      "cause": "Test helper name conflicted with final PHPUnit callback method; renamed."
+    },
+    {
+      "path": ".runtime/greenfield-client/initial-tests-2.log",
+      "status": "failed",
+      "cause": "Repeated callback fixture reused an earlier fake token response; reset its HTTP factory."
+    },
+    {
+      "path": ".runtime/greenfield-client/initial-tests-3.log",
+      "status": "passed",
+      "tests": 12,
+      "assertions": 91
+    },
+    {
+      "path": ".runtime/greenfield-client/sql-READ-COMMITTED.log",
+      "status": "passed",
+      "scope": "Two cases in both engines"
+    },
+    {
+      "path": ".runtime/greenfield-client/sql-REPEATABLE-READ.log",
+      "status": "partially_failed",
+      "cause": "MySQL barrier after email read waited behind serialized reservation gap locks; moved synchronization before reservations. PostgreSQL passed. Both isolations/engines repeated successfully."
+    }
+  ],
+  "limits": [
+    "HTTP loopback and disposable SQLite Laravel hosts; config/route cache enabled and development PHP OPcache disabled.",
+    "Only the two greenfield concurrency cases repeated on SQL, not the historical full SQL suite.",
+    "No new cross-site browser, actual Vue/React starter build, official OIDF or 30-minute load campaign; historical evidence keeps its original sources.",
+    "No remote CI, external pilot, independent review, certification or version publication."
+  ],
+  "evidence_sha256": {
+    ".runtime/greenfield-client/audit.json": "e99397fcc4e69df9bd0935f43a8483e38c4625ae5145caeda3daa5993713f6e4",
+    ".runtime/greenfield-client/composer-examples-app-one.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/greenfield-client/composer-examples-app-two.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/greenfield-client/composer-examples-identity-server.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/greenfield-client/composer-packages-client.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/greenfield-client/composer-packages-contracts.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/greenfield-client/composer-packages-server.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/greenfield-client/composer-root.log": "617d39e3b4752168f63039991b7e1efaca11e54a1f5a9153d93b0d4efe91fe05",
+    ".runtime/greenfield-client/conformance.log": "c1f1d7bbdf6f338c66a37f7642b71c89862e466a7dd060155d948c250d3c644e",
+    ".runtime/greenfield-client/doctor-existing.json": "ae5af2eefb89756901e2a157e19e066ac2ea8e13a717e7a8e3e5b86e8327ff49",
+    ".runtime/greenfield-client/doctor-fresh.json": "59149e5d6294dce0825e679fd20e5e016b0e8c21c8e488eeed5cad1b4b4c481d",
+    ".runtime/greenfield-client/doctor-server.json": "b28aa8a006e0657f2b6e9a4be4ffce1d15c0cbd8f25dd23e022e8de83a86d8b4",
+    ".runtime/greenfield-client/http-initial.log": "3d5fcd6a04cbf7bef2d3bc0cc11e78ed99f42cd0519e922ea0a29e9ff2a2f0ba",
+    ".runtime/greenfield-client/initial-tests-2.log": "937e8563b292dc6515f12b432488392b22fa4746452d5f0b899da5c985a77c34",
+    ".runtime/greenfield-client/initial-tests-3.log": "c3d0e3f24f2df37d97a7b459a73fee9dd9e91f2a840cc111c3c5b0b6f93840f4",
+    ".runtime/greenfield-client/initial-tests.log": "653b5ba8662c197c7d12e4601e7f4c2fe9c77f7829f5392da950feafd4f21768",
+    ".runtime/greenfield-client/larastan.log": "c10b11f9f3221401615294bc8a54f9127c54ab3bcc77b41f8986ac94e4935b44",
+    ".runtime/greenfield-client/php83-tests.log": "bbaaf32b52db9eac635c0703ce767232c7d1133ff294204459e93ed2728bd491",
+    ".runtime/greenfield-client/php84-tests.log": "f5ae95cbf68193909d32025139c36940030b9bd94bfa491ebb155f3e892398a6",
+    ".runtime/greenfield-client/php85-tests.log": "10c7d4e54f74309269cec0850dd4ac81610d8477c6b0c9ba57113ba4f4eb1fee",
+    ".runtime/greenfield-client/pint-files.log": "3610fd171b5dbef9e8b090ec9dedb79695c25ee9845525853981e1457539a41c",
+    ".runtime/greenfield-client/pint-global-verified.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/greenfield-client/pint-global.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/greenfield-client/pint-sql-final.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/greenfield-client/pint-sql.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+    ".runtime/greenfield-client/platform.log": "73278b9ea91ebda3cdbb77d421800efb189ec1f01fd3796b437e84413a7f08da",
+    ".runtime/greenfield-client/protected-before.json": "1b8eb14a9fa8e5544ea69e70432c1848a8683bc77010ace5d88fb2e5fa66e285",
+    ".runtime/greenfield-client/source-fingerprint.json": "0605173599d297957e65f5d30a96f78c3d8f7ad35f3bfaac64f70aab0039e920",
+    ".runtime/greenfield-client/sql-container-fingerprint.txt": "18f7741f6fdb93aba4995bc11d8658ce9f8c027d2324771bfa2132e23afd1685",
+    ".runtime/greenfield-client/sql-host-fingerprint.txt": "844990ed109036377391f2898adf1b2d83e52a16e7bf17a1595df813a9361582",
+    ".runtime/greenfield-client/sql-READ-COMMITTED.log": "0de655ca39a6c5d29bb642e48392cce0522de71748fe68427668738bbbc4c110",
+    ".runtime/greenfield-client/sql-REPEATABLE-READ.log": "fab482c2f77a6e65f42a134fbebaef5d77bfcca3f13ff7d94ccd61a326bd585b",
+    ".runtime/greenfield-client/sql-start-verified.log": "027773960a18844074d9f358c14a214076f749b6f5bbc5b678185458a0f799d5",
+    ".runtime/greenfield-client/sql-start.log": "506303c5ebae4add451d3daa396c376cec2e5382ba94dee23e6eeb2cd8be4f3f",
+    ".runtime/greenfield-client/sql-stop.log": "c825ae682f48f2c653ad1155a605337b5192f21abb118c679cc605f526ac2637",
+    ".runtime/greenfield-client/sql-verified-READ-COMMITTED.log": "7a87daf807cf0550df6524412bf0e27e61b92e499c8463b97c767353cd3f6915",
+    ".runtime/greenfield-client/sql-verified-REPEATABLE-READ.log": "9559376a73bfc19fb84b002f59535656bb23386f79702ff0e1575e94cdffa813",
+    ".runtime/agnostic-auth/live-20261117-161043-3e7104/result.json": "8c57b598fc7e21ddc01955cfdb857fb84881ce6ba34c72786ce060a84540d4b6",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161509-images.json": "8258174eb1f61c9f54952e008ac44f0d6ca612bf9b48a3f54796ee0e34e7fac6",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161509-mysql.junit.xml": "29dc3598f9800854bd14824cdb317638b9511ee812b2e3f0b8b5dce384c9d5e8",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161509-mysql.log": "7fa95b6ba0a1b66caa5efb59f555d087a2c79f7e43513ccf4b602025abc04fbc",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161509-pgsql.junit.xml": "2b5e2c19104d4dd50cec5f1ec329254a052a3e4997f58ecb1299858cbd92d9ba",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161509-pgsql.log": "9d49b992255bb2de479e671965e03687fb2650c13af666ec1f2ff4ef65f2d456",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161514-images.json": "8258174eb1f61c9f54952e008ac44f0d6ca612bf9b48a3f54796ee0e34e7fac6",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161514-mysql.junit.xml": "47c4734a698fc65b1d495f78039f9a5bdd860fd5a1d2d911d87a15a70018bd31",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161514-mysql.log": "69cbc3fe3e387e0ffd44fb72fd4d8437fe97828fb8f9ae3501c130ff1d233147",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161514-pgsql.junit.xml": "7fa9f9b9adb69536f18b1a8bbd121ba7243b73a8e859737722dc58df38affcff",
+    ".runtime/database-lab/results/greenfield-verified-20261117-161514-pgsql.log": "9dff37f17aa4b59ad431edfbd4f701240f0a1f5f4c1c740fc3f93524f1182b1f"
+  }
+}

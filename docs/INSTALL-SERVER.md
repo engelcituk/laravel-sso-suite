@@ -5,6 +5,8 @@ Este Laravel guarda las cuentas centrales y autentica a las personas. Cada aplic
 cliente conserva sus usuarios, contraseñas y permisos independientes.
 Este es el escenario prioritario del paquete. Las instrucciones para un login o una
 instalación existente son compatibilidad adicional y puedes omitirlas en greenfield.
+El paquete agrega servicios y adaptadores a ese Laravel; tu aplicación sigue siendo
+dueña de su CRUD y frontend. [Crear, listar, editar y revocar clientes desde tu controlador](CLIENT-REGISTRATION-SERVICE.md).
 
 ## 1. Prepara un Laravel normal
 
@@ -13,7 +15,7 @@ SessionGuard/proveedor Eloquent. En un Laravel limpio conserva su modelo `User` 
 no agregues traits SSO, columnas `is_active` ni campos de identidad remota.
 
 Prepara `.env`, APP_KEY y tablas base mediante el procedimiento normal de tu aplicación.
-El paquete no crea cuentas ni ejecuta migraciones pendientes del anfitrión. Si el Laravel
+Instalar el paquete no crea cuentas demo ni ejecuta migraciones pendientes del anfitrión. Si el Laravel
 ya existe, conserva su configuración y datos. Para el ejemplo usaremos
 `APP_URL=https://identidad.test`, un origen dedicado sin subdirectorio.
 
@@ -44,7 +46,7 @@ php artisan sso:install-server --configure --issuer=https://identidad.test --mig
 | `--force` | Autoriza las migraciones explícitas en producción |
 
 No cambia APP_KEY, DB, modelo, rutas del anfitrión ni atributos de usuarios. No instala
-un frontend. La migración del servidor crea siete tablas SSO; Passport tiene sus propias
+un frontend. La migración del servidor crea ocho tablas SSO; Passport tiene sus propias
 tablas/migraciones, independientes del límite de **una migración por paquete SSO**.
 Si ya tienes Passport, conserva tablas y claves; un esquema parcial debe revisarse con
 el doctor y repararse de forma controlada, no reinicializarse.
@@ -53,7 +55,9 @@ el doctor y repararse de forma controlada, no reinicializarse.
 
 **Laravel limpio:** ya puedes abrir `/sso/auth/login`. Incluye un formulario mínimo
 opcional con CSRF y limitación de intentos. Usa las cuentas existentes del guard de
-Laravel. No registra usuarios ni cambia sus hashes, aunque el coste configurado haya cambiado.
+Laravel. El login no cambia sus hashes, aunque el coste configurado haya cambiado.
+El paquete también incluye alta manual, registro público opcional y recuperación de
+contraseña. [Sistemas y cuentas centrales](CENTRAL-ACCOUNTS.md).
 
 **Laravel con login propio:** el modo predeterminado `auto` usa la ruta nombrada `login`.
 Conserva su controlador, vistas, MFA y políticas. El POST de contraseña del paquete
@@ -70,7 +74,7 @@ pantalla propia si quieres una experiencia interactiva sin la vista opcional.
 No se exige una columna de cuenta activa. Si tu proyecto ya tiene una booleana y quieres
 aplicarla también a sesiones/tokens, configura `SSO_SERVER_ACTIVE_COLUMN=tu_columna`.
 Cuando la configuras, debe existir y ser verdadera; no se ignora silenciosamente.
-Los usuarios los administra el proyecto; una instalación sin cuentas necesita su proceso de altas.
+Puedes crear las cuentas mediante `sso:user`; el registro público permanece cerrado por defecto.
 
 ## 4. Registra cada aplicación cliente
 
@@ -87,6 +91,13 @@ Sin él se solicita consentimiento. `--trust-backchannel` agrega exactamente la 
 indicada a la lista de destinos de logout autorizados; no permite destinos arbitrarios.
 
 Sigue después [Instalar el cliente](INSTALL-CLIENT.md).
+
+Antes del primer login debes asignar sus cuentas centrales. Una cuenta nueva se crea y
+asigna con `sso:user persona@example.test --name="Persona" --client=ID_DEL_CLIENTE`;
+una existente se asigna con `sso:client-user ID_DEL_CLIENTE ID_CENTRAL`.
+`--first-party` omite consentimiento, no la asignación. No se sincronizan contraseñas.
+Recuperación: `/sso/auth/forgot-password`, con correo/broker de Laravel configurados.
+El doctor valida broker y tabla; no comprueba entrega real de correo.
 
 ## 5. Comprueba y opera
 

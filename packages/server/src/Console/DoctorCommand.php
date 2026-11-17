@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Passport\Passport;
 use LaravelSso\Contracts\DiagnosticReport;
+use LaravelSso\Server\Accounts;
+use LaravelSso\Server\Login;
+use LaravelSso\Server\PasswordRecovery;
 use LaravelSso\Server\Protocol\RedirectUri;
 use LaravelSso\Server\SigningKeys;
 
@@ -49,7 +52,7 @@ final class DoctorCommand extends Command
             && (! app()->environment('production') || (! in_array(config('session.driver'), ['array'], true)
                 && config('session.secure') && ! config('session.domain') && config('session.http_only') && config('session.path') === '/')));
         $report->check('schema', 'Apply Passport migrations and the single server migration.', function (): bool {
-            foreach (['sso_clients' => ['client_id', 'require_pkce'], 'sso_sessions' => ['sid', 'device_id', 'revoked'],
+            foreach (['sso_clients' => ['client_id', 'require_pkce', 'restrict_users'], 'sso_client_users' => ['client_id', 'subject'], 'sso_sessions' => ['sid', 'device_id', 'revoked'],
                 'sso_auth_contexts' => ['nonce'], 'sso_token_sessions' => ['token_id'], 'sso_logout_deliveries' => ['attempts', 'delivered_at'],
                 'sso_devices' => ['credential_hash', 'remember_until'], 'sso_remember_tokens' => ['token_hash', 'used_at'],
                 'oauth_clients' => ['id'], 'oauth_access_tokens' => ['revoked'], 'oauth_auth_codes' => ['revoked']] as $table => $columns) {
@@ -60,6 +63,21 @@ final class DoctorCommand extends Command
 
             return count(glob(database_path('migrations/*_create_sso_tables.php')) ?: []) <= 1;
         });
+        if (app(Login::class)->usesPackageAuthentication()) {
+            $report->check('central_accounts', 'Use conventional central accounts with unique email and closed/open registration.', function (): bool {
+                app(Accounts::class)->checkSchema();
+
+                return in_array(config('sso-server.registration'), ['closed', 'open'], true)
+                    && (int) config('sso-server.password_min_length') >= 12 && (int) config('sso-server.password_min_length') <= 72;
+            });
+            if (config('sso-server.password_reset')) {
+                $report->check('password_recovery', 'Configure the matching database password broker, token table and a working mail transport.', function (): bool {
+                    app(PasswordRecovery::class)->settings();
+
+                    return true;
+                });
+            }
+        }
         $report->check('signing_keys', 'Readable RSA keys (2048+ bits), published signing kid and matching private/public pair required.', function (): bool {
             foreach (array_merge([config('sso-server.private_key')], array_values(config('sso-server.public_keys'))) as $path) {
                 if (! is_string($path) || ! is_readable($path)) {

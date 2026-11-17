@@ -15,6 +15,10 @@ return [
     'login_view' => null,
     'login_field' => 'email',
     'after_login' => '/',
+    'registration' => env('SSO_SERVER_REGISTRATION', 'closed'), // closed: operator creates accounts; open: optional public registration.
+    'password_reset' => env('SSO_SERVER_PASSWORD_RESET', true),
+    'password_broker' => env('SSO_SERVER_PASSWORD_BROKER', config('auth.defaults.passwords', 'users')),
+    'password_min_length' => 12,
     // Optional model attributes. Missing values are omitted, never synthesized.
     'claim_attributes' => [
         'name' => 'name', 'given_name' => 'given_name', 'family_name' => 'family_name',

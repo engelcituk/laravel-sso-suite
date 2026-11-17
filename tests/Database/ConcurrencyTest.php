@@ -4,22 +4,92 @@ namespace LaravelSso\Tests\Database;
 
 use Firebase\JWT\JWT;
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Passport\ClientRepository;
 use LaravelSso\Client\EloquentProvisioner;
+use LaravelSso\Client\Exceptions\ProtocolException;
 use LaravelSso\Contracts\Identity;
+use LaravelSso\Server\ClientChanges;
+use LaravelSso\Server\ClientUsers;
+use LaravelSso\Server\Contracts\ManagesClients;
 use LaravelSso\Server\GlobalSessions;
 use LaravelSso\Server\Http\ProtocolController;
 use LaravelSso\Server\LogoutDeliveries;
+use LaravelSso\Server\PasswordRecovery;
 use LaravelSso\Server\PruneState;
 use LaravelSso\Server\SigningKeys;
 use LaravelSso\Tests\Fixtures\CentralUser;
 use LaravelSso\Tests\Fixtures\LocalUser;
 use LaravelSso\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ConcurrencyTest extends TestCase
 {
+    public static function managementOperations(): array
+    {
+        return [['update'], ['revoke']];
+    }
+
+    #[DataProvider('managementOperations')]
+    public function test_client_management_waits_for_exchange_and_invalidates_its_committed_token(string $operation): void
+    {
+        [$exchange] = $this->authorization();
+        $results = Parallel::run(2, function (int $index, string $directory) use ($exchange, $operation): int {
+            if ($index === 1) {
+                Parallel::wait($directory.'/managed-token-inserted');
+                touch($directory.'/management-started');
+                app(ManagesClients::class)->$operation($exchange['client_id'], ...($operation === 'update' ? [new ClientChanges(name: 'Updated')] : []));
+
+                return 0;
+            }
+            DB::listen(function (QueryExecuted $query) use ($directory): void {
+                if (str_starts_with($query->sql, 'insert') && str_contains($query->sql, 'oauth_access_tokens')) {
+                    touch($directory.'/managed-token-inserted');
+                    Parallel::wait($directory.'/management-started');
+                }
+            });
+
+            return $this->postJson('/oidc/token', $exchange)->getStatusCode();
+        });
+        $this->assertSame([200, 0], $results);
+        $this->assertSame(1, DB::table('oauth_access_tokens')->count());
+        $this->assertTrue((bool) DB::table('oauth_access_tokens')->value('revoked'));
+    }
+
+    #[DataProvider('managementOperations')]
+    public function test_client_management_committing_first_blocks_waiting_exchange(string $operation): void
+    {
+        [$exchange] = $this->authorization();
+        $results = Parallel::run(2, function (int $index, string $directory) use ($exchange, $operation): int {
+            if ($index === 1) {
+                Parallel::wait($directory.'/management-locked');
+                touch($directory.'/managed-exchange-started');
+
+                return $this->postJson('/oidc/token', $exchange)->getStatusCode();
+            }
+            $paused = false;
+            DB::listen(function (QueryExecuted $query) use ($directory, &$paused): void {
+                if (! $paused && str_starts_with($query->sql, 'update') && str_contains($query->sql, 'sso_clients')) {
+                    $paused = true;
+                    touch($directory.'/management-locked');
+                    Parallel::wait($directory.'/managed-exchange-started');
+                }
+            });
+            app(ManagesClients::class)->$operation($exchange['client_id'], ...($operation === 'update' ? [new ClientChanges(name: 'Updated')] : []));
+
+            return 0;
+        });
+        $this->assertSame(0, $results[0]);
+        $this->assertContains($results[1], $operation === 'update' ? [400] : [401]);
+        $this->assertSame(0, DB::table('oauth_access_tokens')->count());
+        $this->assertSame(0, DB::table('sso_token_sessions')->count());
+    }
+
     private function authorization(): array
     {
         $user = CentralUser::create(['name' => 'Concurrent identity', 'email' => 'concurrency@example.test', 'password' => bcrypt('test')]);
@@ -42,14 +112,8 @@ final class ConcurrencyTest extends TestCase
     {
         [$exchange] = $this->authorization();
         $results = Parallel::run(8, function (int $index, string $directory) use ($exchange): int {
-            $paused = false;
-            DB::listen(function (QueryExecuted $query) use (&$paused, $directory, $index): void {
-                if (! $paused && str_contains($query->sql, 'oauth_auth_codes') && str_starts_with($query->sql, 'select')
-                    && str_contains($query->sql, 'exists')) {
-                    $paused = true;
-                    Parallel::barrier($directory, 'code-read', $index, 8);
-                }
-            });
+            // Exchanges now serialize per application with management operations.
+            Parallel::barrier($directory, 'exchange-start', $index, 8);
 
             return $this->postJson('/oidc/token', $exchange)->getStatusCode();
         });
@@ -86,6 +150,117 @@ final class ConcurrencyTest extends TestCase
         $this->assertSame(2, LocalUser::count());
         $this->assertSame(1, DB::table('sso_identities')->where('issuer', 'https://identity.test')->where('subject', 'shared')->count());
         $this->assertArrayNotHasKey('is_admin', LocalUser::find($results[0])->getAttributes());
+    }
+
+    public function test_greenfield_parallel_first_login_creates_exactly_one_account_and_link(): void
+    {
+        Schema::table('users', fn (Blueprint $table) => $table->unique('email'));
+        config(['sso-client.provision' => 'greenfield', 'sso-client.create_user' => null]);
+        $results = Parallel::run(8, function (int $index, string $directory): string {
+            $paused = false;
+            DB::listen(function (QueryExecuted $query) use (&$paused, $index, $directory): void {
+                if (! $paused && str_starts_with($query->sql, 'select') && str_contains($query->sql, 'sso_identities')) {
+                    $paused = true;
+                    Parallel::barrier($directory, 'greenfield-identity-read', $index, 8);
+                }
+            });
+
+            return DB::transaction(function (): string {
+                DB::table('users')->count();
+
+                return (string) app(EloquentProvisioner::class)->provision(new Identity('https://identity.test', 'greenfield', 'sid', time(),
+                    ['name' => 'New account', 'email' => 'new@example.test']))->getAuthIdentifier();
+            }, 10);
+        });
+        $this->assertCount(1, array_unique($results));
+        $this->assertSame(1, LocalUser::count());
+        $this->assertSame(1, DB::table('sso_identities')->where('user_id', $results[0])->count());
+    }
+
+    public function test_greenfield_competing_subjects_with_same_email_never_share_an_account(): void
+    {
+        Schema::table('users', fn (Blueprint $table) => $table->unique('email'));
+        config(['sso-client.provision' => 'greenfield', 'sso-client.create_user' => null]);
+        $results = Parallel::run(2, function (int $index, string $directory): string {
+            $paused = false;
+            DB::listen(function (QueryExecuted $query) use (&$paused, $index, $directory): void {
+                // Synchronize before reservations: RR may serialize different subjects on index gaps.
+                if (! $paused && str_starts_with($query->sql, 'select') && str_contains($query->sql, 'sso_identities')) {
+                    $paused = true;
+                    Parallel::barrier($directory, 'greenfield-competing-read', $index, 2);
+                }
+            });
+            try {
+                app(EloquentProvisioner::class)->provision(new Identity('https://identity.test', 'new-'.$index, 'sid', time(),
+                    ['name' => 'Concurrent account', 'email' => $index === 0 ? 'Same@Example.Test' : 'same@example.test']));
+
+                return 'created';
+            } catch (ProtocolException) {
+                return 'collision';
+            }
+        });
+        sort($results);
+        $this->assertSame(['collision', 'created'], $results);
+        $this->assertSame(1, LocalUser::count());
+        $this->assertSame(1, DB::table('sso_identities')->count());
+        $this->assertSame('same@example.test', LocalUser::sole()->email);
+    }
+
+    public function test_central_password_reset_token_can_only_commit_once_under_parallel_requests(): void
+    {
+        Schema::table('users', fn (Blueprint $table) => $table->unique('email'));
+        Schema::create('password_reset_tokens', function (Blueprint $table): void {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+        config(['auth.providers.users.model' => LocalUser::class, 'sso-server.active_column' => null,
+            'sso-server.password_broker' => 'central',
+            'auth.passwords.central' => ['provider' => 'users', 'table' => 'password_reset_tokens', 'expire' => 60, 'throttle' => 60]]);
+        $user = LocalUser::create(['name' => 'Reset target', 'email' => 'reset@example.test', 'password' => bcrypt('before-reset')]);
+        $token = Password::broker('central')->createToken($user);
+        $results = Parallel::run(2, function (int $index, string $directory) use ($token): array {
+            Parallel::barrier($directory, 'reset-attempt', $index, 2);
+            $password = 'Concurrent-password-'.$index.'!';
+
+            return ['index' => $index, 'status' => app(PasswordRecovery::class)->reset(['email' => 'reset@example.test',
+                'token' => $token, 'password' => $password, 'password_confirmation' => $password])];
+        });
+        $winners = array_values(array_filter($results, fn ($result) => $result['status'] === Password::PASSWORD_RESET));
+        $this->assertCount(1, $winners);
+        $this->assertCount(1, array_filter($results, fn ($result) => $result['status'] === Password::INVALID_TOKEN));
+        $this->assertTrue(Hash::check('Concurrent-password-'.$winners[0]['index'].'!', $user->fresh()->password));
+        $this->assertSame(0, DB::table('password_reset_tokens')->count());
+    }
+
+    public function test_central_assignment_removal_waits_for_exchange_and_revokes_its_committed_token(): void
+    {
+        [$exchange, $sid] = $this->authorization();
+        DB::table('sso_clients')->where('client_id', $exchange['client_id'])->update(['restrict_users' => true]);
+        $subject = DB::table('sso_sessions')->where('sid', $sid)->value('subject');
+        app(ClientUsers::class)->assign($exchange['client_id'], $subject);
+        $results = Parallel::run(2, function (int $index, string $directory) use ($exchange, $subject): int {
+            if ($index === 1) {
+                Parallel::wait($directory.'/assigned-token-inserted');
+                touch($directory.'/assignment-removal-started');
+                app(ClientUsers::class)->assign($exchange['client_id'], $subject, true);
+
+                return 0;
+            }
+            DB::listen(function (QueryExecuted $query) use ($directory): void {
+                if (str_starts_with($query->sql, 'insert') && str_contains($query->sql, 'oauth_access_tokens')) {
+                    touch($directory.'/assigned-token-inserted');
+                    Parallel::wait($directory.'/assignment-removal-started');
+                }
+            });
+
+            return $this->postJson('/oidc/token', $exchange)->getStatusCode();
+        });
+        sort($results);
+        $this->assertSame([0, 200], $results);
+        $this->assertSame(1, DB::table('oauth_access_tokens')->count());
+        $this->assertTrue((bool) DB::table('oauth_access_tokens')->value('revoked'));
+        $this->assertSame(0, DB::table('sso_client_users')->count());
     }
 
     public function test_exchange_waiting_after_token_insert_cannot_outlive_committed_revocation(): void
