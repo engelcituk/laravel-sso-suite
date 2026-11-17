@@ -1,0 +1,734 @@
+{
+    "schema_version": 1,
+    "checked_at_utc": "2026-11-17T04:15:47+00:00",
+    "base_commit": "98b6e47f62f530b110f647f82a7797b9d3bfa141",
+    "scope": "Verified local preparation for an external pilot; not the external pilot itself",
+    "passed": true,
+    "source_fingerprints": {
+        "workspace": {
+            "checked_at_utc": "2026-11-17T04:12:58+00:00",
+            "source_sha256": "84e465a8863106f8442d0f79626dd17fdcb900df73ef8e2863db362bb2de334a",
+            "file_count": 115,
+            "deployment_source_sha256": "8d1b4795306a64952bf3beb259f9472567a2b3b84ab1b39b615c72e92226af67",
+            "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+            "migration_files": {
+                "server": 1,
+                "client": 1,
+                "contracts": 0
+            }
+        },
+        "official_op": {
+            "checked_at_utc": "2026-11-17T04:12:58+00:00",
+            "source_sha256": "84e465a8863106f8442d0f79626dd17fdcb900df73ef8e2863db362bb2de334a",
+            "file_count": 115,
+            "deployment_source_sha256": null,
+            "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+            "migration_files": {
+                "server": 1,
+                "client": 1,
+                "contracts": 0
+            }
+        },
+        "deployments": {
+            "checked_at_utc": "2026-11-17T04:12:58+00:00",
+            "source_sha256": "84e465a8863106f8442d0f79626dd17fdcb900df73ef8e2863db362bb2de334a",
+            "file_count": 115,
+            "deployment_source_sha256": "8d1b4795306a64952bf3beb259f9472567a2b3b84ab1b39b615c72e92226af67",
+            "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+            "migration_files": {
+                "server": 1,
+                "client": 1,
+                "contracts": 0
+            }
+        }
+    },
+    "official_oidc": {
+        "results": "conformance/oidf-results.json",
+        "results_sha256": "6a59ba7a121abd3c9b01c33aca3f980cc8705a2d3b997868b6c13478fc712ce6",
+        "review_sha256": "6de8cd2005630e2600da4c40afb9d45c71830b9f5c360ee84a16b29f0ee3dfe6",
+        "totals": {
+            "PASSED": 58,
+            "FAILED": 0,
+            "WARNING": 0,
+            "REVIEW": 16,
+            "SKIPPED": 10,
+            "UNKNOWN": 0
+        },
+        "transport": {
+            "checked_at_utc": "2026-11-17T03:37:12+00:00",
+            "requests": 80,
+            "concurrency": 4,
+            "passed": 80,
+            "failures": [],
+            "request_timeout_seconds": 5,
+            "max_latency_ms": 58.18,
+            "official_conformance_test": false
+        }
+    },
+    "operational_evidence": {
+        "path": "conformance/pilot-deployment-results.json",
+        "sha256": "c0e7ebb06036d5638436ba419d1dd5b315fc25f6c1563a077200df833cd6c42b"
+    },
+    "modes": {
+        "cases": 30,
+        "checks": 174,
+        "phases": {
+            "local-before": {
+                "started_at_utc": "2026-11-17T03:39:44.733Z",
+                "label": "pilot-modes-final",
+                "phase": "local-before",
+                "https_errors_ignored": false,
+                "script_sha256": "364197672997dcbb5056e2b620b64dd94f1bf88d3977b6a2c5d4a3b349acee2e",
+                "playwright": "1.65.1",
+                "tests": [
+                    {
+                        "engine": "chromium",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "chromium",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    }
+                ],
+                "failed": 0,
+                "finished_at_utc": "2026-11-17T03:39:57.131Z"
+            },
+            "sso": {
+                "started_at_utc": "2026-11-17T03:40:05.569Z",
+                "label": "pilot-modes-final",
+                "phase": "sso",
+                "https_errors_ignored": false,
+                "script_sha256": "364197672997dcbb5056e2b620b64dd94f1bf88d3977b6a2c5d4a3b349acee2e",
+                "playwright": "1.65.1",
+                "tests": [
+                    {
+                        "engine": "chromium",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "chromium",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    }
+                ],
+                "failed": 0,
+                "finished_at_utc": "2026-11-17T03:40:22.732Z"
+            },
+            "sso-outage": {
+                "started_at_utc": "2026-11-17T03:40:24.666Z",
+                "label": "pilot-modes-final",
+                "phase": "sso-outage",
+                "https_errors_ignored": false,
+                "script_sha256": "364197672997dcbb5056e2b620b64dd94f1bf88d3977b6a2c5d4a3b349acee2e",
+                "playwright": "1.65.1",
+                "tests": [
+                    {
+                        "engine": "chromium",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "op_outage_denies_both_authenticated_rps",
+                            "no_automatic_local_fallback"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "chromium",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "op_outage_denies_both_authenticated_rps",
+                            "no_automatic_local_fallback"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "op_outage_denies_both_authenticated_rps",
+                            "no_automatic_local_fallback"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "op_outage_denies_both_authenticated_rps",
+                            "no_automatic_local_fallback"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "op_outage_denies_both_authenticated_rps",
+                            "no_automatic_local_fallback"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "op_outage_denies_both_authenticated_rps",
+                            "no_automatic_local_fallback"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    }
+                ],
+                "failed": 0,
+                "finished_at_utc": "2026-11-17T03:40:30.592Z"
+            },
+            "sso-recovery": {
+                "started_at_utc": "2026-11-17T03:40:32.555Z",
+                "label": "pilot-modes-final",
+                "phase": "sso-recovery",
+                "https_errors_ignored": false,
+                "script_sha256": "364197672997dcbb5056e2b620b64dd94f1bf88d3977b6a2c5d4a3b349acee2e",
+                "playwright": "1.65.1",
+                "tests": [
+                    {
+                        "engine": "chromium",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps",
+                            "sso_recovers_without_credential_resubmission"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "chromium",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps",
+                            "sso_recovers_without_credential_resubmission"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps",
+                            "sso_recovers_without_credential_resubmission"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps",
+                            "sso_recovers_without_credential_resubmission"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps",
+                            "sso_recovers_without_credential_resubmission"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "old_sessions_rejected",
+                            "native_login_redirected_and_password_post_403",
+                            "same_explicitly_linked_accounts_and_acl",
+                            "one_central_login_for_two_rps",
+                            "sso_recovers_without_credential_resubmission"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    }
+                ],
+                "failed": 0,
+                "finished_at_utc": "2026-11-17T03:40:46.003Z"
+            },
+            "local-after": {
+                "started_at_utc": "2026-11-17T03:40:53.935Z",
+                "label": "pilot-modes-final",
+                "phase": "local-after",
+                "https_errors_ignored": false,
+                "script_sha256": "364197672997dcbb5056e2b620b64dd94f1bf88d3977b6a2c5d4a3b349acee2e",
+                "playwright": "1.65.1",
+                "tests": [
+                    {
+                        "engine": "chromium",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl",
+                            "sso_sessions_rejected_after_disable"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "chromium",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl",
+                            "sso_sessions_rejected_after_disable"
+                        ],
+                        "passed": true,
+                        "version": "159.0.8154.6"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl",
+                            "sso_sessions_rejected_after_disable"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "firefox",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl",
+                            "sso_sessions_rejected_after_disable"
+                        ],
+                        "passed": true,
+                        "version": "159.0"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "fpm",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl",
+                            "sso_sessions_rejected_after_disable"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    },
+                    {
+                        "engine": "webkit",
+                        "profile": "apache",
+                        "checks": [
+                            "real_config_route_caches_and_opcache_both_rps",
+                            "both_rps_require_fresh_local_login",
+                            "sso_endpoints_404",
+                            "native_login_csrf_enforced",
+                            "local_credentials_work_with_op_down",
+                            "no_browser_op_contact_during_local_auth",
+                            "same_local_ids_and_independent_acl",
+                            "sso_sessions_rejected_after_disable"
+                        ],
+                        "passed": true,
+                        "version": "27.2"
+                    }
+                ],
+                "failed": 0,
+                "finished_at_utc": "2026-11-17T03:41:06.404Z"
+            }
+        },
+        "preservation": {
+            "fpm": {
+                "one": {
+                    "checked_at_utc": "2026-11-17T03:41:07+00:00",
+                    "profile": "fpm",
+                    "role": "one",
+                    "passed": true,
+                    "user_count": 10,
+                    "schema_unchanged": true,
+                    "all_user_attributes_unchanged": true,
+                    "passwords_and_remember_tokens_unchanged": true,
+                    "acl_unchanged": true
+                },
+                "two": {
+                    "checked_at_utc": "2026-11-17T03:41:08+00:00",
+                    "profile": "fpm",
+                    "role": "two",
+                    "passed": true,
+                    "user_count": 10,
+                    "schema_unchanged": true,
+                    "all_user_attributes_unchanged": true,
+                    "passwords_and_remember_tokens_unchanged": true,
+                    "acl_unchanged": true
+                }
+            },
+            "apache": {
+                "one": {
+                    "checked_at_utc": "2026-11-17T03:41:09+00:00",
+                    "profile": "apache",
+                    "role": "one",
+                    "passed": true,
+                    "user_count": 10,
+                    "schema_unchanged": true,
+                    "all_user_attributes_unchanged": true,
+                    "passwords_and_remember_tokens_unchanged": true,
+                    "acl_unchanged": true
+                },
+                "two": {
+                    "checked_at_utc": "2026-11-17T03:41:10+00:00",
+                    "profile": "apache",
+                    "role": "two",
+                    "passed": true,
+                    "user_count": 10,
+                    "schema_unchanged": true,
+                    "all_user_attributes_unchanged": true,
+                    "passwords_and_remember_tokens_unchanged": true,
+                    "acl_unchanged": true
+                }
+            }
+        },
+        "negative_control": {
+            "negative_exit": 1,
+            "positive_exit": 0,
+            "passed": true,
+            "changed_fixture_data": false,
+            "checked_at_utc": "2026-11-17T03:39:26.9545535Z"
+        }
+    },
+    "existing_installation_rehearsal": {
+        "fpm": {
+            "checked_at_utc": "2026-11-17T03:32:57+00:00",
+            "profile": "fpm",
+            "driver": "mysql",
+            "passed": true,
+            "isolated_namespace": true,
+            "recorded_migration_not_reapplied": true,
+            "adaptation_only_sso_tables": true,
+            "legacy_sessions_revoked": true,
+            "logout_receipts_preserved": true,
+            "explicit_link_idempotent": true,
+            "users_schema_and_all_attributes_unchanged": true,
+            "local_password_valid_and_unchanged": true,
+            "acl_unchanged": true,
+            "new_package_migrations": 0,
+            "production_upgrade_tool": false
+        },
+        "apache": {
+            "checked_at_utc": "2026-11-17T03:32:59+00:00",
+            "profile": "apache",
+            "driver": "pgsql",
+            "passed": true,
+            "isolated_namespace": true,
+            "recorded_migration_not_reapplied": true,
+            "adaptation_only_sso_tables": true,
+            "legacy_sessions_revoked": true,
+            "logout_receipts_preserved": true,
+            "explicit_link_idempotent": true,
+            "users_schema_and_all_attributes_unchanged": true,
+            "local_password_valid_and_unchanged": true,
+            "acl_unchanged": true,
+            "new_package_migrations": 0,
+            "production_upgrade_tool": false
+        }
+    },
+    "export_negative_control": {
+        "checked_at_utc": "2026-11-17T03:51:05.3955693Z",
+        "historical_soak_label": "soak-30m-verified",
+        "exit": 255,
+        "historical_evidence_rejected": true,
+        "success_report_written": false,
+        "passed": true
+    },
+    "quality": {
+        "phpunit": {
+            "php": "8.3.36",
+            "passed": true,
+            "tests": 230,
+            "assertions": 1076,
+            "skipped": 0,
+            "junit_sha256": "5d6036cd583ef6bcd835279bcab04396602c61e521ae05377c89a50b6ca3f4bf"
+        },
+        "larastan": {
+            "passed": true,
+            "level": 5,
+            "baseline": false,
+            "log_sha256": "de5724e222ff5a6a9f1967522863d0112aaa2eee3c9f7cda6da0a8ecfa0c9fe5"
+        },
+        "pint_changed_files": {
+            "passed": true,
+            "new_tools_passed": true
+        },
+        "pint_full_repository": {
+            "passed": false,
+            "pre_existing_failure_paths": 37,
+            "all_current_paths_also_fail_on_pristine_archive": true,
+            "affected_paths_modified_in_this_phase": 0,
+            "archive_has_additional_eol_findings": true
+        },
+        "powershell_parser": {
+            "passed": true
+        }
+    },
+    "cleanup": {
+        "checked_at_utc": "2026-11-17T04:15:07.0526954Z",
+        "deployment_stopped": true,
+        "oidf_stopped": true,
+        "remaining_task_containers": 0,
+        "private_volumes_and_evidence_preserved": true,
+        "published_versions": false
+    },
+    "preserved_examples": {
+        "files_checked": 10,
+        "contents_unchanged": true,
+        "credentials_exported": false
+    },
+    "migration_files": {
+        "server": 1,
+        "client": 1,
+        "contracts": 0
+    },
+    "published_versions": false,
+    "external_certification_claimed": false,
+    "artifacts_sha256": {
+        "pilot-modes-final-local-before.json": "8a87ae8df49a33b742b6a45241d6e6f06d9568b8edfba24a297135034c74ca2d",
+        "pilot-modes-final-sso.json": "7c6cb55510e65c3a2b219554bb20bd1a8f384c7a2d1a734d999f3dee0d90211d",
+        "pilot-modes-final-sso-outage.json": "7ad4fa53180dfdc6e399aa4b90f9824176ff10dacd688edf15b90fc878c4ed7d",
+        "pilot-modes-final-sso-recovery.json": "43d0925bc8982b112038d00186357a0ab62757eaa04c746a35d0f00f843ca63d",
+        "pilot-modes-final-local-after.json": "6b6122ae8101fcb9eac5bcdcac4755b77f6147bda70d30fc4e654404f9c60833",
+        "modes-preservation-fpm-one.json": "884c9062bea9286bc0ee7896dd928812310e0c549aec0d4525e25e5719fba33e",
+        "modes-preservation-fpm-two.json": "ab070922d9f5b44d1e2994e940fe25fbb861d9e98358e99c2e7445d688fabd5a",
+        "pilot-upgrade-fpm.json": "9b12693f10cb659219dbc188b279faf4a00a7f44ba2a3acccc6c8a9797b1b4af",
+        "modes-preservation-apache-one.json": "8ed8eb474d90bba77a3b923243cb70bb2d25beced84f89983a8a5f53f16fa6a2",
+        "modes-preservation-apache-two.json": "7c3e39b1966c6eb1d3a3efb4eda064a133a19d2a551b6c9eab87dfcc51df919b",
+        "pilot-upgrade-apache.json": "7f423bff1d0ae01941169014a913b9110bc460b484fc3e4e2ebd5c35d1faf237",
+        "workspace-fingerprint.json": "59104fca78678fdc0f45238274df7ec62bd4c9bef51dd9022c99f61945c4dcbd",
+        "oidf-runtime-fingerprint.json": "baa559b6fbce14cb89415ba9f3ed2e6fa11284d9a34875980fc889c42ef6c3c7",
+        "deployment-runtime-fingerprint.json": "59104fca78678fdc0f45238274df7ec62bd4c9bef51dd9022c99f61945c4dcbd",
+        "oidf-transport-check.json": "420a6f3d0f4cc69e159de0e1266ba7d19db0cdeeed8945518792afade62f26ab",
+        "modes-negative-control.json": "d2a87902dacd3fa6755a90be9daffa396d0d87a6c0dd059c793ba711dcc93e0f",
+        "export-negative-control.json": "c066140afc4e27a0e87d80f2f668111fe0ffc6e99187dfcc81e5c02e53861f6f",
+        "protected-files-before.json": "3a91970f1c8a43664da694714cb77b449b2c31e4cd161cc08b723d115e752c2a",
+        "protected-files-after.json": "3a91970f1c8a43664da694714cb77b449b2c31e4cd161cc08b723d115e752c2a",
+        "quality-summary.json": "9293c2de1d5dda3e5af29e4bf4c71b7798c133e3e407b01e36e3b88101277e64",
+        "cleanup.json": "426f992bc3b9627238a1ff817efc533d06c9216ee32fe7b2212069f352967b06"
+    },
+    "limits": [
+        "Local isolated Docker only",
+        "No independent external review/certification",
+        "No physical mobile devices, commercial browsers or Safari on macOS/iOS",
+        "No distributed or multiday load",
+        "Upgrade rehearsal is not a production upgrade tool",
+        "Full-repository Pint retains documented pre-existing findings"
+    ]
+}

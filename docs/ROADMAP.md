@@ -7,15 +7,35 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | --- | --- | --- |
 | 0 análisis | base completada | versiones/APIs inspeccionadas, arquitectura, decisiones, modelo y matriz |
 | 1 fundamento | base local y CI remota verificadas | compatibilidad ampliada integrada en main, 14/14: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
-| 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
-| 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
+| 2 servidor | perfil Code reevaluado localmente | cinco planes oficiales repetidos tras compatibilidad/Auth opcional: 58 PASSED, 0 FAILED/WARNING, 16 REVIEW verificados y 10 SKIPPED justificados; sin certificación |
+| 3 cliente | validación OIDC y modos ampliada | validadores normativos, navegadores cross-site y 30 casos con Auth local/SSO, cachés y reinicios aprobados; falta evaluación externa |
 | 4 identidad local | modo opcional integrado y verificado en main | SSO_CLIENT_ENABLED, tablas propias sin tocar users/passwords, 18 casos nuevos y CI de integración 14/14 |
-| 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
-| 6 instalación | despliegues y operación local verificados | Nginx/FPM/MySQL y Apache/PHP/PostgreSQL optimizados, 60 controles de navegador y campaña de 30 min; otros entornos/piloto externo fuera de alcance |
-| 7 publicación | pendiente | calidad local y matriz remota aprobadas; faltan auditoría/certificación externa y autorización para publicar versiones |
+| 5 sesiones | funcionalidades y recuperación locales verificadas | Recordarme, dispositivos, revocación y retención; carga actual con caída OP de 60 s y pausa de worker de 120 s, colas 0/0 al cierre; evaluación externa pendiente |
+| 6 instalación | preparación local del piloto verificada | dos despliegues optimizados, 60 controles cross-site, ambos modos con cachés/reinicios, ensayo SSO-only en dos motores y carga actual de 30 min; piloto externo pendiente |
+| 7 publicación | pendiente | CI histórica aprobada; formato de archivos modificados aprobado, Pint global Windows con 37 hallazgos preexistentes; faltan auditoría/certificación externa y autorización para publicar |
 
 ## Resultados ejecutados
 
+- **Preparación verificable del piloto, workspace sobre `98b6e47`**: cinco planes OIDC
+  oficiales repetidos, 84 FINISHED: **58 PASSED, 0 FAILED/WARNING, 16 REVIEW verificados
+  y 10 SKIPPED justificados**. Run privado `official-pilot-verified-20261117-033225`,
+  UTC 03:32:25–03:35:24 del 17 de noviembre (22:32:25–22:35:24 del 16 en Cancún).
+  **30 casos / 174 controles** de modos con cachés reales, reinicios de FPM/Apache,
+  caída/recuperación del OP y sesiones no transferibles; **60 controles cross-site** y
+  doce de proxy aprobados. Los cuatro RP conservaron usuarios, hashes, recaller y ACL
+  durante la matriz. Dos ensayos aislados MySQL/PostgreSQL adaptaron sólo tablas SSO,
+  sin reaplicar la migración registrada ni cambiar la cuenta local sintética.
+  Campaña completa: **1806,038 s, ocho usuarios, 15 832 solicitudes, cero errores
+  inesperados/workers fallidos**; pausa con 28/24 entregas pendientes y 0/0 al cierre.
+  PHPUnit **230 / 1076**, Larastan y Pint de archivos modificados aprobados. Pint global
+  Windows conserva 37 archivos preexistentes con hallazgos, ninguno modificado en esta fase.
+  Fuentes/inventario coincidentes en workspace y contenedores; diez archivos originales
+  protegidos de ejemplos sin cambios. Una migración servidor, una cliente, contracts
+  ninguna. Se corrigió el arranque de Gates/Policies de ejemplos con rutas cacheadas;
+  no cambió código de paquetes, bases reales ni contraseñas. Sin nueva CI remota ni
+  publicación. [Informe, intentos y límites](PILOT-PREPARATION.md),
+  [resumen consolidado](../conformance/pilot-preparation-results.json) y
+  [campaña actual](../conformance/pilot-deployment-results.json).
 - **Modo SSO/Auth local en main**: run `44007989216`, commit
   `249ca73`, **14/14 trabajos aprobados**, UTC 2026-11-17 03:07:58–03:10:47
   (16 de noviembre 22:07:58–22:10:47 en Cancún). Nueve perfiles PHP/dependencias:
@@ -85,8 +105,8 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   Repetición tras auditoría/operaciones: `official-audit-operations-20261114-215322`,
   mismos conteos y revisión repetida, con huella del OP coincidente con el workspace de esa ejecución.
   OP/worker trasladados al volumen y red Linux; transporte HTTPS 80/80, cuatro simultáneas.
-  La compatibilidad posterior modificó transacciones sin repetir el harness oficial;
-  sus resultados históricos se conservan. No se solicitó certificación.
+  La compatibilidad posterior modificó transacciones sin repetir entonces el harness;
+  la preparación actual sí lo repitió y conserva ambos informes. No se solicitó certificación.
 - Siete manifiestos Composer: validate --strict aprobado. Composer audit --locked:
   sin avisos conocidos en la consulta realizada; no equivale a auditar el código propio.
 - Resolución independiente del cliente: 77 paquetes, sin Passport ni laravel-sso/server.
@@ -105,7 +125,8 @@ carga distribuida o multijornada ni revisión independiente/certificación exter
 despliegues, navegadores Linux cross-site y carga local de 30 min sí se ejecutaron. MySQL, PostgreSQL y el harness
 OpenID Foundation sí se ejecutaron localmente. La matriz ampliada prueba resoluciones
 locked/lowest/latest por PHP y dos aislamientos por motor SQL; no prueba todas las
-combinaciones de dependencias/PHP/SQL. El harness oficial no se repitió en esta última fase.
+combinaciones de dependencias/PHP/SQL. El harness oficial, los navegadores y la carga
+sí se repitieron en la preparación actual del piloto; no equivalen a evaluación externa.
 
 ## Matriz requisito → componente → prueba
 
@@ -113,7 +134,7 @@ combinaciones de dependencias/PHP/SQL. El harness oficial no se repitió en esta
 | --- | --- | --- |
 | Login único entre hosts | Passport + central session | tools/e2e.php: dos RP sin segundo login |
 | Identidad / Laravel Auth | EloquentProvisioner + SessionGuard | ClientTest y E2E mismo iss/sub |
-| SSO opcional sin cambiar users | IdentityLinks + sso.local/sso.session | OptionalClientTest: 18 casos, Auth sin tablas SSO, credenciales/ACL intactas y cambio de modo; CI nueve perfiles PHP |
+| SSO opcional sin cambiar users | IdentityLinks + sso.local/sso.session | 18 casos PHPUnit y CI histórica; 30 casos / 174 controles actuales con cachés/reinicios, cuentas/ACL intactas y caída/recuperación |
 | ACL independiente | Gate + ReportPolicy | E2E permiso sólo en A, 403 en B |
 | Código de un uso / S256 | AuthCodeRepository + League | ProtocolTest: replay, verifier, plain, callback y cliente |
 | ID Token / rotación | SigningKeys / IdTokenValidator | ClientTest negativos y KeyRotationTest |
@@ -129,7 +150,7 @@ combinaciones de dependencias/PHP/SQL. El harness oficial no se repitió en esta
 | Auditoría | AuditEvent + Audit por componente | AuditTest: rollback, replay, secretos excluidos, duplicados y logs opt-in; ProtocolTest: códigos/tokens reales |
 | Instalación y diagnóstico | install-server/install-client/doctor-server/doctor | OperationsTest: conservación, migración real, claves y fallos múltiples; doctores OP/RP reales en E2E |
 | Compatibilidad DB / carreras | migraciones y transacciones | SQLite; MySQL 8.4 / PostgreSQL 18 en READ COMMITTED y REPEATABLE READ, catorce carreras por perfil; campaña previa de 30 min |
-| Despliegue / cross-site | Nginx/FPM y Apache; Playwright | seis apps optimizadas HTTPS, tres motores de navegador, 60 controles y doce de proxy |
+| Despliegue / cross-site | Nginx/FPM y Apache; Playwright | seis apps HTTPS optimizadas; repetición actual: 60 controles, doce de proxy y 1806,038 s de carga sin errores inesperados |
 | Perfil Code normativo local | tests/Conformance | **106 tests / 414 aserciones**; no equivale al harness oficial |
 | Certificación | OpenID Foundation | harness oficial ejecutado localmente; resultados y revisiones conservados; certificación no solicitada |
 
@@ -142,10 +163,13 @@ atendida e integrada en main, con su matriz remota aprobada. El destino y retenc
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
 El modo opcional queda integrado en main mediante fast-forward autorizado y conserva
-sus guías y evidencias de pruebas. La siguiente fase posible es un piloto externo con
-un destino concreto y revisión independiente. Las bases existentes requieren adaptar sólo el esquema
-propio mediante un procedimiento controlado; la migración inicial consolidada no se
-reaplica sola. No se modificaron tus bases de ejemplos ni se eliminaron credenciales.
+sus guías y evidencias de pruebas. La preparación local del piloto queda verificada en
+el workspace, con OIDC, modos cacheados/reiniciados, navegadores, adaptación SSO-only
+y carga completa repetidos. No se presenta como una nueva CI remota ni como piloto externo.
+La siguiente fase es un piloto externo con destino concreto y revisión independiente.
+La adaptación de bases existentes se ensayó en espacios descartables de ambos motores:
+la migración inicial consolidada no se reaplica sola y no se entrega un actualizador de
+producción. No se modificaron tus bases de ejemplos ni se eliminaron credenciales.
 
 1. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
    móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.

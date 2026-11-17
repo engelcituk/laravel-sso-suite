@@ -1,5 +1,9 @@
 # SSO opcional y Auth local
 
+La [preparación posterior del piloto](PILOT-PREPARATION.md) repite la validación operativa
+del modo opcional. Sus resultados locales son independientes de la integración y CI
+históricas que se documentan en esta página.
+
 Integrado en **main** desde `codex/optional-client-auth` mediante fast-forward autorizado,
 de `848b35cce1eaaa7a20afbd246c9b263a81cbde3b` a
 `249ca73178df67c1804cfd1c0ef5e1ca298d547e`, sin conflictos ni reescribir commits.
@@ -74,8 +78,9 @@ rechazo de credenciales locales al activar SSO, aislamiento de origen de sesión
 conservación de usuario y ACL, vinculación explícita/idempotente sin reasignación,
 ausencia de email linking, fábrica obligatoria, rollback, doctor desactivado,
 callback/logout, migración up/down sin alterar users, SsoOnly opt-in y morph map ajeno.
-Las pruebas de rutas arrancan con el flag apagado y luego lo activan: verifican el
-gating en ejecución; no son una campaña de despliegue con config/route cache en ambos modos.
+Las pruebas PHPUnit de rutas arrancan con el flag apagado y luego lo activan: verifican el
+gating en ejecución. La campaña posterior con config/route cache, reinicios y ambos modos
+está documentada por separado en [preparación del piloto](PILOT-PREPARATION.md).
 El E2E utiliza instalaciones nuevas de ejemplos con password/remember_token normales y
 comprueba que la contraseña central no se copió a los RP.
 
@@ -112,8 +117,9 @@ local: si se desea habilitarla después, el anfitrión debe ofrecer su proceso d
 establecimiento/recuperación. Las cuentas locales ya existentes conservan su hash.
 Las fábricas y listeners son código del anfitrión; controla sus privilegios y efectos externos.
 
-No se repitieron la suite oficial OIDF, los navegadores cross-site ni la campaña de carga
-de 30 minutos para este cambio. Sus informes históricos conservan sus commits/huellas.
+Durante esta integración no se repitieron la suite oficial OIDF, los navegadores cross-site
+ni la carga de 30 minutos. La [preparación posterior](PILOT-PREPARATION.md) registra las
+repeticiones con sus propias huellas; los resultados históricos se conservan.
 No hay certificación ni evaluación externa. La integración en main no cambia ese alcance.
 La siguiente fase posible es un piloto en un entorno concreto de destino y una revisión
 independiente; publicar versiones sigue requiriendo autorización expresa.

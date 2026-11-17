@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('Build', 'Start', 'Browsers', 'Soak', 'Inspect', 'Stop', 'Status')]
+    [ValidateSet('Build', 'Start', 'Browsers', 'Modes', 'Soak', 'Inspect', 'Stop', 'Status')]
     [string]$Action = 'Status',
     [ValidateRange(1, 120)][int]$Minutes = 30,
     [ValidatePattern('^[a-z0-9-]+$')][string]$Label = 'evaluation'
@@ -32,9 +32,9 @@ if ($Action -eq 'Start') {
     if ($LASTEXITCODE -ne 0) { throw 'TLS preparation failed.' }
     Invoke-LabDocker -Arguments @('volume', 'create', 'laravel-sso-deployment-application')
     $archive = Join-Path $runtime 'application.tar'
-    & tar.exe -cf $archive --exclude=vendor/laravel-sso --exclude=vendor/orchestra/testbench-core/laravel/vendor --exclude=examples/*/vendor --exclude=examples/*/storage --exclude=examples/*/database/*.sqlite --exclude=examples/*/.env --exclude=examples/*/bootstrap/cache -C $projectRoot vendor packages tests tools composer.lock examples conformance/deployment
+    & tar.exe -cf $archive --exclude=vendor/laravel-sso --exclude=vendor/orchestra/testbench-core/laravel/vendor --exclude=examples/*/vendor --exclude=examples/*/storage --exclude=examples/*/database/*.sqlite --exclude=examples/*/.env --exclude=examples/*/bootstrap/cache -C $projectRoot vendor packages tests tools composer.lock examples conformance/deployment conformance/oidf-suite.json
     if ($LASTEXITCODE -ne 0) { throw 'Snapshot failed.' }
-    $extract = 'set -eu; tar -xf /snapshot.tar -C /app; mkdir -p /app/vendor/laravel-sso; for taskPackage in server client contracts; do test -e /app/vendor/laravel-sso/$taskPackage || ln -s /app/packages/$taskPackage /app/vendor/laravel-sso/$taskPackage; done'
+    $extract = 'set -eu; for taskMigrationDir in /app/packages/server/database/migrations /app/packages/client/database/migrations; do if [ -d "$taskMigrationDir" ]; then find "$taskMigrationDir" -maxdepth 1 -type f -name "*.php" -delete; fi; done; tar -xf /snapshot.tar -C /app; mkdir -p /app/vendor/laravel-sso; for taskPackage in server client contracts; do test -e /app/vendor/laravel-sso/$taskPackage || ln -s /app/packages/$taskPackage /app/vendor/laravel-sso/$taskPackage; done'
     Invoke-LabDocker -Arguments @('run', '--rm', '--network', 'none', '-v', 'laravel-sso-deployment-application:/app', '-v', ($archive.Replace('\', '/') + ':/snapshot.tar:ro'), 'laravel-sso-deployment-fpm:local', 'sh', '-c', $extract)
     Invoke-LabDocker -Arguments ($compose + @('up', '-d', '--wait', 'mysql', 'postgres'))
     Invoke-LabDocker -Arguments ($compose + @('run', '--rm', '--user', 'root', 'runner', '/app/tools/deployment-prepare.php', 'applications'))
@@ -45,6 +45,39 @@ if ($Action -eq 'Start') {
 }
 if ($Action -eq 'Browsers') { Invoke-LabDocker -Arguments ($compose + @('run', '--rm', 'browser', $Label)); return }
 if ($Action -eq 'Inspect') { Invoke-LabDocker -Arguments ($compose + @('run', '--rm', 'runner', '/app/tools/deployment-control.php', 'inspect')); return }
+if ($Action -eq 'Modes') {
+    $outageMarker = Join-Path $runtime 'control/all-ops-down'
+    function Invoke-ModeControl([string]$Operation) {
+        foreach ($profile in @('fpm', 'apache')) {
+            foreach ($role in @('one', 'two')) {
+                Invoke-LabDocker -Arguments ($compose + @('run', '--rm', 'runner', '/app/tools/deployment-modes.php', $Operation, $profile, $role))
+            }
+        }
+    }
+    Invoke-ModeControl 'seed'
+    Invoke-ModeControl 'capture'
+    try {
+        foreach ($phase in @('local-before', 'sso', 'sso-outage', 'sso-recovery', 'local-after')) {
+            if ($phase -in @('local-before', 'sso', 'local-after')) {
+                Invoke-ModeControl $(if ($phase -eq 'sso') { 'enable' } else { 'disable' })
+                Invoke-LabDocker -Arguments ($compose + @('restart', 'fpm', 'apache'))
+            }
+            if ($phase -in @('local-before', 'sso-outage', 'local-after')) {
+                New-Item -ItemType File -Path $outageMarker -Force | Out-Null
+            } elseif (Test-Path -LiteralPath $outageMarker) {
+                Remove-Item -LiteralPath $outageMarker
+            }
+            Invoke-LabDocker -Arguments ($compose + @('run', '--rm', 'browser', '--modes', $Label, $phase))
+        }
+        Invoke-ModeControl 'verify'
+    } finally {
+        if (Test-Path -LiteralPath $outageMarker) { Remove-Item -LiteralPath $outageMarker }
+        Invoke-ModeControl 'enable'
+        Invoke-LabDocker -Arguments ($compose + @('restart', 'fpm', 'apache'))
+    }
+    Invoke-LabDocker -Arguments ($compose + @('run', '--rm', 'runner', '/app/tools/deployment-control.php', 'inspect'))
+    return
+}
 if ($Action -eq 'Soak') {
     $statsFile = Join-Path $runtime "results/$Label-stats.jsonl"
     $monitor = Start-Job -ScriptBlock {

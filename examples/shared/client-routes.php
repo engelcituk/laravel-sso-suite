@@ -5,10 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use LaravelSso\Examples\Report;
-use LaravelSso\Examples\ReportPolicy;
 
-Gate::policy(Report::class, ReportPolicy::class);
-Gate::define('view-reports', fn ($user) => Gate::forUser($user)->allows('view', new Report));
 Route::get('/', fn () => view()->file(dirname(__DIR__).'/shared/client-home.blade.php'));
 Route::middleware(['auth', 'sso.session:strict'])->group(function (): void {
     Route::get('/me', fn () => [

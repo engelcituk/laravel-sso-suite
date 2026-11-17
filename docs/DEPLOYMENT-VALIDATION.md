@@ -1,7 +1,9 @@
 # Despliegues HTTPS, navegadores cross-site y carga
 
 Evidencia histórica previa al [modo SSO/Auth local opcional](OPTIONAL-AUTH.md).
-Sus despliegues, navegadores y campaña de carga no se repitieron para esa modificación.
+La repetición posterior con ambos modos se documenta en
+[preparación verificable del piloto](PILOT-PREPARATION.md); esta página conserva las
+métricas y huellas de la campaña original.
 
 Laboratorio local aislado del 2026-11-14. Este informe distingue servidores web reales,
 navegadores reales y usuarios HTTP del generador de carga. Los resultados de la campaña

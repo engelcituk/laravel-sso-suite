@@ -133,7 +133,7 @@ async function enter(page, origin) {
         result.checks.push('recent_password_device_management');
 
         await navigate(page, profile.one);
-        await page.getByRole('button', {name: 'Cerrar sesión global', exact: true}).click();
+        await page.locator('form[action$="/sso/logout"] button').click();
         await page.waitForURL(`${profile.op}/oidc/logout?**`);
         await page.locator('button[name="approve"][value="1"]').click();
         assert.ok((await page.locator('body').textContent()).includes('Sesión global cerrada'));

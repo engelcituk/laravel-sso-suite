@@ -1,8 +1,9 @@
 # Resultados OIDC y revisión de observaciones
 
-El [modo opcional posterior](OPTIONAL-AUTH.md) cambió la persistencia de identidad del RP
-y repitió la conformidad PHPUnit propia y el E2E, sin repetir el harness oficial.
-Los estados de este informe corresponden exclusivamente a las ejecuciones indicadas.
+La repetición posterior al [modo opcional](OPTIONAL-AUTH.md) y a la compatibilidad
+ampliada se documenta en [preparación verificable del piloto](PILOT-PREPARATION.md).
+Los JSON `oidf-results.json` y `oidf-review.json` contienen esa ejecución nueva; esta
+página conserva los IDs, métricas y contexto históricos de las ejecuciones indicadas abajo.
 
 Este informe conserva la ejecución oficial indicada abajo. La fase posterior de
 [compatibilidad ampliada](COMPATIBILITY.md) modificó transacciones y pasó las pruebas
@@ -136,7 +137,7 @@ sin repetir ni modificar estos estados oficiales. No se afirma auditoría extern
 ## Evidencias y reproducción
 
 - [Resumen oficial sin secretos](../conformance/oidf-results.json), [auditoría de revisiones/saltos](../conformance/oidf-review.json).
-- Originales JSON/HTML y diez ZIP actuales: `.runtime/conformance/official-audit-operations-20261114-215322/`.
+- Originales históricos JSON/HTML y diez ZIP de esta evaluación: `.runtime/conformance/official-audit-operations-20261114-215322/`.
 - `runtime-check.json` en ese directorio confirma que paquetes, código compartido y
   dependencias del OP Linux coinciden con el workspace. La revisión de los 16 REVIEW y
   10 SKIPPED se repitió sobre sus exports, manteniendo los estados oficiales. El runner

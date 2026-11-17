@@ -34,8 +34,9 @@ if ($mode === 'seed') {
     $app = bootFixture($profileName, 'op');
     $profile = &$manifest['profiles'][$profileName];
     $profile['users'] ??= array_map(static fn ($id) => ['email' => 'lab-'.$id.'-'.bin2hex(random_bytes(4)).'@example.test', 'password' => bin2hex(random_bytes(24))], range(0, 15));
-    foreach ($profile['users'] as $user) {
-        CentralUser::firstOrCreate(['email' => $user['email']], ['name' => 'Synthetic deployment user', 'password' => bcrypt($user['password']), 'is_active' => true]);
+    foreach ($profile['users'] as $index => $user) {
+        $central = CentralUser::firstOrCreate(['email' => $user['email']], ['name' => 'Synthetic deployment user', 'password' => bcrypt($user['password']), 'is_active' => true]);
+        $profile['users'][$index]['subject'] = (string) $central->getKey();
     }
     foreach (['one', 'two'] as $clientName) {
         $client = isset($profile['clients'][$clientName]) ? Passport::client()->newQuery()->find($profile['clients'][$clientName]) : null;

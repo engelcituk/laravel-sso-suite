@@ -84,11 +84,14 @@ $app = Application::configure(basePath: $base)
     ->withRouting(web: $base.'/routes/web.php')
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: ['172.29.231.10']);
-        $middleware->redirectGuestsTo('/sso/login');
+        $middleware->redirectGuestsTo(fn () => config('sso-client.enabled') ? '/sso/login' : '/login');
     })->withExceptions(function (\Illuminate\Foundation\Configuration\Exceptions $exceptions): void {})->create();
 $app->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, \LaravelSso\Conformance\FixtureExceptionHandler::class);
 $app->booted(function (): void {
     \Illuminate\Support\Facades\Http::globalOptions(['verify' => '/app/.runtime/deployment-lab/tls/ca.pem', 'proxy' => '']);
+    if (basename(app()->basePath()) !== 'op') {
+        require '/app/examples/shared/client-authorization.php';
+    }
 });
 return $app;
 PHP;
@@ -145,7 +148,7 @@ PHP;
         file_put_contents($base.'/config/logging.php', "<?php \$config = require '/app/examples/shared/config/logging.php'; \$config['channels']['single']['level']='info'; return \$config;");
         $server = "<?php \$config = require '/app/packages/server/config/sso-server.php'; \$config['protocol_throttle']='6000,1,sso-lab'; \$config['audit_log']=true; \$config['session_idle']=120; \$config['session_max']=300; \$config['remember_ttl']=900; \$config['access_token_ttl']=120; \$config['id_token_ttl']=120; \$config['backchannel_allowed_urls']=".var_export([$profile['one'].'/sso/backchannel-logout', $profile['two'].'/sso/backchannel-logout'], true).'; return $config;';
         file_put_contents($base.'/config/sso-server.php', $server);
-        $client = "<?php \$config = require '/app/packages/client/config/sso-client.php'; \$config['user_model']=\\LaravelSso\\Examples\\LocalUser::class; \$config['provision']='automatic'; \$config['audit_log']=true; \$config['local_session_ttl']=120; \$config['allowed_urls']=".var_export(array_map(fn ($path) => $profile['op'].$path, ['/.well-known/openid-configuration', '/oidc/authorize', '/oidc/token', '/oidc/jwks', '/oidc/userinfo', '/oidc/session', '/oidc/logout']), true).'; return $config;';
+        $client = "<?php \$config = require '/app/packages/client/config/sso-client.php'; \$config['user_model']=\\LaravelSso\\Examples\\LocalUser::class; \$config['create_user']=\\LaravelSso\\Examples\\CreateLocalUser::class; \$config['provision']='automatic'; \$config['audit_log']=true; \$config['local_session_ttl']=120; \$config['allowed_urls']=".var_export(array_map(fn ($path) => $profile['op'].$path, ['/.well-known/openid-configuration', '/oidc/authorize', '/oidc/token', '/oidc/jwks', '/oidc/userinfo', '/oidc/session', '/oidc/logout']), true).'; return $config;';
         file_put_contents($base.'/config/sso-client.php', $client);
         if (! is_file($base.'/.env')) {
             $env = 'APP_NAME="SSO deployment laboratory"'."\nAPP_ENV=production\nAPP_DEBUG=false\nAPP_KEY=base64:".base64_encode(random_bytes(32))."\nAPP_URL=".$profile[$role]."\nSESSION_COOKIE=".$profileName.'_'.$role."_session\nSESSION_SECURE_COOKIE=true\nSSO_SERVER_ENABLED=".($role === 'op' ? 'true' : 'false')."\nSSO_CLIENT_ENABLED=".($role === 'op' ? 'false' : 'true')."\nSSO_ISSUER=".$profile['op']."\nSSO_REDIRECT_URI=".$profile[$role]."/sso/callback\nSSO_SESSION_STATUS_URL=".$profile['op']."/oidc/session\n";

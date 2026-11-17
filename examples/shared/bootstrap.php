@@ -16,6 +16,9 @@ return static function (string $base): Application {
         ->withExceptions(function (Exceptions $exceptions): void {})
         ->create();
     $app->useConfigPath(__DIR__.'/config');
+    if (basename($base) !== 'identity-server') {
+        $app->booted(fn () => require __DIR__.'/client-authorization.php');
+    }
 
     return $app;
 };

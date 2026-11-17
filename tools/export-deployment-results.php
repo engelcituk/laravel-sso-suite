@@ -5,13 +5,16 @@ declare(strict_types=1);
 // Exports only successful local evidence. It never contacts a public service.
 $root = dirname(__DIR__);
 $label = $argv[1] ?? 'soak-30m-verified';
-if (! preg_match('/^[a-z0-9-]+$/D', $label)) {
+$browserLabel = $argv[2] ?? 'final';
+$outputName = $argv[3] ?? 'deployment-results';
+if (! preg_match('/^[a-z0-9-]+$/D', $label) || ! preg_match('/^[a-z0-9-]+$/D', $browserLabel)
+    || ! preg_match('/^[a-z0-9-]+$/D', $outputName)) {
     throw new RuntimeException('Invalid run label.');
 }
 $directory = $root.'/.runtime/deployment-lab/results';
 $read = static fn ($name) => json_decode(file_get_contents($directory.'/'.$name), true, flags: JSON_THROW_ON_ERROR);
 $soak = $read($label.'-soak.json');
-$browsers = $read('final-browsers.json');
+$browsers = $read($browserLabel.'-browsers.json');
 $inspection = $read('deployment-inspection.json');
 $proxy = $read('proxy-check.json');
 $source = (require __DIR__.'/deployment-source.php')($root);
@@ -139,8 +142,8 @@ foreach ($report['resources'] as $resource) {
         throw new RuntimeException('Telemetry does not cover the campaign.');
     }
 }
-foreach ([$label.'-soak.json', $label.'-stats.jsonl', 'final-browsers.json', 'deployment-inspection.json', 'images.json', 'proxy-check.json'] as $artifact) {
+foreach ([$label.'-soak.json', $label.'-stats.jsonl', $browserLabel.'-browsers.json', 'deployment-inspection.json', 'images.json', 'proxy-check.json'] as $artifact) {
     $report['artifacts_sha256'][$artifact] = hash_file('sha256', $directory.'/'.$artifact);
 }
-file_put_contents($root.'/conformance/deployment-results.json', json_encode($report, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+file_put_contents($root.'/conformance/'.$outputName.'.json', json_encode($report, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
 echo "Verified two optimized deployments, six browser cases and a complete 30-minute campaign; exported only non-secret evidence.\n";

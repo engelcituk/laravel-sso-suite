@@ -10,6 +10,7 @@ Route::get('/lab/health', function (Request $request) {
     return response()->json(['php' => PHP_VERSION, 'sapi' => PHP_SAPI, 'secure' => $request->isSecure(),
         'host' => $request->getHost(), 'configuration_cached' => app()->configurationIsCached(), 'routes_cached' => app()->routesAreCached(),
         'session_driver' => config('session.driver'), 'opcache' => (bool) ini_get('opcache.enable'),
+        'sso_enabled' => (bool) config('sso-client.enabled'),
         'driver' => DB::getDriverName(), 'database_version' => DB::selectOne('select version() as version')->version]);
 });
 Route::get('/lab/cookie-probe', fn (Request $request) => response()->json([

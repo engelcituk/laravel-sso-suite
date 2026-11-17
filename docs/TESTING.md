@@ -1,5 +1,13 @@
 # Pruebas y evidencia
 
+Preparación posterior del piloto: [informe y alcance](PILOT-PREPARATION.md). Repite OIDC
+oficial, navegadores cross-site y ambos modos con cachés/reinicios; distingue sus pruebas
+locales de la CI histórica de integración descrita abajo. La campaña completa pasó:
+**1806,038 s / 15 832 solicitudes / ocho usuarios / cero errores inesperados**, colas
+0/0 al cierre. Los exportadores verificaron fuentes y resultados antes de escribir
+los resúmenes sin secretos. No se afirma Pint global verde en Windows: conserva 37
+archivos preexistentes con hallazgos; los modificados pasan.
+
 Estado del modo opcional: [run 44007989216](https://github.com/engelcituk/laravel-sso-suite/actions/runs/44007989216),
 `249ca73`, integrado en **main** por fast-forward autorizado, **14/14 trabajos aprobados**. Por cada uno
 de los nueve perfiles PHP 8.3/8.4/8.5 × locked/lowest/latest: **230 pruebas / 1076 aserciones**,
@@ -15,8 +23,9 @@ sesiones no transferibles entre modos, conservación de ID/perfil/hash/recaller/
 vinculación explícita e idempotente sin email linking ni reasignación, fábrica obligatoria,
 rollback de política, doctor local, callback/logout y esquema de users intacto tras up/down.
 También prueba SsoOnly opt-in y ausencia de cambios requeridos al morph map del anfitrión.
-La prueba de rutas verifica gating en ejecución; no ejecuta un despliegue con cachés reales
-en ambos modos. El E2E remoto usa instalaciones nuevas de los ejemplos y HTTP loopback.
+La prueba PHPUnit de rutas verifica gating en ejecución. La campaña posterior
+[de preparación](PILOT-PREPARATION.md) sí ejecuta ambos modos con cachés reales,
+reinicios y navegadores. El E2E remoto histórico usa instalaciones nuevas y HTTP loopback.
 
 `composer test` ejecuta PHPUnit/Orchestra Testbench con Laravel real, SQLite y claves RSA
 efímeras generadas en tests/.keys (ignoradas por Git). No contiene claves privadas de prueba
