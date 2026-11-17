@@ -107,6 +107,7 @@ composer audit --locked
 [auditoría, instalación y diagnóstico](docs/AUDIT-OPERATIONS.md),
 [despliegues, navegadores cross-site y carga de 30 min](docs/DEPLOYMENT-VALIDATION.md),
 [preparación del piloto con OIDC repetido y ambos modos con cachés](docs/PILOT-PREPARATION.md),
+[cierre de Pint global y calidad en PHP 8.3/8.4/8.5](docs/FORMAT-QUALITY.md),
 [modelo de seguridad](docs/SECURITY-MODEL.md), [arquitectura](docs/ARCHITECTURE.md),
 [decisiones y fuentes](docs/DECISIONS.md), [Auth](docs/LARAVEL-AUTH.md),
 [ACL local](docs/LOCAL-ACL.md), [sesiones y logout](docs/SESSIONS.md),

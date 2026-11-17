@@ -1,12 +1,19 @@
 # Pruebas y evidencia
 
+Cierre de formato del 2026-11-17: **Pint global aprobado con caché nueva**, los 37 archivos
+corregidos sólo en finales de línea y con tokens PHP equivalentes. PHPUnit **230 / 1076**
+en PHP 8.3/8.4/8.5, grupo normativo propio **106 / 414**, Larastan y controles Composer
+aprobados. Lockfile, bases y secretos de ejemplos intactos.
+[Evidencia y límites](FORMAT-QUALITY.md), [JSON](../conformance/format-quality-results.json).
+
 Preparación posterior del piloto: [informe y alcance](PILOT-PREPARATION.md). Repite OIDC
 oficial, navegadores cross-site y ambos modos con cachés/reinicios; distingue sus pruebas
 locales de la CI histórica de integración descrita abajo. La campaña completa pasó:
 **1806,038 s / 15 832 solicitudes / ocho usuarios / cero errores inesperados**, colas
 0/0 al cierre. Los exportadores verificaron fuentes y resultados antes de escribir
-los resúmenes sin secretos. No se afirma Pint global verde en Windows: conserva 37
-archivos preexistentes con hallazgos; los modificados pasan.
+los resúmenes sin secretos. En aquella preparación Pint global señaló 37 archivos;
+el cierre de formato posterior descrito arriba los corrigió. Sus campañas conservan
+las huellas originales y no se atribuyen a una nueva ejecución tras el formato.
 
 Estado del modo opcional: [run 44007989216](https://github.com/engelcituk/laravel-sso-suite/actions/runs/44007989216),
 `249ca73`, integrado en **main** por fast-forward autorizado, **14/14 trabajos aprobados**. Por cada uno

@@ -1,5 +1,10 @@
 # Preparación verificable del piloto
 
+Actualización posterior, 2026-11-17: los 37 archivos señalados por Pint ya están
+[corregidos y validados](FORMAT-QUALITY.md). Este informe y sus JSON conservan los
+resultados y huellas de la preparación original; no se reescriben para atribuir sus
+campañas a los bytes posteriores al formato.
+
 16 de noviembre de 2026, Cancún (ejecuciones UTC del 17 de noviembre). Validación local
 del workspace sobre `98b6e47`; las modificaciones de esta fase se identifican mediante
 huellas de fuentes y dependencias. No se atribuyen a una nueva CI remota ni a un piloto
@@ -143,10 +148,10 @@ ninguna en contracts.
   La huella de despliegue incluye ahora las fuentes compartidas de los ejemplos.
 - PHPUnit PHP 8.3.36: **230 pruebas / 1076 aserciones**, aprobado. Larastan nivel 5 sin
   baseline: sin errores. Pint de los archivos modificados: aprobado.
-- Pint global del checkout Windows señaló **37 archivos preexistentes sin cambios en
-  esta fase**. Esos caminos también fallan en una copia del HEAD original; el archivo
-  exportado tiene además diferencias de finales de línea. No se afirma Pint global verde
-  para este workspace ni se reescriben paquetes/migraciones para ocultar el resultado.
+- Pint global del checkout Windows señaló entonces **37 archivos preexistentes sin cambios
+  en esta fase**. Se conservaron el fallo y la comparación con HEAD. El
+  [cierre posterior de formato](FORMAT-QUALITY.md) los normalizó y pasó Pint global;
+  esta preparación conserva su resultado histórico en los JSON originales.
 
 Los logs y JUnit de calidad están en `.runtime/pilot-preparation-20261117/`. Se conservan
 el primer fallo de modos y una campaña corta interrumpida voluntariamente con salida 137

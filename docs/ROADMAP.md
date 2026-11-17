@@ -1,6 +1,6 @@
 # Roadmap y evidencia
 
-Actualizado 2026-11-16 (Cancún). Primera vertical integrada **experimental**, sin publicación de versiones,
+Actualizado 2026-11-17 (Cancún). Primera vertical integrada **experimental**, sin publicación de versiones,
 certificación ni recomendación de producción. Una vertical no cierra toda su fase.
 
 | Fase | Estado real | Evidencia / cierre pendiente |
@@ -12,10 +12,24 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | 4 identidad local | modo opcional integrado y verificado en main | SSO_CLIENT_ENABLED, tablas propias sin tocar users/passwords, 18 casos nuevos y CI de integración 14/14 |
 | 5 sesiones | funcionalidades y recuperación locales verificadas | Recordarme, dispositivos, revocación y retención; carga actual con caída OP de 60 s y pausa de worker de 120 s, colas 0/0 al cierre; evaluación externa pendiente |
 | 6 instalación | preparación local del piloto verificada | dos despliegues optimizados, 60 controles cross-site, ambos modos con cachés/reinicios, ensayo SSO-only en dos motores y carga actual de 30 min; piloto externo pendiente |
-| 7 publicación | pendiente | CI histórica aprobada; formato de archivos modificados aprobado, Pint global Windows con 37 hallazgos preexistentes; faltan auditoría/certificación externa y autorización para publicar |
+| 7 publicación | pendiente | cierre local de calidad aprobado: Pint global sin hallazgos, PHPUnit en PHP 8.3/8.4/8.5, Larastan y Composer; CI previa histórica; faltan auditoría/certificación externa y autorización para publicar |
 
 ## Resultados ejecutados
 
+- **Cierre de los 37 archivos señalados por Pint, 2026-11-17**: la ejecución global con
+  caché nueva reprodujo los 37 caminos y la repetición posterior pasó con **cero hallazgos**.
+  Los 37 ajustes fueron exclusivamente CRLF/LF; comparación de bytes normalizados y tokens
+  PHP aprobada, sin cambios de lógica ni esquema. PHPUnit pasó **230 pruebas / 1076
+  aserciones** en PHP **8.3.36, 8.4.27 y 8.5.12**; grupo normativo propio **106 / 414**,
+  incluido en la suite general. Larastan nivel 5 sin baseline, siete manifiestos Composer
+  estrictos, requisitos de plataforma y audit del lockfile aprobados; sin avisos conocidos
+  ni paquetes abandonados en la consulta. Lockfile y diez archivos protegidos de ejemplos
+  intactos. Una migración servidor, una cliente y contracts ninguna, sin cambios de esquema
+  ni credenciales. Las huellas de bytes cambiaron por el formato: OIDC oficial, navegadores,
+  carga y matriz SQL conservan sus evidencias anteriores, sin repetirlas ni reetiquetarlas
+  como actuales. Sin nueva CI remota ni publicación.
+  [Alcance y reproducción](FORMAT-QUALITY.md),
+  [resultados y hashes](../conformance/format-quality-results.json).
 - **Preparación verificable del piloto, workspace sobre `98b6e47`**: cinco planes OIDC
   oficiales repetidos, 84 FINISHED: **58 PASSED, 0 FAILED/WARNING, 16 REVIEW verificados
   y 10 SKIPPED justificados**. Run privado `official-pilot-verified-20261117-033225`,
@@ -28,7 +42,8 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   Campaña completa: **1806,038 s, ocho usuarios, 15 832 solicitudes, cero errores
   inesperados/workers fallidos**; pausa con 28/24 entregas pendientes y 0/0 al cierre.
   PHPUnit **230 / 1076**, Larastan y Pint de archivos modificados aprobados. Pint global
-  Windows conserva 37 archivos preexistentes con hallazgos, ninguno modificado en esta fase.
+  Windows señaló entonces 37 archivos preexistentes; el cierre posterior de formato,
+  documentado arriba, los corrigió. Este informe conserva el alcance de aquella ejecución.
   Fuentes/inventario coincidentes en workspace y contenedores; diez archivos originales
   protegidos de ejemplos sin cambios. Una migración servidor, una cliente, contracts
   ninguna. Se corrigió el arranque de Gates/Policies de ejemplos con rutas cacheadas;
@@ -166,6 +181,8 @@ El modo opcional queda integrado en main mediante fast-forward autorizado y cons
 sus guías y evidencias de pruebas. La preparación local del piloto queda verificada en
 el workspace, con OIDC, modos cacheados/reiniciados, navegadores, adaptación SSO-only
 y carga completa repetidos. No se presenta como una nueva CI remota ni como piloto externo.
+El cierre posterior de los 37 archivos de Pint ya pasó la calidad local; al cambiar sólo
+finales de línea, conserva las campañas anteriores con sus huellas originales.
 La siguiente fase es un piloto externo con destino concreto y revisión independiente.
 La adaptación de bases existentes se ensayó en espacios descartables de ambos motores:
 la migración inicial consolidada no se reaplica sola y no se entrega un actualizador de

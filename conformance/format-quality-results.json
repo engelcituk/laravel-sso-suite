@@ -1,0 +1,467 @@
+{
+    "schema_version": 1,
+    "checked_at_utc": "2026-11-17T13:56:17+00:00",
+    "base_commit": "5616b3688106a6a64b3c11c1f687d33e258770f8",
+    "scope": "Local Pint line-ending correction and quality validation; previous protocol/browser/load evidence retains original fingerprints",
+    "passed": true,
+    "formatting": {
+        "checked_at_utc": "2026-11-17T13:56:17+00:00",
+        "files_changed": 37,
+        "all_changes_are_line_endings_only": true,
+        "non_whitespace_php_tokens_unchanged": true,
+        "method": "PHP TOKEN_PARSE; whitespace omitted; tag whitespace/comment line endings normalized; string tokens unchanged",
+        "files": [
+            {
+                "path": "examples/shared/client-console.php",
+                "before_sha256": "3dcf5e74d44e58f6e1701739da510a1079f49028b536f0877f102cb4d9dfe7d4",
+                "after_sha256": "3d1a377db6313c85833db4833e0d17bd816783234728db744ef7846ad5bf4df7",
+                "normalized_php_tokens_sha256": "fb105c30d9567999ba7caef1d268b140db09a76019ef3809d07f6d4d232dc658",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "examples/shared/client-migration.php",
+                "before_sha256": "a1c73f6d1b5fac5877e9feec189638d266ea07b666e682870fbae5773fc10bc7",
+                "after_sha256": "17d2df058ee0296a0ef89e4b3597ca4440738690e359383c91f3cac0398ad4b1",
+                "normalized_php_tokens_sha256": "8dde56d16f307358ee39db2fe9fb6d6e95833518ee5b378ec53c46756bb5c99f",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "examples/shared/client-model.php",
+                "before_sha256": "716d87f5b414781ab188890c4d432cf0c44c65b206c3947177f384fecf12a21f",
+                "after_sha256": "9e78c4785af3f9d987e543f452381894c6f74e4e9f6a73eefd225356a4fd7399",
+                "normalized_php_tokens_sha256": "5479f220f8f829706001aea695f769ae427abc68164e00bdbaffd42762c1e203",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "examples/shared/config/sso-client.php",
+                "before_sha256": "16a9e919fd753d4471e047021201c24e185ce06916c5b27942fb683e3402343d",
+                "after_sha256": "c265d3b69c7cfe54adbf4c8d7f2fe8d3bb6634debfb8c6b9236af54cda12f8db",
+                "normalized_php_tokens_sha256": "634f4e5bccab4e1fae53267d4515fa4b21d0871236248bc82796fa475aabf045",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/config/sso-client.php",
+                "before_sha256": "d7336eca29cbc67ee8d0a9ecfe44faa1526ce52259483852f50ad036747dda3f",
+                "after_sha256": "38183b3b88e7c18d75b08ec7a146c1957e4be32d19ba0cac1b0f79e5975e537c",
+                "normalized_php_tokens_sha256": "e46720630c84b191e1d50c96586aa32012b7993ed1cf7ff6d1f6453f95453d14",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/database/migrations/2026_11_13_000002_create_sso_local_sessions.php",
+                "before_sha256": "fae22256c96d4d2a3ded95e14a2af932713313552ab91befff0ea050e624daac",
+                "after_sha256": "663dca91f30517412491167e6cda60f6e84b4c35b41fec59e1528d97a5c44a17",
+                "normalized_php_tokens_sha256": "dc74ea3a6920ce24b251a1e0c232d8dbb26d96fb6d47e7df7ba3779682de8d80",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Console/DoctorCommand.php",
+                "before_sha256": "7ad30becf0b0b1cc5d28a20e8ca8985623e496a66588464937108c0f2e7cba27",
+                "after_sha256": "fefc77af7080a93f1baf913eff535059ebd5fbb7e75c7f7cf9d832d19eb50af6",
+                "normalized_php_tokens_sha256": "160c350dada79c281b3dfa70390e54ac725205c74b19117e2c5ead9a08471b91",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Console/LinkUserCommand.php",
+                "before_sha256": "724fde858260222622822f60628d05e8ecc5186f8d75e3615bc491db4dc73f00",
+                "after_sha256": "4f6b9178363cf3820cc14965c2c41d425506abed1378a9048a87dd912e09ee0c",
+                "normalized_php_tokens_sha256": "62972a7a3db15910797fde00c7eaae81b19335265395a0bf6142d06a41155f2a",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/EloquentProvisioner.php",
+                "before_sha256": "393ea6ac68d9f17e75da000abd9d45a195cced88e35f30ce0e6cc0934164c70d",
+                "after_sha256": "5461420bbf22c7beedf39eb048ebec7374e84e82319e3774d08fb9d45f8bb5f4",
+                "normalized_php_tokens_sha256": "e1b0c6cadf842ca47da1bce4335bcfd681ce203aad9c6b35020e60d1b5ff4dbe",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Http/EnsureGlobalSession.php",
+                "before_sha256": "6baed6306c27690d5ee2bb6e73964bd3c625e2d6a244e68f7a2172a894667874",
+                "after_sha256": "ce3cffd4097bb10584e6ed3bbf6e9fb512b1300797633fb17c3f365b92651e40",
+                "normalized_php_tokens_sha256": "bc1bc7152e24182ef3377199fb10ec4956f40cf6e39ec14c2219f266fac524f2",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Http/EnsureSsoEnabled.php",
+                "before_sha256": "a4e596dd68337c29b2dfa0de619b6a766639c16270713ce74bb1bc3317b63ba6",
+                "after_sha256": "7512f6a544e050fec3cf19cf4d2bd369a8d0e21306d0052d07c422a25dd91429",
+                "normalized_php_tokens_sha256": "7d527ab805b6012ba464fde051a4cfd1b6d470b00b6d537bfe280342c067e4da",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Http/LocalAuthentication.php",
+                "before_sha256": "647cd0bb4b69257d77d5ce0f9cdb8cc87ec39a1633ea13b2a83f80a26160bcce",
+                "after_sha256": "98f09d9243f1a82066ee7602ba52f292dbaa2d271cbe8518a8005154eeb507fc",
+                "normalized_php_tokens_sha256": "5c1a8c379729f55f1ceed860419ef919bd61fbc3c54ce91a4b25a320c9b6867a",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Http/LoginController.php",
+                "before_sha256": "b071d4c1c279d21ebef6067316b754129bbe332dc1e88fc9bb68deea796abeb6",
+                "after_sha256": "18c505add60b5274f1ea7b5d2d637af98c38ef78b4594778f8eb1f418f609ee7",
+                "normalized_php_tokens_sha256": "95e9510529ade3010298c11a5e4661f30ec24faca0c4e021faff7cc818a84619",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Http/LogoutController.php",
+                "before_sha256": "fd766a8cd8fd4e1e8c1860e705e3d03f6a3158c97a9fa54e85a2fb81fa795bd0",
+                "after_sha256": "963bc28af8d80b928c9717753dc3832b23210ca44624395b28264bd9f5e6e373",
+                "normalized_php_tokens_sha256": "d804c42cdfa848ef8186bf8002911cf69ad6de79c0754bf4d04214bd729b303f",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/IdentityLinks.php",
+                "before_sha256": "62477feb07ad41062dbc0a9df94c6d426cd1c3fa7904f3add2b407512c9a24a8",
+                "after_sha256": "f85553f1b7ffd85c1ef5af6d3a367b0e46218d31bd9f48a60d4fb8c0511ce8e5",
+                "normalized_php_tokens_sha256": "8b858b18c152c1e0bb73916ab9ee4a7da95439cc948b73ed92256bb3136ef145",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/SsoClientServiceProvider.php",
+                "before_sha256": "6adec4af559dbf1480f2b1bbca1d73454ee941fc387d885f9d07b59e0e0af503",
+                "after_sha256": "48b9b0602630554386f8f2634226ca207a20c008bfc5c9d067c4edfe37580e00",
+                "normalized_php_tokens_sha256": "b4f2eb24fd44c061465acd35046295f8dee57224b25ab4525574980f8de513ce",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/SsoOnly.php",
+                "before_sha256": "a4cd3b6740f1c508f500d96e69959ba069dc4c2e3135425df5be1e385899fe5e",
+                "after_sha256": "fcd739fd35adc441679f486ef5de966f9f5aee966c9360976b07e066dd6b7c06",
+                "normalized_php_tokens_sha256": "d45079760888da23ddd22404f184d8e7c9e48f4e2244f79d69c764daac2d1878",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/client/src/Transactions.php",
+                "before_sha256": "063e252c21a0ff370174c3dc38782490b09e7f2d770f787ee6ceb903fb6a28ec",
+                "after_sha256": "1053639cb2e9616136d106e2461c65b38f660e19068b488c7c7e19ce4dae14db",
+                "normalized_php_tokens_sha256": "d5f6a0fb226a0b58344b6dc67f0ef1475b736aa9035ab215d67588367853d2b2",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/contracts/src/AuditEvent.php",
+                "before_sha256": "179acb8dbb210ca1c4c3f5a4eb60f76a4d4545b065dd9335886d8428d5a00187",
+                "after_sha256": "9784b258934fd04938a74c003ca5bd47bb650bac6e210089a390fccb767c1070",
+                "normalized_php_tokens_sha256": "834fd73746ed38167315e5b13fa51fa534e809e4231e6696f39401264adee959",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/server/src/DeviceSessions.php",
+                "before_sha256": "39b14eb786e7301f9640f585462c85d27780886b5b2115028cdbf242220f7bc5",
+                "after_sha256": "6b8f3dc4badd1a0a2bad147e725a2717c71eb7d87de9ecd3daa27e242cd62e1b",
+                "normalized_php_tokens_sha256": "20bb08b3cda80e41bef9bdd9d24cacf1890b7be9a85824ead2a43a408f40fff0",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/server/src/GlobalSessions.php",
+                "before_sha256": "49728bea21e2b6f098a1469699cdcfbd7ee908980dd41afd0cba07e8371670d3",
+                "after_sha256": "d33a71e89d333f8d7a37a5fa576ea3a2983e4067b5d569d3413a9ad6abb80192",
+                "normalized_php_tokens_sha256": "b34f7b867be30ceff779815c0ffcdcea53ad7bbc392a3111665db9f9688b9ec3",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/server/src/Http/ProtocolController.php",
+                "before_sha256": "901765f11d821a4b699f5f1d1019bb72dc07206dd8a6bba9105c89508c844f7e",
+                "after_sha256": "37f3140e074282479421ce38c860aa170af19cbb39e2a05363dc9c9a1089d9d7",
+                "normalized_php_tokens_sha256": "6371d69f552ec9aaf20b688579c41179af9086c83dc7957316ea96fb18dcba55",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "packages/server/src/Transactions.php",
+                "before_sha256": "31983883d0591d4176d3bcea7abc4d74de19e138026d0cdea8e9d6d144f96534",
+                "after_sha256": "6aa6bfde71db5287511d9fb090c99f5342c975a3e153978f7ff164f761ce9713",
+                "normalized_php_tokens_sha256": "c771edff1ea6d3603f982dcfaa1bc025f775b4b0c9ab1056cd88e2c92bc4d736",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/ClientTest.php",
+                "before_sha256": "6e9e1b26f3c45bed9645e11209b3213b6aadff5b176e7aff77ceefebd50b36b7",
+                "after_sha256": "7e49d2fe37c26503e45bb16f20ce2184cc183a9eb51c4e75c4a0ba200f0cac54",
+                "normalized_php_tokens_sha256": "e5bf9452d697574c6dad5cc5144099cb2bf1d637a19cab14c5d170015eb72723",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/Database/ConcurrencyTest.php",
+                "before_sha256": "cf21d21f6482945d71aa024270474e4a57dde8b75aced376360c1a4ef800ea1a",
+                "after_sha256": "b01b2a01425e93777c78be09544a77d1723fc2e601c91286e4d78e79cb50c106",
+                "normalized_php_tokens_sha256": "95d3009b6611b0b17ec5a25dd4b3af066565c62fc5ab0d3e4aed12b56f381718",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/Database/EnvironmentTest.php",
+                "before_sha256": "baabbccdeaed8675ff9e611d122c1bcf9becfb81e561199c95b76457b5aa8d81",
+                "after_sha256": "1075150e5770141e4fbc75a1d0ea3965484ee57e5fd6dc78abe67d682c7603eb",
+                "normalized_php_tokens_sha256": "fce53429a1409a521179da282279b88f798807d8f28824ef15af46a803191710",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/Database/Parallel.php",
+                "before_sha256": "f508b1a8ababf6f4fd5b72d20dbbf7cd23be53ba0eec24b33b7bb859c9f46392",
+                "after_sha256": "853479ec46c6dee474bdb310bb317abf782107af51ec440b1be9a25297afd241",
+                "normalized_php_tokens_sha256": "96f3a0bd8dbaa5a8682ed21750bea477b575c61f5ba5d9f27538bd422a24b652",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/Database/RememberConcurrencyTest.php",
+                "before_sha256": "c2e9a5b6cda912862b9cc72490781cc804bd766c5326da74d6e923ffc9089476",
+                "after_sha256": "cdce2c9446ae0337581c22747581d06f62795cd4b351e1084996c8bec982baa4",
+                "normalized_php_tokens_sha256": "728bca03e441dd6db823be41800c565a23063a65af0494a8dbec8926917ace37",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/Fixtures/LocalUser.php",
+                "before_sha256": "e0ef7754ea53e5a6baec658c1d3362a0d7869665ddd00d21fbf07bdd51874a39",
+                "after_sha256": "5eca390cf2e629fc5c16245fde8695d1dc79ee457b46261692626ce535604a2a",
+                "normalized_php_tokens_sha256": "60ce541bb08ee81ef70358a818b54218ca4101658408a6e87318e806cded41bc",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/Fixtures/SsoOnlyUser.php",
+                "before_sha256": "ce40bded3cff7b2680da229dcdd6582a018a28557f56703d35b4b5da5667393c",
+                "after_sha256": "2783d7103f6a82a03966e71d0b7eea2fd5314870021d3b94a71d03df6bae9f20",
+                "normalized_php_tokens_sha256": "390420fb2268c7130f22bf9f220bf02b8297fcbe98e49c29d655aeb071ca355d",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/LogoutTest.php",
+                "before_sha256": "6ba376a38e5e89c13b5b116d2c9d797d62d54bb14745ba8e5e01cb0b2c8d1447",
+                "after_sha256": "e71d8d907f386112b2b4e3fc865d460252c3a476b56b22431a00ecaa035d9ef4",
+                "normalized_php_tokens_sha256": "97d410cdbf7331aa16ea2c2b9e7ac4f9e5af0d25392d6677e6c6f37d4e8e2bdf",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/OperationsTest.php",
+                "before_sha256": "0f91c6d385806c284501472f803b111d0848c21bc2e2a773fe069be53ec7dccc",
+                "after_sha256": "8c26b2248a11d1dad6d675394d4f71ee08669a0dbab45cb98ae7f55ea904095b",
+                "normalized_php_tokens_sha256": "382b2011af123067c44a7f48018666600348a3d851baf9c7a9238adf46a7ab77",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/OptionalClientTest.php",
+                "before_sha256": "58adf3eb9f2f92982a11c274fcfc1e309e985c02846c921ea1166718b690b781",
+                "after_sha256": "762d739a09cf1d292358d728ed624f0cf1a3974611eea031e72546981eecb8d9",
+                "normalized_php_tokens_sha256": "5d9d154e60765b257017e0c8e6ce882005d11a2173dd3117d62d8de776a3b402",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/TestCase.php",
+                "before_sha256": "7b3d92d9edaddc203f03cf956ed85ebe18d203aae5d6ffd8b1b4a2b1953b0b53",
+                "after_sha256": "198eb0b3093d625ae3dc79376f6d4bdb862721b2626d8a8a140f21568bcf11cd",
+                "normalized_php_tokens_sha256": "c3ca838cfb0c83f831f44ac97aa8f686da0c6f64436cfc34d3aeb0596e50aad3",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tests/TransactionTest.php",
+                "before_sha256": "7fc57fea269b3b7d7abe1dee1a40ce25d65db1a3804024520b5abf767e1e8fa9",
+                "after_sha256": "06f12f7da3dcdfcbb4abf06c31f88ca725b460fc131ebe9475017ed0564105a1",
+                "normalized_php_tokens_sha256": "511cc7665c51c0d5874e5a856fd8dfe6917fac8e08a013c7e961d246f919cdfe",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tools/compatibility-environment.php",
+                "before_sha256": "50d6500a500a6c5583efe09470f37688ccf6500008f6b2951409eb4b66937d14",
+                "after_sha256": "d07c0e04b4ea40a02e2e16b250c89fb8361516ac932e684e98092901029efb59",
+                "normalized_php_tokens_sha256": "e7513650f7972b6729663c6bf25322a6db285c582b1d7e70505b6489c5599599",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            },
+            {
+                "path": "tools/e2e.php",
+                "before_sha256": "fa7488388c7e82a0e91d05ff97243758c897b57b1a823f131b03b3bc03183e44",
+                "after_sha256": "08a13254da7937b5e5b97baeec5659a58048b6497bbeb89b2fdfab338147f8a5",
+                "normalized_php_tokens_sha256": "38cfa3c34cc217edd5bdb3747b1d5b40a16c17bd40fbfe3764133c88dc68ea36",
+                "line_endings_only": true,
+                "non_whitespace_tokens_unchanged": true
+            }
+        ],
+        "migration_files": {
+            "server": [
+                "2026_11_13_000001_create_sso_tables.php"
+            ],
+            "client": [
+                "2026_11_13_000002_create_sso_local_sessions.php"
+            ],
+            "contracts": []
+        }
+    },
+    "pint": {
+        "version": "v1.32.3",
+        "scope": "whole repository with a fresh cache",
+        "before_failed_files": 37,
+        "after_failed_files": 0,
+        "passed": true
+    },
+    "tests": {
+        "php83": {
+            "php": "8.3.36",
+            "passed": true,
+            "tests": 230,
+            "assertions": 1076,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+        },
+        "php84": {
+            "php": "8.4.27",
+            "passed": true,
+            "tests": 230,
+            "assertions": 1076,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+        },
+        "php85": {
+            "php": "8.5.12",
+            "passed": true,
+            "tests": 230,
+            "assertions": 1076,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+        },
+        "conformance": {
+            "php": "8.3.36",
+            "passed": true,
+            "tests": 106,
+            "assertions": 414,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+        }
+    },
+    "conformance_group_is_included_in_general_suite": true,
+    "larastan": {
+        "level": 5,
+        "baseline": false,
+        "passed": true
+    },
+    "composer": {
+        "manifests": [
+            {
+                "path": "composer.json",
+                "exit_code": 0,
+                "passed": true
+            },
+            {
+                "path": "packages/contracts/composer.json",
+                "exit_code": 0,
+                "passed": true
+            },
+            {
+                "path": "packages/server/composer.json",
+                "exit_code": 0,
+                "passed": true
+            },
+            {
+                "path": "packages/client/composer.json",
+                "exit_code": 0,
+                "passed": true
+            },
+            {
+                "path": "examples/identity-server/composer.json",
+                "exit_code": 0,
+                "passed": true
+            },
+            {
+                "path": "examples/app-one/composer.json",
+                "exit_code": 0,
+                "passed": true
+            },
+            {
+                "path": "examples/app-two/composer.json",
+                "exit_code": 0,
+                "passed": true
+            }
+        ],
+        "installed_platform_requirements_passed_on_php83": true,
+        "audit": {
+            "checked_at_utc": "2026-11-17T13:53:18.9709744Z",
+            "exit_code": 0,
+            "passed": true,
+            "advisories": 0,
+            "abandoned": 0
+        },
+        "lockfile_unchanged": true,
+        "lockfile_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf"
+    },
+    "preservation": {
+        "protected_example_files_checked": 10,
+        "contents_unchanged": true,
+        "host_users_schema_or_credentials_changed": false,
+        "databases_reset_or_upgraded": false
+    },
+    "current_fingerprints": {
+        "checked_at_utc": "2026-11-17T13:56:17+00:00",
+        "source_sha256": "cc9950d72a31d7dd3fa5cb77774a4efcbff3b67ea6d74a2a37560037579d8c6e",
+        "file_count": 115,
+        "deployment_source_sha256": "d27fcefba2ec4ccfa2b9730907b59aaa95cb2906b085bc222d75b84bfd797e41",
+        "dependency_inventory_sha256": "1cc835f66a225de6bbd1cf24bf1b6d9baf5418ac1af72b0f90e304c6d050a708",
+        "migration_files": {
+            "server": 1,
+            "client": 1,
+            "contracts": 0
+        }
+    },
+    "previous_pilot_evidence": {
+        "path": "conformance/pilot-preparation-results.json",
+        "sha256": "de285ef3ec2f09d4f270cdf66d9c86abd334445523680b7626822d18257b0545",
+        "source_sha256": "84e465a8863106f8442d0f79626dd17fdcb900df73ef8e2863db362bb2de334a",
+        "raw_source_fingerprints_changed_by_formatting": true,
+        "reports_rewritten_or_relabelled": false,
+        "official_oidc_browsers_load_and_sql_matrix_rerun": false
+    },
+    "remote_ci_run_triggered": false,
+    "versions_published": false,
+    "artifacts_sha256": {
+        "pint-before.log": "ab97e3567b669cc13234fa273e76c7387b43ca3c542fa0356ff17a9c1d5b9c07",
+        "pint-fix.log": "62f5c15092699544c2f439b7e725a121ee1909a7fe1286d4003e311eeea16460",
+        "pint-after.log": "acbf5da6385237b6f4cd342c4454d93f6c4df8bfcf1687838edb3b651981c4e1",
+        "format-verification.json": "0c648117ad871f5c7adba006ce507a8e1029e3f55e3c6a4a8d91fd7dd2ab59f5",
+        "php83-junit.xml": "9332aeea5c0d334c0538638575325dad31585cfd1e3c9b7e7e268728cd734a54",
+        "php84-junit.xml": "49a368802a5e86ab62cc657fc28e630ee753963877b831a4c576ecc45ce05b25",
+        "php85-junit.xml": "c51ba186f202757c2b6bed10af0b73fefc6363a2eff7e2b7928a6e7adff8957e",
+        "conformance-junit.xml": "40aa2ff803daf77519c674516e3b52023e4cc30ce3c31cbd040942aca9773edc",
+        "larastan.log": "de5724e222ff5a6a9f1967522863d0112aaa2eee3c9f7cda6da0a8ecfa0c9fe5",
+        "manifests.json": "70e16b87d6d2f7f524725fe4ffab633a9e5d8be0e1fb9c921e8d21eb62ea25e5",
+        "platform.log": "73278b9ea91ebda3cdbb77d421800efb189ec1f01fd3796b437e84413a7f08da",
+        "composer-audit.json": "851e471fba40aa9f3097e61faea3df7fb5583a200d95e5dd571aabfc22cc75d7",
+        "composer-audit-status.json": "b44f4431d32e42e7327535e78707aec90f981e72ea158bb38641dfefc99cc4ce",
+        "protected-before.json": "1b8eb14a9fa8e5544ea69e70432c1848a8683bc77010ace5d88fb2e5fa66e285",
+        "protected-after.json": "1b8eb14a9fa8e5544ea69e70432c1848a8683bc77010ace5d88fb2e5fa66e285",
+        "current-fingerprint.json": "3ef9a6f750c6bd64494a4154caf5b824b3ca5b3a76872cf65a46f4167738409a"
+    }
+}
