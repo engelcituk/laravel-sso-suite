@@ -1,0 +1,97 @@
+{
+    "schema_version": 1,
+    "source": "fba4d6fa7446e0e52adcd92048b603a02f5357f7",
+    "version": "0.1.x-dev",
+    "time": "2026-11-17T19:22:15+00:00",
+    "packages": {
+        "contracts": {
+            "manifest": {
+                "name": "laravel-sso/contracts",
+                "description": "Shared identity value objects for Laravel SSO",
+                "license": "MIT",
+                "type": "library",
+                "require": {
+                    "php": "^8.3"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "LaravelSso\\Contracts\\": "src/"
+                    }
+                }
+            },
+            "files": 8,
+            "migrations": 0,
+            "sha1": "4868360adb174a171ce3ae1603986ac0fbb5ee08",
+            "sha256": "3d1d427f9b7e9f41991592395a0c291fd6a0724a583b732da087b086080d88d1"
+        },
+        "server": {
+            "manifest": {
+                "name": "laravel-sso/server",
+                "description": "Experimental OpenID Connect provider built on Laravel Passport",
+                "license": "MIT",
+                "type": "library",
+                "require": {
+                    "php": "^8.3",
+                    "ext-openssl": "*",
+                    "laravel-sso/contracts": "^0.1@dev",
+                    "illuminate/auth": "^13.0",
+                    "illuminate/database": "^13.0",
+                    "illuminate/http": "^13.0",
+                    "illuminate/support": "^13.0",
+                    "laravel/passport": "^13.0",
+                    "firebase/php-jwt": "^7.0"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "LaravelSso\\Server\\": "src/"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "LaravelSso\\Server\\SsoServerServiceProvider"
+                        ]
+                    }
+                }
+            },
+            "files": 64,
+            "migrations": 1,
+            "sha1": "f0ccb2ec356cc5647be5d80b83877fbe781218c0",
+            "sha256": "b7e44a99ac3d7ae5bd35c64e1ccfbf780f0d6606e6bea620a78c686e0a7424df"
+        },
+        "client": {
+            "manifest": {
+                "name": "laravel-sso/client",
+                "description": "Experimental OIDC client for native Laravel Auth and local Eloquent identities",
+                "license": "MIT",
+                "type": "library",
+                "require": {
+                    "php": "^8.3",
+                    "ext-openssl": "*",
+                    "laravel-sso/contracts": "^0.1@dev",
+                    "illuminate/auth": "^13.0",
+                    "illuminate/database": "^13.0",
+                    "illuminate/http": "^13.0",
+                    "illuminate/support": "^13.0",
+                    "firebase/php-jwt": "^7.0"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "LaravelSso\\Client\\": "src/"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "LaravelSso\\Client\\SsoClientServiceProvider"
+                        ]
+                    }
+                }
+            },
+            "files": 31,
+            "migrations": 1,
+            "sha1": "769ca88038466d012ebe057fb2fc5053aaacc36d",
+            "sha256": "1dc4e69190f8ac7b4c75059c56655da00861b8c9ad8a41a9acf4265c3fe5b645"
+        }
+    }
+}
