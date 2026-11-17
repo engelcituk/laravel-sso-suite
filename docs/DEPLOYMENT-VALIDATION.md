@@ -1,5 +1,8 @@
 # Despliegues HTTPS, navegadores cross-site y carga
 
+Evidencia histórica previa al [modo SSO/Auth local opcional](OPTIONAL-AUTH.md).
+Sus despliegues, navegadores y campaña de carga no se repitieron para esa modificación.
+
 Laboratorio local aislado del 2026-11-14. Este informe distingue servidores web reales,
 navegadores reales y usuarios HTTP del generador de carga. Los resultados de la campaña
 se conservan con sus huellas; no se publicaron paquetes, imágenes ni evidencias externas.

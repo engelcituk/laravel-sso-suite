@@ -1,5 +1,9 @@
 # Resultados OIDC y revisión de observaciones
 
+El [modo opcional posterior](OPTIONAL-AUTH.md) cambió la persistencia de identidad del RP
+y repitió la conformidad PHPUnit propia y el E2E, sin repetir el harness oficial.
+Los estados de este informe corresponden exclusivamente a las ejecuciones indicadas.
+
 Este informe conserva la ejecución oficial indicada abajo. La fase posterior de
 [compatibilidad ampliada](COMPATIBILITY.md) modificó transacciones y pasó las pruebas
 normativas propias en nueve combinaciones, sin repetir el harness oficial. No se atribuyen

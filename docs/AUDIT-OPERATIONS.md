@@ -1,9 +1,10 @@
 # Auditoría, instalación y diagnóstico
 
 La fase agrega `LaravelSso\Contracts\AuditEvent` y comandos Artisan en ambos paquetes.
-No agrega tablas ni migraciones: servidor conserva su única definición inicial y cliente
-la suya. El paquete contracts continúa sin dependencias de Laravel/Passport; contiene DTOs
-y utilidades PHP de instalación/informes. No se ha publicado ningún paquete ni evidencia.
+La fase original no agregó tablas ni migraciones: servidor conserva su única definición
+inicial y cliente la suya. El modo opcional posterior añade `sso_identities` dentro de
+esa migración cliente, sin tocar users. El catálogo actual suma 35 nombres. Contracts
+continúa sin Laravel/Passport. [Resultados posteriores y CI](OPTIONAL-AUTH.md).
 
 ## Eventos de seguridad
 
@@ -23,7 +24,7 @@ Ambos paquetes despachan el mismo DTO inmutable mediante el dispatcher de Larave
 | Servidor, tokens | `token.issued`, `token.rejected`, `token.replayed` |
 | Servidor, entrega logout | `logout.retry`, `logout.delivered` |
 | Servidor, operación | `client.registered`, `keys.created` |
-| Cliente, identidad | `identity.provisioned`, `identity.rejected` |
+| Cliente, identidad | `identity.linked`, `identity.provisioned`, `identity.rejected` |
 | Cliente, login/sesión | `login.completed`, `login.rejected`, `session.denied` |
 | Cliente, logout | `logout.local`, `logout.received`, `logout.duplicate`, `logout.rejected` |
 
@@ -32,8 +33,9 @@ la aplicación puede invocar `SessionGuard::login`. La restauración de Recordar
 su evento propio y conserva `auth_time`. `remember.replayed` exige verificar el secreto;
 un secreto adivinado no genera una acusación de replay ni revoca otro dispositivo.
 `remember.expired` incluye credenciales persistentes ya no válidas por caducidad,
-revocación, suspensión o cambio de contraseña. `identity.provisioned` incluye una
-actualización aprobada de usuario existente; `created` permite distinguir creación.
+revocación, suspensión o cambio de contraseña. `identity.provisioned` indica resolución
+aprobada, sin actualizar atributos del usuario existente; `created` distingue altas.
+`identity.linked` registra una vinculación explícita nueva; repetirla no duplica el evento.
 
 Sólo se admiten referencias `issuer`, `subject`, `client`, `device`, `sid`, `delivery`.
 Se transforman mediante HMAC-SHA256 con la clave del encrypter y separación por versión,
@@ -145,8 +147,9 @@ sesiones/cookies, tablas Passport/SSO y campos nuevos, una única copia publicad
 claves RSA OIDC y OAuth coincidentes, conexión Passport compartida, TTLs positivos,
 allowlist de logout y entregas con más de cinco minutos de retraso. No entrega notificaciones.
 
-El doctor RP comprueba activación, SessionGuard/modelo de identidad sin credenciales,
-índice único `(sso_issuer,sso_subject)` y collation sensible en MySQL, tablas/columnas,
+Con el cliente desactivado, el doctor RP aprueba el modo local sin exigir tablas ni
+configuración SSO y sin HTTP. Activado, comprueba SessionGuard/modelo local en la misma
+conexión, índice único `(issuer,subject)` de `sso_identities`, collation sensible en MySQL, tablas/columnas,
 sesiones/cookies, callback/política/scopes/TTLs y confianza explícita de discovery/status.
 Por defecto añade los GET de discovery y JWKS: verifica issuer exacto, allowlists,
 RS256/S256 y un conjunto RSA utilizable. `--offline` no envía HTTP. Ninguna modalidad
@@ -162,7 +165,11 @@ Un resultado aprobado es una instantánea. No prueba scheduler/queue, permisos/A
 TLS/proxy públicos, todas las collations ni login completo, y no es conformidad/certificación
 OIDC. [Eventos tras commit en Laravel](https://laravel.com/framework/docs/events#dispatching-events-after-database-transactions).
 
-## Validación de esta fase
+La vinculación aprobada de un usuario existente se realiza con
+`sso:link-user {user} {subject} --issuer=https://identity.example.org`. No actualiza perfil,
+hash ni permisos y rechaza una identidad con otro propietario. No asocia por correo.
+
+## Validación histórica de auditoría/operaciones
 
 Las pruebas nuevas ejercitan transacciones y rollback reales, sesiones/credenciales nativas,
 replay, logs opt-in, exclusión de secretos, diagnóstico negativo y publicación local repetida

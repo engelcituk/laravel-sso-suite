@@ -3,7 +3,8 @@
 Implementado y probado localmente el 2026-11-14. El OP ofrece una credencial persistente
 por navegador y una pantalla de administración en `/sso/devices`. La portada del ejemplo
 central enlaza a ella. Los RP conservan SessionGuard, usuarios Eloquent y sesiones locales;
-no reciben contraseñas ni credenciales Recordarme propias.
+el flujo SSO no recibe contraseñas centrales ni crea un recaller RP. El posterior
+[modo local opcional](OPTIONAL-AUTH.md) conserva las credenciales y Recordarme del anfitrión.
 
 ## Uso e integración
 

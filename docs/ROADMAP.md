@@ -1,6 +1,6 @@
 # Roadmap y evidencia
 
-Actualizado 2026-11-15 UTC. Primera vertical integrada **experimental**, sin publicación de versiones,
+Actualizado 2026-11-16 (Cancún). Primera vertical integrada **experimental**, sin publicación de versiones,
 certificación ni recomendación de producción. Una vertical no cierra toda su fase.
 
 | Fase | Estado real | Evidencia / cierre pendiente |
@@ -9,13 +9,23 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 | 1 fundamento | base local y CI remota verificadas | compatibilidad ampliada integrada en main, 14/14: PHP 8.3/8.4/8.5 con locked/lowest/latest y cuatro perfiles SQL, cero advertencias del runner |
 | 2 servidor | perfil Code evaluado localmente | cinco planes oficiales en Docker; PKCE por defecto, excepción confidencial explícita, replay y canal de errores corregidos; ver resultados reales |
 | 3 cliente | validación OIDC ampliada | iss, at_hash, aud/azp, max_age, Logout Tokens y UserInfo con sub coincidente; falta evaluación externa |
-| 4 identidad local | concurrencia local y remota verificadas | unicidad/commit, snapshots y reintentos corregidos; MySQL/PostgreSQL en READ COMMITTED y REPEATABLE READ, ACL independiente |
+| 4 identidad local | modo opcional implementado y validado en rama | SSO_CLIENT_ENABLED, tablas propias sin tocar users/passwords, 18 casos nuevos y CI 14/14; aún no integrado en main |
 | 5 sesiones | funcionalidades locales verificadas | Recordarme central con rotación/replay, dispositivos, revocación, outbox y retención probados; validación operativa externa pendiente |
 | 6 instalación | despliegues y operación local verificados | Nginx/FPM/MySQL y Apache/PHP/PostgreSQL optimizados, 60 controles de navegador y campaña de 30 min; otros entornos/piloto externo fuera de alcance |
 | 7 publicación | pendiente | calidad local y matriz remota aprobadas; faltan auditoría/certificación externa y autorización para publicar versiones |
 
 ## Resultados ejecutados
 
+- **Modo SSO/Auth local en `codex/optional-client-auth`**: run `43991616405`, commit
+  `b385141`, **14/14 trabajos aprobados**, UTC 2026-11-17 00:56:05–00:57:59
+  (16 de noviembre 19:56:05–19:57:59 en Cancún). Nueve perfiles PHP/dependencias:
+  **230 / 1076** generales y **106 / 414** normativos, E2E real y audit aprobados.
+  Cuatro perfiles SQL: **246 / 1152** MySQL y **246 / 1150** PostgreSQL, ambos aislamientos.
+  Pint (147 archivos), Larastan y manifiestos aprobados; cero advertencias del runner.
+  Se corrigieron la lectura de propietario bajo MySQL REPEATABLE READ y un cursor SQLite
+  del E2E que bloqueaba el back-channel. Se conservan los intentos fallidos.
+  Una migración por paquete; cliente con tres tablas propias. Main sigue en `848b35c`.
+  Sólo se subió la rama autorizada, sin merge ni versiones. [Contrato y evidencia](OPTIONAL-AUTH.md).
 - Compatibilidad ampliada en **main**: **14/14 trabajos aprobados** en `3f55235`, run `43680036096`,
   UTC 2026-11-15 05:12:00–05:14:44 (00:12:00–00:14:44 en Cancún).
   Nueve combinaciones PHP/dependencias: **212 / 994** generales y **106 / 414** normativos
@@ -57,7 +67,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
   guardados como hash, rotación de un uso y revocación de familia ante replay. La pantalla
   `/sso/devices` permite nombrar/revocar dispositivos propios con CSRF y contraseña reciente.
   [Alcance, política estricta y resultados](REMEMBER-DEVICES.md).
-- Auditoría: 34 eventos de catálogo cerrado con referencias HMAC; cambios después de commit,
+- Auditoría: 35 eventos de catálogo cerrado (incluye `identity.linked`) con referencias HMAC; cambios después de commit,
   rollback sin eventos de transición y sink de log opt-in. Instaladores OP/RP repetidos sin
   sobrescrituras ni migraciones duplicadas; diagnósticos JSON y casos negativos aprobados.
   E2E: doctor OP y ambos doctores RP con discovery/JWKS reales aprobados.
@@ -82,7 +92,7 @@ certificación ni recomendación de producción. Una vertical no cierra toda su 
 - E2E con tres servidores HTTP reales: hosts 127.0.0.1, 127.0.0.2 y 127.0.0.3,
   cookies separadas, tres SQLite y tres APP_KEY distintas; el primer navegador conecta
   dos RP con una entrada de credenciales. Un segundo verifica revocación aislada; misma
-  identidad, ACL independiente y ausencia de contraseñas RP.
+  identidad, ACL independiente y ausencia de copia de contraseña central en los RP.
 - E2E rechazó login sin CSRF, cerró globalmente desde A, obtuvo 401 en B y procesó las
   tres entregas back-channel. Verificó además recuperación/rotación tras perder la cookie
   de sesión central, revocación de otro dispositivo, POST externo de authorize/logout y rechazo
@@ -101,6 +111,7 @@ combinaciones de dependencias/PHP/SQL. El harness oficial no se repitió en esta
 | --- | --- | --- |
 | Login único entre hosts | Passport + central session | tools/e2e.php: dos RP sin segundo login |
 | Identidad / Laravel Auth | EloquentProvisioner + SessionGuard | ClientTest y E2E mismo iss/sub |
+| SSO opcional sin cambiar users | IdentityLinks + sso.local/sso.session | OptionalClientTest: 18 casos, Auth sin tablas SSO, credenciales/ACL intactas y cambio de modo; CI nueve perfiles PHP |
 | ACL independiente | Gate + ReportPolicy | E2E permiso sólo en A, 403 en B |
 | Código de un uso / S256 | AuthCodeRepository + League | ProtocolTest: replay, verifier, plain, callback y cliente |
 | ID Token / rotación | SigningKeys / IdTokenValidator | ClientTest negativos y KeyRotationTest |
@@ -128,6 +139,12 @@ de los cinco planes OIDC y sus evidencias históricas. La compatibilidad ampliad
 atendida e integrada en main, con su matriz remota aprobada. El destino y retención de auditoría se configuran
 en cada anfitrión; sus eventos no sustituyen una outbox durable de auditoría.
 
+El modo opcional también queda implementado y probado en su rama, con guías actualizadas.
+La siguiente acción posible es revisar e integrar `codex/optional-client-auth` en main
+cuando se autorice, repitiendo su CI. Las bases existentes requieren adaptar sólo el esquema
+propio mediante un procedimiento controlado; la migración inicial consolidada no se
+reaplica sola. No se modificaron tus bases de ejemplos ni se eliminaron credenciales.
+
 1. Evaluar un piloto externo y los entornos concretos de destino: navegadores comerciales,
    móviles físicos, carga distribuida/multijornada y fallos distintos de los ensayados.
    Nuevos motores/versiones se eligen según el destino; no hay una garantía general de compatibilidad.
@@ -143,6 +160,7 @@ sin modificar la instalación global. OpenSSL necesitó OPENSSL_CONF explícito.
 is_readable fallaba bajo sandbox Windows aunque permitía lectura; las verificaciones PHP
 se ejecutaron fuera del sandbox. Secretos, claves, bases y logs están ignorados por Git.
 
-Las contradicciones del prompt sobre users se resolvieron con confirmación del usuario:
-representaciones Eloquent locales sin credenciales. Los criterios antiguos de "sin tabla
-users" se sustituyen por identidad central más usuarios y ACL locales.
+Las contradicciones iniciales sobre users se resolvieron con representaciones Eloquent
+locales. La solicitud posterior de desacoplamiento sustituye el requisito de no tener
+credenciales: ahora se conservan users y sus contraseñas; el vínculo SSO vive en tablas
+propias. Los criterios antiguos de "sin tabla users" también quedan sustituidos.

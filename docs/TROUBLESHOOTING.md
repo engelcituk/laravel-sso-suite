@@ -4,7 +4,11 @@
 | --- | --- |
 | invalid_sso_transaction | issuer exacto, estado/nonce, expiración, cookie SameSite y secreto/callback registrados |
 | Untrusted OIDC endpoint | allowed_urls debe contener la URL exacta; no se siguen redirects |
-| Acceso denegado al primer login | provision=restricted necesita identidad preaprobada; automatic no asigna roles |
+| Acceso denegado al primer login | restricted necesita sso:link-user aprobado; automatic necesita create_user del anfitrión y no asigna roles |
+| /sso/login devuelve 404 | comprobar SSO_CLIENT_ENABLED y reconstruir config cache; desactivado es el comportamiento esperado |
+| Login nativo redirige o responde 403 | sso.local bloquea credenciales locales cuando SSO está activo; revisar la política elegida |
+| Sesión pierde acceso tras cambiar el flag | esperado: autenticar de nuevo en el modo seleccionado; no se promueve una sesión de otro origen |
+| Doctor detecta esquema antiguo | la migración inicial consolidada no se reaplica; adaptar sólo tablas propias de forma controlada, sin migrate:fresh sobre datos existentes |
 | Logout local pero global pendiente | OP accesible, confirmación central, worker y sso_logout_deliveries |
 | Vuelve a pedir login cada pocos minutos | access token corto; redirección al OP debe recuperar sesión central |
 | is_active ausente | agregar campo o configurar active_column del modelo central |

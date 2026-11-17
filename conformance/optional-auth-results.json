@@ -1,0 +1,644 @@
+{
+  "schema_version": 1,
+  "feature": "optional-client-auth",
+  "branch": "codex/optional-client-auth",
+  "source_commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+  "run": {
+    "id": 43991616405,
+    "url": "https://github.com/engelcituk/laravel-sso-suite/actions/runs/43991616405",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at_utc": "2026-11-17T00:56:05Z",
+    "completed_at_utc": "2026-11-17T00:57:59Z"
+  },
+  "main_unchanged": "848b35cce1eaaa7a20afbd246c9b263a81cbde3b",
+  "publication": {
+    "source_branch_explicitly_authorized": true,
+    "merged_to_main": false,
+    "tags_releases_versions_published": false
+  },
+  "migration_files": {
+    "server": 1,
+    "client": 1,
+    "contracts": 0
+  },
+  "client_owned_tables": [
+    "sso_identities",
+    "sso_local_sessions",
+    "sso_logout_receipts"
+  ],
+  "host_users_schema_or_credentials_changed_by_package": false,
+  "optional_client_cases": 18,
+  "jobs": [
+    {
+      "id": 133733357343,
+      "name": "database-concurrency (pgsql, REPEATABLE READ)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 246,
+          "assertions": 1150
+        }
+      ],
+      "e2e_passed": null,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:57:26+00:00",
+        "php": "8.3.36",
+        "os": "Linux",
+        "driver": "pgsql",
+        "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "isolation": "repeatable read",
+        "pcntl": true,
+        "pdo_client": "18.6",
+        "source_sha256": "1b487c4c3d7e88ddb3bdb5703014d0f06846cef57d59ce13ffe17eff625130ad",
+        "collations": null,
+        "laravel": "v13.42.0",
+        "passport": "v13.10.0",
+        "oauth2_server": "9.4.1",
+        "phpunit": "12.5.44"
+      }
+    },
+    {
+      "id": 133733357559,
+      "name": "test (8.3, lowest)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:21+00:00",
+        "profile": "lowest",
+        "php": "8.3.36",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.3.36",
+        "lock_sha256": "543acb7dc76c4e728a480bb1b8a8ceb220cd7a966b9683d5c9f15f2b0f6add52",
+        "installed_sha256": "dc4a35f4a3d7e7298bd6dcadaabdd2d8d1f48408d2e73dda96abe3408c85abd1",
+        "versions": {
+          "firebase/php-jwt": "v7.0.0",
+          "larastan/larastan": "v3.9.3",
+          "laravel/framework": "v13.40.0",
+          "laravel/passport": "v13.7.1",
+          "laravel/pint": "v1.0.0",
+          "league/oauth2-server": "9.2.0",
+          "orchestra/testbench": "v11.0.0",
+          "phpstan/phpstan": "2.1.32",
+          "phpunit/phpunit": "12.5.8"
+        }
+      }
+    },
+    {
+      "id": 133733357593,
+      "name": "test (8.4, latest)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:21+00:00",
+        "profile": "latest",
+        "php": "8.4.27",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.4.27",
+        "lock_sha256": "c47e859e463b07b7d3a865fc189b5d89e7bc9d330cbe736cbd6d0ffc53901a35",
+        "installed_sha256": "8a2f6aa1ac0bd9646e1bf6c8d727eeb97bd29ecd30cc0d6afd0cce82c81b3d34",
+        "versions": {
+          "firebase/php-jwt": "v7.2.1",
+          "larastan/larastan": "v3.15.0",
+          "laravel/framework": "v13.42.0",
+          "laravel/passport": "v13.10.0",
+          "laravel/pint": "v1.32.3",
+          "league/oauth2-server": "9.4.1",
+          "orchestra/testbench": "v11.3.0",
+          "phpstan/phpstan": "2.3.6",
+          "phpunit/phpunit": "12.5.44"
+        }
+      }
+    },
+    {
+      "id": 133733357602,
+      "name": "database-concurrency (pgsql, READ COMMITTED)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 246,
+          "assertions": 1150
+        }
+      ],
+      "e2e_passed": null,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:57:08+00:00",
+        "php": "8.3.36",
+        "os": "Linux",
+        "driver": "pgsql",
+        "database_version": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "isolation": "read committed",
+        "pcntl": true,
+        "pdo_client": "18.6",
+        "source_sha256": "1b487c4c3d7e88ddb3bdb5703014d0f06846cef57d59ce13ffe17eff625130ad",
+        "collations": null,
+        "laravel": "v13.42.0",
+        "passport": "v13.10.0",
+        "oauth2_server": "9.4.1",
+        "phpunit": "12.5.44"
+      }
+    },
+    {
+      "id": 133733357645,
+      "name": "database-concurrency (mysql, READ COMMITTED)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 246,
+          "assertions": 1152
+        }
+      ],
+      "e2e_passed": null,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:57:25+00:00",
+        "php": "8.3.36",
+        "os": "Linux",
+        "driver": "mysql",
+        "database_version": "8.4.13",
+        "isolation": "READ-COMMITTED",
+        "pcntl": true,
+        "pdo_client": "mysqlnd 8.3.36",
+        "source_sha256": "1b487c4c3d7e88ddb3bdb5703014d0f06846cef57d59ce13ffe17eff625130ad",
+        "collations": {
+          "connection": "utf8mb4_unicode_ci",
+          "local_index": "utf8mb4_bin"
+        },
+        "laravel": "v13.42.0",
+        "passport": "v13.10.0",
+        "oauth2_server": "9.4.1",
+        "phpunit": "12.5.44"
+      }
+    },
+    {
+      "id": 133733357653,
+      "name": "package-manifests",
+      "conclusion": "success",
+      "e2e_passed": null,
+      "static_analysis_passed": null,
+      "runner_warnings": []
+    },
+    {
+      "id": 133733357660,
+      "name": "database-concurrency (mysql, REPEATABLE READ)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 246,
+          "assertions": 1152
+        }
+      ],
+      "e2e_passed": null,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:57:29+00:00",
+        "php": "8.3.36",
+        "os": "Linux",
+        "driver": "mysql",
+        "database_version": "8.4.13",
+        "isolation": "REPEATABLE-READ",
+        "pcntl": true,
+        "pdo_client": "mysqlnd 8.3.36",
+        "source_sha256": "1b487c4c3d7e88ddb3bdb5703014d0f06846cef57d59ce13ffe17eff625130ad",
+        "collations": {
+          "connection": "utf8mb4_unicode_ci",
+          "local_index": "utf8mb4_bin"
+        },
+        "laravel": "v13.42.0",
+        "passport": "v13.10.0",
+        "oauth2_server": "9.4.1",
+        "phpunit": "12.5.44"
+      }
+    },
+    {
+      "id": 133733357669,
+      "name": "test (8.4, locked)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": true,
+      "pint_files": 147,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:17+00:00",
+        "profile": "locked",
+        "php": "8.4.27",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.3.0",
+        "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
+        "installed_sha256": "fdac931571d168bc2be35985c72729c4cbfb086badf05a19eba63a3ff66a234f",
+        "versions": {
+          "firebase/php-jwt": "v7.2.1",
+          "larastan/larastan": "v3.15.0",
+          "laravel/framework": "v13.42.0",
+          "laravel/passport": "v13.10.0",
+          "laravel/pint": "v1.32.3",
+          "league/oauth2-server": "9.4.1",
+          "orchestra/testbench": "v11.3.0",
+          "phpstan/phpstan": "2.3.5",
+          "phpunit/phpunit": "12.5.44"
+        }
+      }
+    },
+    {
+      "id": 133733357685,
+      "name": "test (8.3, locked)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": true,
+      "pint_files": 147,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:21+00:00",
+        "profile": "locked",
+        "php": "8.3.36",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.3.0",
+        "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
+        "installed_sha256": "fdac931571d168bc2be35985c72729c4cbfb086badf05a19eba63a3ff66a234f",
+        "versions": {
+          "firebase/php-jwt": "v7.2.1",
+          "larastan/larastan": "v3.15.0",
+          "laravel/framework": "v13.42.0",
+          "laravel/passport": "v13.10.0",
+          "laravel/pint": "v1.32.3",
+          "league/oauth2-server": "9.4.1",
+          "orchestra/testbench": "v11.3.0",
+          "phpstan/phpstan": "2.3.5",
+          "phpunit/phpunit": "12.5.44"
+        }
+      }
+    },
+    {
+      "id": 133733357703,
+      "name": "test (8.3, latest)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:21+00:00",
+        "profile": "latest",
+        "php": "8.3.36",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.3.36",
+        "lock_sha256": "7fe3e6ec31f801ced4c42b7dc0e741efea76f51a3ef61f606dd0f81553e3a6e4",
+        "installed_sha256": "0da38399f06d9e0b0855430e4f3e558cbe9534c26c0dd0b31894e5c6ad7a5028",
+        "versions": {
+          "firebase/php-jwt": "v7.2.1",
+          "larastan/larastan": "v3.15.0",
+          "laravel/framework": "v13.42.0",
+          "laravel/passport": "v13.10.0",
+          "laravel/pint": "v1.32.3",
+          "league/oauth2-server": "9.4.1",
+          "orchestra/testbench": "v11.3.0",
+          "phpstan/phpstan": "2.3.6",
+          "phpunit/phpunit": "12.5.44"
+        }
+      }
+    },
+    {
+      "id": 133733357725,
+      "name": "test (8.5, latest)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:21+00:00",
+        "profile": "latest",
+        "php": "8.5.12",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.5.12",
+        "lock_sha256": "e388823d0c43bf73c7a1ded158491cccab7d3fe1bb31910d5f8f7cfe74a2c29b",
+        "installed_sha256": "8a2f6aa1ac0bd9646e1bf6c8d727eeb97bd29ecd30cc0d6afd0cce82c81b3d34",
+        "versions": {
+          "firebase/php-jwt": "v7.2.1",
+          "larastan/larastan": "v3.15.0",
+          "laravel/framework": "v13.42.0",
+          "laravel/passport": "v13.10.0",
+          "laravel/pint": "v1.32.3",
+          "league/oauth2-server": "9.4.1",
+          "orchestra/testbench": "v11.3.0",
+          "phpstan/phpstan": "2.3.6",
+          "phpunit/phpunit": "12.5.44"
+        }
+      }
+    },
+    {
+      "id": 133733357735,
+      "name": "test (8.4, lowest)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:26+00:00",
+        "profile": "lowest",
+        "php": "8.4.27",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.4.27",
+        "lock_sha256": "62b0f3a75f3fc99ca2e807442ada80e1c0fbca04dd6df5676a86a165f376e746",
+        "installed_sha256": "dc34c28373570d83af8340154f34a1a50032cc69755e5dce9741697aef027df5",
+        "versions": {
+          "firebase/php-jwt": "v7.0.0",
+          "larastan/larastan": "v3.9.3",
+          "laravel/framework": "v13.40.0",
+          "laravel/passport": "v13.7.1",
+          "laravel/pint": "v1.0.0",
+          "league/oauth2-server": "9.2.0",
+          "orchestra/testbench": "v11.0.0",
+          "phpstan/phpstan": "2.1.32",
+          "phpunit/phpunit": "12.5.8"
+        }
+      }
+    },
+    {
+      "id": 133733357746,
+      "name": "test (8.5, locked)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": true,
+      "pint_files": 147,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:27+00:00",
+        "profile": "locked",
+        "php": "8.5.12",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.3.0",
+        "lock_sha256": "84cd1bfed2bb4be4cac92147144d787f0e95689fff78b9a4983eeda2771ebabf",
+        "installed_sha256": "fdac931571d168bc2be35985c72729c4cbfb086badf05a19eba63a3ff66a234f",
+        "versions": {
+          "firebase/php-jwt": "v7.2.1",
+          "larastan/larastan": "v3.15.0",
+          "laravel/framework": "v13.42.0",
+          "laravel/passport": "v13.10.0",
+          "laravel/pint": "v1.32.3",
+          "league/oauth2-server": "9.4.1",
+          "orchestra/testbench": "v11.3.0",
+          "phpstan/phpstan": "2.3.5",
+          "phpunit/phpunit": "12.5.44"
+        }
+      }
+    },
+    {
+      "id": 133733357962,
+      "name": "test (8.5, lowest)",
+      "conclusion": "success",
+      "test_runs": [
+        {
+          "tests": 230,
+          "assertions": 1076
+        },
+        {
+          "tests": 106,
+          "assertions": 414
+        }
+      ],
+      "e2e_passed": true,
+      "static_analysis_passed": null,
+      "pint_files": null,
+      "runner_warnings": [],
+      "environment": {
+        "checked_at_utc": "2026-11-17T00:56:27+00:00",
+        "profile": "lowest",
+        "php": "8.5.12",
+        "os": "Linux",
+        "commit": "b3851411fcb8862f09bcc5ce7d752a60d552d413",
+        "platform_php": "8.5.12",
+        "lock_sha256": "6e47b1de78cb3007ed2eee779d7b481820295933a4d61adf38c1ff687fd87397",
+        "installed_sha256": "dc11a8912e210ea33ca1a1a659e035934f43a5dd8aa061b42366714a08898d7c",
+        "versions": {
+          "firebase/php-jwt": "v7.0.0",
+          "larastan/larastan": "v3.9.3",
+          "laravel/framework": "v13.40.0",
+          "laravel/passport": "v13.7.1",
+          "laravel/pint": "v1.0.0",
+          "league/oauth2-server": "9.3.0",
+          "orchestra/testbench": "v11.0.0",
+          "phpstan/phpstan": "2.1.32",
+          "phpunit/phpunit": "12.5.8"
+        }
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14288810221,
+      "name": "sql-mysql-1",
+      "size_in_bytes": 10944,
+      "digest": "sha256:3d366fdae432cbdbab3e7a6bdaff2a9d443c818ca39ec43f210455029052772b"
+    },
+    {
+      "id": 14288685238,
+      "name": "compatibility-php-8.5-locked",
+      "size_in_bytes": 58978,
+      "digest": "sha256:d6caf842fe9aecc18319d60cd18d288d82e7957900c23baab6b56374a6067a7d"
+    },
+    {
+      "id": 14288620271,
+      "name": "compatibility-php-8.5-latest",
+      "size_in_bytes": 59026,
+      "digest": "sha256:46b54bcfcc0a0c23a8c8e2d5b1a793b74949f2bdd7c2ad149f0803631a840b4f"
+    },
+    {
+      "id": 14288600417,
+      "name": "compatibility-php-8.5-lowest",
+      "size_in_bytes": 59308,
+      "digest": "sha256:de2fe3e3e8eb99a7c13ff36705188334dabe34f59e258255639d8ab1a6afddc7"
+    },
+    {
+      "id": 14288247001,
+      "name": "sql-pgsql-2",
+      "size_in_bytes": 10839,
+      "digest": "sha256:fe1d72f69105cca3e725820d1d4bf84bd85ee1ea5ffd061bf85537052cfce274"
+    },
+    {
+      "id": 14288112263,
+      "name": "compatibility-php-8.3-lowest",
+      "size_in_bytes": 59213,
+      "digest": "sha256:5510b6da016de5044bf5e64cf734090552a2ee319e5cfc21ee2aae42fce3a3d4"
+    },
+    {
+      "id": 14287887627,
+      "name": "compatibility-php-8.3-locked",
+      "size_in_bytes": 58952,
+      "digest": "sha256:922db9e203e9eade59b95d9f16aa13a1a3916dac855dbc5308822241e4aa05ed"
+    },
+    {
+      "id": 14287597729,
+      "name": "sql-pgsql-3",
+      "size_in_bytes": 10886,
+      "digest": "sha256:bf065f1d297574960f9279d63c4a95e74c25de42556075bfa6a445327792dff2"
+    },
+    {
+      "id": 14287417410,
+      "name": "compatibility-php-8.4-latest",
+      "size_in_bytes": 59056,
+      "digest": "sha256:dd7a75527adb109cc74da942358397a9b2516db749de893bd2cd5bc952687a1e"
+    },
+    {
+      "id": 14287222853,
+      "name": "sql-mysql-0",
+      "size_in_bytes": 10795,
+      "digest": "sha256:b008091469f2338c96368e0ec11272b6c507d4075aa661446b7ba89563f97a0e"
+    },
+    {
+      "id": 14287192749,
+      "name": "compatibility-php-8.4-locked",
+      "size_in_bytes": 58951,
+      "digest": "sha256:027e649cb2fed947b7a9aec8de2d883c9df8a93a15874e7b712e8b97f34016bd"
+    },
+    {
+      "id": 14287029262,
+      "name": "compatibility-php-8.4-lowest",
+      "size_in_bytes": 59277,
+      "digest": "sha256:2db3e303bf37287f73aacea62365573220436f07d3f23a71091b81f0ac3531db"
+    },
+    {
+      "id": 14286564868,
+      "name": "compatibility-php-8.3-latest",
+      "size_in_bytes": 59055,
+      "digest": "sha256:5d441e435b0363018935b05b740b8320d9987f68c328966bcc1ae1234887dec6"
+    }
+  ],
+  "artifact_retention_days": 7,
+  "prior_attempt": {
+    "run_id": 43684419416,
+    "source_commit": "fa84a10106034585fe766b259f9295eef79d5d7c",
+    "conclusion": "failure",
+    "successful_jobs": 5,
+    "failed_jobs": 9,
+    "failure": "E2E inspection cursor retained a SQLite read lock, preventing back-channel writes.",
+    "correction": "Close the credential inspection cursor before continuing E2E."
+  },
+  "local_sql_before_final_morph_map_case": {
+    "mysql_repeatable_read": {
+      "tests": 245,
+      "assertions": 1150,
+      "result": "passed"
+    },
+    "pgsql_repeatable_read": {
+      "tests": 245,
+      "assertions": 1148,
+      "result": "passed"
+    },
+    "corrected_failure": "Read the linked user with a current locking read under MySQL REPEATABLE READ."
+  },
+  "limits": [
+    "PHPUnit normative group is a subset of the general suite; counts are not additive.",
+    "Official OIDF harness not rerun for this change.",
+    "Cross-site browsers and 30-minute load campaign not rerun for this change.",
+    "Runtime route gating tested; actual config/route-cache deployment matrix across both modes not executed.",
+    "Existing example databases were not reset or silently upgraded.",
+    "Installed initial migrations do not reapply themselves; owned-schema upgrades require a reviewed procedure.",
+    "No external certification or independent security review."
+  ]
+}

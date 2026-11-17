@@ -2,8 +2,8 @@
 
 - ADR-001: monorepo de paquetes path Composer, nombres provisionales laravel-sso/*.
 - ADR-002: Laravel ^13, PHP ^8.3 y Passport ^13. Versiones resueltas en composer.lock.
-- ADR-003: representaciones Eloquent locales sin credenciales, conforme a secciones 6–7
-  y confirmación del usuario. La identidad es `(iss, sub)` y nunca el email.
+- ADR-003 (sustituida por ADR-033): inicialmente representaciones Eloquent locales sin
+  credenciales, conforme a secciones 6–7. Se conserva `(iss, sub)`, nunca el email.
 - ADR-004: RS256 por política fija; biblioteca firebase/php-jwt para JWS/JWK.
   Claves OIDC separadas de las claves OAuth de Passport. No criptografía propia.
 - ADR-005: inicialmente Authorization Code + S256; sin implicit, password grant,
@@ -80,6 +80,19 @@
   transacciones completas, con presupuesto limitado. Si el llamador posee la transacción,
   debe reintentarla completa. No se reintentan errores de integridad arbitrarios ni se
   publican callbacks propios de intentos revertidos. Ver [resultados](COMPATIBILITY.md).
+
+- ADR-033: modo explícito mediante SSO_CLIENT_ENABLED, desactivado por defecto. El usuario
+  solicita extender Auth local sin tocar users ni sus contraseñas. La identidad se guarda
+  en sso_identities; las sesiones incluyen el propietario local. Una migración inicial
+  por paquete, sin migraciones incrementales. No hay conversión automática de esquemas
+  ya instalados ni vinculación por correo. SsoOnly pasa a ser opt-in para modelos exclusivos.
+- ADR-034: las altas automáticas usan una fábrica del anfitrión dentro de la transacción;
+  los usuarios vinculados no sincronizan perfil ni credenciales. Clase invocable cacheable,
+  misma conexión, unicidad de identidad, rollback y eventos después de commit. La lectura
+  del propietario bloqueada obtiene estado actual bajo MySQL REPEATABLE READ.
+- ADR-035: sso.local protege rutas nativas y sso.session protege recursos en ambos modos.
+  El cambio de origen exige nuevo login; logoutCurrentDevice conserva el recaller nativo.
+  El modo local es política del operador, nunca fallback automático ante caída del OP.
 
 ## Fuentes oficiales consultadas (2026-11-13)
 

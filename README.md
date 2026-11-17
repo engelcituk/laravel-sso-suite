@@ -9,8 +9,11 @@ Monorepo **experimental, pre-alpha** de identidad centralizada para Laravel 13 y
 Implementación OIDC original sobre la persistencia OAuth de Passport 13 y League OAuth2 Server.
 Licencia MIT. Nombres `laravel-sso/*` provisionales; **todavía no están publicados en Packagist**.
 
-Un servidor conserva las credenciales. Cada aplicación cliente usa un usuario Eloquent
-local sin contraseña, vinculado por `(iss, sub)`, y administra sus propios Gates y Policies.
+Con SSO activo, el servidor autentica las cuentas centrales. Cada cliente conserva su
+usuario Eloquent y sus Gates/Policies; la vinculación `(iss, sub)` vive en tablas propias.
+`SSO_CLIENT_ENABLED=false` permite continuar con Auth local. El paquete no modifica
+`users`, sus contraseñas ni sus permisos. Consulta [integración de los dos modos](docs/INSTALL-CLIENT.md)
+y [resultados de la fase](docs/OPTIONAL-AUTH.md).
 El cliente no depende de Passport. No hay dependencias de frontend ni ACL obligatoria.
 
 ## Qué funciona y qué falta
@@ -60,7 +63,7 @@ php -S 127.0.0.3:9102 -t examples/app-two/public examples/app-two/public/index.p
 ```
 
 Abre [Application One](http://127.0.0.2:9101), luego [Application Two](http://127.0.0.3:9102).
-Sólo [Identity Server](http://127.0.0.1:9100/login) recibe la contraseña.
+Con los ejemplos en modo SSO, sólo [Identity Server](http://127.0.0.1:9100/login) recibe la contraseña central.
 Los hosts loopback distintos mantienen las cookies separadas; no hace falta editar hosts.
 En una terminal del servidor central procesa las notificaciones:
 

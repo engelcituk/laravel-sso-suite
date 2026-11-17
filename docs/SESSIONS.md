@@ -81,7 +81,8 @@ concurrentes en MySQL/PostgreSQL; ver [resultados y plazos](DATABASE-CONCURRENCY
 El ejemplo central ofrece Recordarme opt-in y `/sso/devices`. La credencial persistente
 se rota en cada recuperación, conserva la fecha de autenticación original y no extiende
 su vencimiento absoluto. Replay verificado revoca el dispositivo; una contraseña reciente
-y CSRF protegen la administración. Los RP siguen sin credenciales Recordarme propias.
+y CSRF protegen la administración. El flujo SSO no crea un recaller local; el Auth nativo
+puede conservar el suyo cuando el cliente funciona en [modo local](OPTIONAL-AUTH.md).
 Ver [política, integración, limpieza y resultados reales](REMEMBER-DEVICES.md).
 
 Las carreras de revocación, entrega y recuperación en MySQL/PostgreSQL y una

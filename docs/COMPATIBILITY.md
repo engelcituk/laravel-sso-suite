@@ -1,5 +1,9 @@
 # Compatibilidad ampliada: dependencias y aislamiento
 
+Informe histórico de la fase de compatibilidad. La fase posterior de
+[SSO/Auth local opcional](OPTIONAL-AUTH.md) vuelve a ejecutar la matriz con la nueva
+identidad en tablas propias; sus conteos y commits se registran por separado.
+
 El [run 43680036096, intento 1](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43680036096)
 pasó **14/14 trabajos, sin advertencias del runner ni fallos**, el 2026-11-15
 **05:12:00–05:14:44 UTC** (00:12:00–00:14:44 en Cancún), en **main**.

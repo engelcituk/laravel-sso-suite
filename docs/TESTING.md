@@ -1,5 +1,23 @@
 # Pruebas y evidencia
 
+Estado del modo opcional: [run 43991616405](https://github.com/engelcituk/laravel-sso-suite/actions/runs/43991616405),
+`b385141`, rama `codex/optional-client-auth`, **14/14 trabajos aprobados**. Por cada uno
+de los nueve perfiles PHP 8.3/8.4/8.5 × locked/lowest/latest: **230 pruebas / 1076 aserciones**,
+**106 / 414** normativas y E2E real aprobados. MySQL: **246 / 1152** por aislamiento;
+PostgreSQL: **246 / 1150**, READ COMMITTED y REPEATABLE READ. Pint (147 archivos) y Larastan
+pasan en los tres perfiles locked, manifiestos/plataforma/audit aprobados y sin advertencias
+del runner. Los resultados de fases anteriores se conservan abajo como históricos.
+[Informe completo y correcciones](OPTIONAL-AUTH.md), [JSON sin secretos](../conformance/optional-auth-results.json).
+
+`tests/OptionalClientTest.php` añade 18 casos: Auth local sin tablas SSO ni HTTP, endpoints
+desactivados, bloqueo del login nativo con SSO, activación de rutas registradas apagadas,
+sesiones no transferibles entre modos, conservación de ID/perfil/hash/recaller/ACL,
+vinculación explícita e idempotente sin email linking ni reasignación, fábrica obligatoria,
+rollback de política, doctor local, callback/logout y esquema de users intacto tras up/down.
+También prueba SsoOnly opt-in y ausencia de cambios requeridos al morph map del anfitrión.
+La prueba de rutas verifica gating en ejecución; no ejecuta un despliegue con cachés reales
+en ambos modos. El E2E remoto usa instalaciones nuevas de los ejemplos y HTTP loopback.
+
 `composer test` ejecuta PHPUnit/Orchestra Testbench con Laravel real, SQLite y claves RSA
 efímeras generadas en tests/.keys (ignoradas por Git). No contiene claves privadas de prueba
 publicadas. `composer analyse` ejecuta Larastan/PHPStan nivel 5 sin baseline; Pint aplica
@@ -8,7 +26,8 @@ el preset Laravel. El lockfile resuelve dependencias para PHP 8.3 mínimo.
 Las pruebas integradas intercambian códigos mediante Passport/League reales. Las pruebas
 del callback aislado simulan HTTP para comprobar rechazo antes de login. `tools/e2e.php`
 añade tres servidores HTTP reales y un cookie jar, sin simular el OP. Comprueba login único,
-identidad compartida, Gate/Policy y ACL independiente, ausencia de contraseñas RP, claves y
+identidad compartida, Gate/Policy y ACL independiente, conservación del esquema de Auth
+local y ausencia de copia de contraseña central, claves y
 bases distintas, CSRF en formularios, logout y entrega back-channel.
 
 La suite negativa cubre firma alterada, kid desconocido, alg none/HS256, aud/azp/issuer,

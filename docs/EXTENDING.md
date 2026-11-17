@@ -5,16 +5,26 @@ sessionId, authenticatedAt y atributos de identidad verificados; no roles ni con
 
 Para personalizar aprovisionamiento implementa
 `LaravelSso\Client\Contracts\ProvisionsUsers::provision(Identity): Authenticatable` y
-vincula el contrato en el service provider de tu aplicación. Conserva vinculación por
-issuer/subject, índice único, lista explícita de atributos y política local. El evento
-`IdentityProvisioned` se emite tras aprobación, actualización y commit, sin tokens.
+vincula el contrato en el service provider de tu aplicación. El callback establece la
+vinculación mediante `IdentityLinks` antes de iniciar sesión; no permite reasignar una
+identidad a otro usuario. Conserva política local y usuario en la misma conexión.
+El aprovisionador predeterminado emite `IdentityProvisioned` tras aprobación y commit,
+sin tokens; las integraciones personalizadas deben definir sus eventos equivalentes.
 Si el llamador abre una transacción en MySQL/PostgreSQL, debe reintentar la transacción
 completa ante deadlock/serialización, por ejemplo `DB::transaction(fn () => $users->provision($identity), 5)`.
 Los callbacks del evento se descartan al hacer rollback; no se publica el intento abortado.
 
-El proveedor Eloquent puede utilizar tu modelo y tabla. El esquema debe ofrecer las
-columnas de identidad; para otro mapeo implementa el aprovisionador y adapta explícitamente
-la comprobación de sesión. La implementación predeterminada espera sso_issuer/sso_subject.
+El proveedor Eloquent utiliza tu modelo y tabla sin columnas SSO. La relación vive en
+`sso_identities`; `IdentityLinks::find/link` centraliza resolución y vinculación explícita.
+No sincroniza atributos ni credenciales de usuarios vinculados. Para altas automáticas
+configura `create_user` con una clase invocable o callable del anfitrión que devuelva un
+usuario persistido, del modelo configurado y en la misma conexión. La fábrica recibe
+`Identity`, no tokens ni contraseñas. Prefiere clase invocable para `config:cache`.
+El predeterminado ejecuta fábrica, relación y `allowed` dentro de la transacción; un
+rechazo revierte los cambios. Evita efectos externos dentro de esa fábrica; los reintentos
+pueden invocarla varias veces en transacciones que luego se revierten. Una restricción
+única ajena al mapeo se propaga: no se trata como una carrera de identidad reintentable.
+Consulta [instalación y ejemplo](INSTALL-CLIENT.md).
 
 Los servicios `GlobalSessions` y `LogoutDeliveries` se resuelven por DI. No son APIs
 administrativas HTTP. Conserva autorización propia al invocarlos; sus transiciones

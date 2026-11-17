@@ -10,10 +10,19 @@ El cliente no depende de Passport ni del servidor. Redis es opcional.
 ## Identidad y autorización
 
 El OP conserva credenciales y autentica mediante el guard Laravel de la aplicación anfitriona.
-El RP conserva una representación Eloquent con clave local e índice único `(sso_issuer,
-sso_subject)`, sin contraseña. La elección fue confirmada por el usuario: las secciones
-6–7 sustituyen las menciones contradictorias de clientes sin tabla users del documento.
-Los Gates, Policies y relaciones usan la clave local. Nunca se vincula por email.
+El RP conserva el usuario Eloquent del anfitrión, con sus credenciales locales y ACL.
+La tabla propia `sso_identities` vincula `(issuer, subject)` con la clase concreta del
+modelo y su clave local, mediante un índice único sensible a mayúsculas. No se agregan
+columnas ni se modifican datos en `users`. Nunca se vincula por email. La solicitud
+posterior de modo opcional sustituye la decisión inicial de modelos sin credenciales.
+
+Con `SSO_CLIENT_ENABLED=false`, los middleware integrados utilizan Auth local sin
+consultas SSO ni HTTP al OP. Con `true`, exigen identidad OIDC y sesión central vigente.
+Los cambios de modo exigen autenticación nueva. El anfitrión integra una vez `sso.local`
+en sus rutas de autenticación y `auth` + `sso.session` en recursos protegidos. Las rutas
+del paquete siempre se registran y se habilitan en ejecución mediante `sso.enabled`.
+Las altas automáticas requieren una fábrica explícita del anfitrión; la vinculación
+manual conserva usuarios existentes. [Contrato y evidencia](OPTIONAL-AUTH.md).
 
 ## Primera vertical
 

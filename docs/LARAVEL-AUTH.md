@@ -1,21 +1,38 @@
 # Integración Laravel Auth
 
-El cliente aprovisiona un modelo Eloquent y llama a `SessionGuard::login($user, false)`.
-`Auth::id()` es la clave **local**, mientras `Auth::user()->sso_subject` identifica al sujeto
-central y siempre se interpreta junto con `sso_issuer`.
+El cliente utiliza el SessionGuard y el proveedor Eloquent del anfitrión. Con
+`SSO_CLIENT_ENABLED=false` siguen funcionando el login por contraseña, registro,
+recuperación y Recordarme nativos. Con `true`, el callback OIDC resuelve un usuario
+local vinculado y ejecuta `SessionGuard::login($user, false)` regenerando la sesión.
 
-Funcionan `Auth::check()`, `auth()->user()`, el middleware auth, relaciones Eloquent,
-Gates y Policies. Usa el guard configurado si tu aplicación tiene varios guards. No se
-instala un UserProvider remoto ni se cambian silenciosamente tus guards/rutas.
+`Auth::id()` siempre es la clave local. Funcionan `Auth::check()`, `auth()->user()`,
+relaciones, Gates y Policies. No se instala un proveedor remoto ni se reescriben guards.
+Las identidades centrales se guardan en `sso_identities`, no en columnas del usuario.
+Usa `IdentityLinks::find($issuer, $subject)` desde código autorizado para resolver una
+identidad; durante una sesión SSO validada, `session('sso.identity')` contiene su contexto.
+Interpreta siempre `sub` junto con `iss`; no busques cuentas por email.
 
-Para autoría de registros conserva claves foráneas a users.id y relaciones belongsTo.
-Revocar una sesión no elimina el usuario local ni rompe relaciones históricas.
+El modelo puede ser tu `User` convencional con password y remember_token. La vinculación
+no cambia su perfil, hash, recaller, permisos ni ID; las relaciones históricas siguen
+apuntando al mismo usuario. El paquete no crea, elimina ni altera la tabla del anfitrión.
+Para altas automáticas se exige una fábrica explícita del anfitrión; para usuarios ya
+existentes basta una vinculación aprobada mediante `sso:link-user`.
 
-`SsoOnly` rechaza asignar password, devuelve una contraseña vacía y deshabilita remember
-tokens locales. Retira las rutas de registro, password reset y login por contraseña del
-guard SSO. Si necesitas otros tipos de identidad utiliza guards/modelos separados y
-protege cada grupo con su estrategia correspondiente. No uses Auth::attempt en el RP.
+Integra `sso.local` en las rutas nativas de autenticación y `auth` + `sso.session` en
+los recursos protegidos. Configura la redirección de invitados según el flag. La
+[guía de instalación](INSTALL-CLIENT.md) detalla orden y ejemplos. La integración
+se realiza una vez; el paquete no intercepta rutas propias que no lo utilicen.
 
-Aplica `sso.session` junto con auth: comprueba el índice local **en cada request** y consulta
-la vigencia central conforme al intervalo. Las operaciones sensibles usan `strict`.
-Las solicitudes ya iniciadas antes de una revocación no se pueden cancelar retroactivamente.
+Cambiar de modo exige autenticación nueva: una sesión local no acredita login OIDC, y
+una sesión SSO no concede acceso nativo al apagar el flag. Los cierres iniciados por SSO
+usan `logoutCurrentDevice()` para conservar `remember_token`; el ciclo del recaller
+nativo sigue perteneciendo a tu Auth local. No se comparten contraseñas o cookies con el OP.
+
+`SsoOnly` es una opción para modelos deliberadamente exclusivos de SSO: devuelve una
+contraseña vacía e inhabilita el recaller local. No modifica el esquema ni borra valores
+almacenados. No lo añadas a un modelo que deba soportar los dos modos.
+
+Con SSO activo, `sso.session` comprueba el índice local por petición y consulta la
+vigencia central conforme al intervalo. `strict` comprueba siempre al OP y falla cerrado.
+Las peticiones ya iniciadas no pueden cancelarse retroactivamente. Apagar SSO debe ser
+un cambio de configuración autorizado; una caída del OP no conmuta automáticamente.

@@ -2,7 +2,9 @@
 
 ## Fronteras de confianza
 
-Sólo el OP recibe contraseñas. El RP confía en un issuer configurado y sus claves públicas.
+En modo SSO sólo el OP recibe la contraseña central. En modo local, el anfitrión usa
+su Auth normal; el paquete no recibe ni sincroniza esas credenciales. El RP confía en
+un issuer configurado y sus claves públicas.
 No se confía en claims decodificados antes de validar la firma. Las identidades locales
 no conceden roles. Las cookies y bases de datos no se comparten entre dominios.
 
@@ -48,7 +50,7 @@ se conservan por código/token. sub no puede sustituir al usuario autenticado. E
 acr=0 no afirma MFA ni identidad acreditada; un acr esencial distinto se rechaza.
 
 El replay revoca sólo tokens ligados al código y al cliente autenticado. UserInfo debe
-tener el mismo sub que el ID Token validado antes de crear o actualizar al usuario local.
+tener el mismo sub que el ID Token validado antes de resolver o aprovisionar al usuario local.
 Los Request Objects siguen rechazados: se puede leer de forma acotada sólo response_mode
 para entregar ese error; nunca se aceptan su redirect, identidad, state, scopes ni PKCE.
 
@@ -66,6 +68,24 @@ no registra tokens, códigos, credenciales, atributos personales ni requests/mod
 Los callbacks esperan commit y desaparecen en rollback. El sink de log es opt-in, con
 retención y permisos del anfitrión; no es una outbox durable de auditoría. Los diagnósticos
 no exponen valores de configuración ni excepciones. Ver [garantías y operación](AUDIT-OPERATIONS.md).
+
+## Auth local y cambio de modo
+
+El flag se configura por el operador. No depende de disponibilidad del OP: una petición
+SSO falla cerrada aunque exista una contraseña local. La integración del anfitrión debe
+proteger sus rutas nativas con `sso.local` y sus recursos con `auth` + `sso.session`.
+Rutas fuera de esa integración conservan su comportamiento y requieren revisión propia.
+Las sesiones locales anteriores no acreditan identidad central y las sesiones SSO se
+invalidan al volver a local; se exige nueva autenticación. El cierre SSO conserva hash y
+remember_token nativos. El registro/recuperación de contraseña local queda bajo política
+del anfitrión y no debe exponerse sin el middleware al usar SSO.
+
+La vinculación manual exige un operador autorizado y un iss/sub verificado. Un mismo
+email no demuestra identidad; una vinculación existente no cambia de propietario.
+La fábrica automática es código confiable del anfitrión: elige atributos permitidos y
+campos obligatorios, nunca recibe la contraseña central. El paquete no escribe atributos
+del usuario existente. Una cuenta nueva necesita un proceso local de establecimiento
+de contraseña si luego se desea usar Auth local. [Pruebas y límites](OPTIONAL-AUTH.md).
 
 ## Validación externa pendiente
 
